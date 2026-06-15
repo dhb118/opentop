@@ -61,6 +61,7 @@ Run the local quality gate:
 pnpm generate:gallery
 pnpm test
 pnpm build
+pnpm check:publish
 ```
 
 ## Model Setup

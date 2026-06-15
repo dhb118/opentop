@@ -42,3 +42,13 @@ gh repo create opentop --public --source . --remote origin --push
 5. Create labels from `.github/labels.yml`.
 6. Create the first public issues from `docs/STARTER_ISSUES.md`.
 7. Use `docs/LAUNCH_PLAYBOOK.md` for the first distribution posts.
+
+## Publish Check
+
+Before pushing, run:
+
+```bash
+pnpm check:publish
+```
+
+The check verifies the local branch, `origin` remote, clean working tree, current commit, and whether `dhb118/opentop` is reachable through the GitHub API.
