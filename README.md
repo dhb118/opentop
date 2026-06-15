@@ -1,5 +1,7 @@
 # OpenTop
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 [![CI](https://github.com/dhb118/opentop/actions/workflows/ci.yml/badge.svg)](https://github.com/dhb118/opentop/actions/workflows/ci.yml)
 [![Pages](https://github.com/dhb118/opentop/actions/workflows/pages.yml/badge.svg)](https://github.com/dhb118/opentop/actions/workflows/pages.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-d8ff4f.svg)](LICENSE)
