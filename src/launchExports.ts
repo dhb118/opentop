@@ -14,6 +14,17 @@ export interface StarGrowthStage {
   risks: string[];
 }
 
+export interface RepoListingPack {
+  description: string;
+  topics: string[];
+  homepageRecommendation: string;
+  socialPreviewAlt: string;
+  pinnedIssueTitle: string;
+  pinnedIssueBody: string;
+  ghCommands: string[];
+  checklist: string[];
+}
+
 export function buildReadmeBrief(title: string, item: Opportunity): string {
   return `# ${title}
 
@@ -158,6 +169,10 @@ ${item.repoHook}
 - Moat: ${item.moat}
 - Score: ${item.score}/10
 
+## GitHub Repo Listing Pack
+
+${buildRepoListingPackMarkdown(item).trim()}
+
 ## Launch Checklist
 
 - [ ] Add a screenshot or short demo clip above the README fold.
@@ -193,6 +208,102 @@ ${buildXThread(item).trim()}
 ## Reddit Draft
 
 ${buildRedditPost(item).trim()}
+`;
+}
+
+export function buildRepoListingPack(item: Opportunity): RepoListingPack {
+  const description = trimForGitHubDescription(`${item.name}: ${item.repoHook}`);
+  const topics = buildTopics(item);
+  const homepageRecommendation =
+    "Use the hosted demo URL once it works; until then keep the README Quick Start as the visible fallback.";
+  const socialPreviewAlt = trimForGitHubDescription(
+    `${item.name} interface showing ${item.targetUser} turning an AI workflow signal into a launch-ready repository plan.`
+  );
+  const pinnedIssueTitle = `Start here: ${item.name} first release map`;
+  const pinnedIssueBody = `## Why this repository exists
+
+${item.repoHook}
+
+## First release
+
+${item.firstRelease.map((entry) => `- [ ] ${entry}`).join("\n")}
+
+## Good first contribution paths
+
+- Improve README proof for the target user: ${item.targetUser}
+- Add one example that demonstrates the wedge: ${item.wedge}
+- Open or refine starter issues for docs, examples, provider support, and launch assets.
+
+## Score context
+
+- Overall: ${item.score}/10
+- Distribution: ${item.scores.distribution}/10
+- Star potential: ${item.scores.starPotential}/10
+`;
+  const ghCommands = [
+    `gh repo edit OWNER/REPO --description ${quoteForShell(description)}`,
+    "gh repo edit OWNER/REPO --homepage https://YOUR-DEMO-URL.example.com",
+    "gh repo edit OWNER/REPO --enable-issues",
+    `gh repo edit OWNER/REPO ${topics.map((topic) => `--add-topic ${topic}`).join(" ")}`
+  ];
+  const checklist = [
+    "Description names the outcome, not just the category.",
+    "Topics include TypeScript, AI, open-source, and the strongest user workflow.",
+    "Homepage points to a working hosted demo before broad launch.",
+    "Social preview image or screenshot matches the README first screen.",
+    "Pinned issue gives first-time contributors a clear starting point."
+  ];
+
+  return {
+    description,
+    topics,
+    homepageRecommendation,
+    socialPreviewAlt,
+    pinnedIssueTitle,
+    pinnedIssueBody,
+    ghCommands,
+    checklist
+  };
+}
+
+export function buildRepoListingPackMarkdown(item: Opportunity): string {
+  const pack = buildRepoListingPack(item);
+
+  return `# ${item.name} GitHub Repo Listing Pack
+
+Use this before a public launch so GitHub visitors can understand, search for, and contribute to the repository from the first screen.
+
+## About Description
+
+${pack.description}
+
+## Topics
+
+${pack.topics.map((topic) => `\`${topic}\``).join(", ")}
+
+## Homepage
+
+${pack.homepageRecommendation}
+
+## Social Preview Alt Text
+
+${pack.socialPreviewAlt}
+
+## Pinned Issue
+
+Title: ${pack.pinnedIssueTitle}
+
+${pack.pinnedIssueBody.trim()}
+
+## GitHub CLI Setup
+
+\`\`\`bash
+${pack.ghCommands.join("\n")}
+\`\`\`
+
+## Listing Checklist
+
+${pack.checklist.map((entry) => `- [ ] ${entry}`).join("\n")}
 `;
 }
 
@@ -461,6 +572,70 @@ function pickFirstChannel(launchPlan: string[]): string {
     launchPlan[0] ??
     "Share the strongest concrete demo with a developer audience."
   );
+}
+
+function trimForGitHubDescription(value: string): string {
+  const normalized = value.replace(/\s+/g, " ").trim();
+  if (normalized.length <= 160) {
+    return normalized;
+  }
+  return `${normalized.slice(0, 157).replace(/\s+\S*$/, "")}...`;
+}
+
+function buildTopics(item: Opportunity): string[] {
+  const keywords = `${item.name} ${item.tagline} ${item.wedge} ${item.targetUser}`
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter((word) => word.length >= 4 && !topicStopWords.has(word));
+  const candidates = [
+    "ai",
+    "typescript",
+    "open-source",
+    "developer-tools",
+    item.repoHook.match(/\b(local|without an api key|no api key|no signup)\b/i) ? "local-first" : "ai-tools",
+    item.scores.distribution >= 8 ? "launch-tools" : "startup-ideas",
+    item.scores.starPotential >= 8 ? "open-source-growth" : "repo-scaffold",
+    ...keywords
+  ];
+
+  return uniqueTopics(candidates).slice(0, 8);
+}
+
+const topicStopWords = new Set([
+  "with",
+  "without",
+  "from",
+  "that",
+  "this",
+  "into",
+  "your",
+  "their",
+  "builder",
+  "builders",
+  "developer",
+  "developers",
+  "workflow",
+  "workflows"
+]);
+
+function uniqueTopics(values: string[]): string[] {
+  const topics: string[] = [];
+  for (const value of values) {
+    const topic = value
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 50);
+    if (!topic || topics.includes(topic)) {
+      continue;
+    }
+    topics.push(topic);
+  }
+  return topics;
+}
+
+function quoteForShell(value: string): string {
+  return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
 }
 
 function slugify(value: string): string {

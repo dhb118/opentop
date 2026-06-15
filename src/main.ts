@@ -9,6 +9,7 @@ import {
   buildLaunchKit,
   buildReadmeBrief,
   buildRedditPost,
+  buildRepoListingPackMarkdown,
   buildRepoScaffoldPlan,
   buildShowHnPost,
   buildStarGrowthPlanMarkdown,
@@ -639,6 +640,20 @@ function bindEvents(): void {
     }, 1400);
   });
 
+  document.querySelector<HTMLButtonElement>("[data-download-repo-listing]")?.addEventListener("click", (event) => {
+    const selected = result?.opportunities.find((item) => item.id === selectedId);
+    if (!selected) {
+      return;
+    }
+
+    const button = event.currentTarget as HTMLButtonElement;
+    button.textContent = "Downloaded";
+    downloadMarkdown(`${repoScaffoldRootName(selected)}-repo-listing-pack.md`, buildRepoListingPackMarkdown(selected));
+    window.setTimeout(() => {
+      button.textContent = "Download Repo Listing";
+    }, 1400);
+  });
+
   document.querySelector<HTMLButtonElement>("[data-download-scaffold]")?.addEventListener("click", (event) => {
     const selected = result?.opportunities.find((item) => item.id === selectedId);
     if (!selected) {
@@ -787,10 +802,12 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
           <button class="secondary-action" data-copy="launch-kit" type="button">Copy Launch Kit</button>
           <button class="secondary-action" data-copy="contributor-queue" type="button">Copy Contributor Queue</button>
           <button class="secondary-action" data-copy="star-plan" type="button">Copy Star Plan</button>
+          <button class="secondary-action" data-copy="repo-listing" type="button">Copy Repo Listing</button>
           <button class="secondary-action" data-copy="repo-scaffold" type="button">Copy Repo Plan</button>
           <button class="secondary-action" data-download-launch-kit type="button">Download Launch Kit</button>
           <button class="secondary-action" data-download-contributor-queue type="button">Download Contributor Queue</button>
           <button class="secondary-action" data-download-star-plan type="button">Download Star Plan</button>
+          <button class="secondary-action" data-download-repo-listing type="button">Download Repo Listing</button>
           <button class="secondary-action" data-download-scaffold type="button">Download Repo ZIP</button>
           <button class="secondary-action" data-copy="share-url" type="button">Copy Share Link</button>
           <button class="secondary-action" data-download-card-png type="button">Download PNG</button>
@@ -1133,6 +1150,9 @@ function copyPayload(mode: string | undefined, item: AnalysisResult["opportuniti
   if (mode === "star-plan") {
     return buildStarGrowthPlanMarkdown(item);
   }
+  if (mode === "repo-listing") {
+    return buildRepoListingPackMarkdown(item);
+  }
   if (mode === "x-thread") {
     return buildXThread(item);
   }
@@ -1163,6 +1183,9 @@ function copyLabel(mode: string | undefined): string {
   }
   if (mode === "star-plan") {
     return "Copy Star Plan";
+  }
+  if (mode === "repo-listing") {
+    return "Copy Repo Listing";
   }
   if (mode === "x-thread") {
     return "Copy X Thread";

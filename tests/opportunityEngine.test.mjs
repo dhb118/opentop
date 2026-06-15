@@ -11,6 +11,8 @@ import {
   buildLaunchKit,
   buildReadmeBrief,
   buildRedditPost,
+  buildRepoListingPack,
+  buildRepoListingPackMarkdown,
   buildRepoScaffoldPlan,
   buildShowHnPost,
   buildStarGrowthPlanMarkdown,
@@ -364,6 +366,8 @@ describe("launch text exports", () => {
     const launchKit = buildLaunchKit(opportunity);
     const contributorIssues = buildContributorIssueQueue(opportunity);
     const contributorQueue = buildContributorQueueMarkdown(opportunity);
+    const repoListingPack = buildRepoListingPack(opportunity);
+    const repoListing = buildRepoListingPackMarkdown(opportunity);
     const starGrowthStages = buildStarGrowthStages(opportunity);
     const starGrowthPlan = buildStarGrowthPlanMarkdown(opportunity);
 
@@ -387,6 +391,7 @@ describe("launch text exports", () => {
     assert.match(launchKit, /## Reddit Draft/);
     assert.match(launchKit, /## Contributor Queue/);
     assert.match(launchKit, /## Star Growth Plan/);
+    assert.match(launchKit, /## GitHub Repo Listing Pack/);
     assert.match(launchKit, new RegExp(opportunity.name));
     assert.ok(contributorIssues.length >= 5);
     assert.deepEqual(contributorIssues[0].labels, ["good-first-issue", "first-release", "help-wanted"]);
@@ -394,6 +399,15 @@ describe("launch text exports", () => {
     assert.match(contributorIssues[0].body, /- \[ \] Local tests and production build pass\./);
     assert.match(contributorQueue, /# .* Contributor Queue/);
     assert.match(contributorQueue, /Labels: `good-first-issue`/);
+    assert.ok(repoListingPack.description.length <= 160);
+    assert.ok(repoListingPack.topics.includes("ai"));
+    assert.ok(repoListingPack.topics.includes("typescript"));
+    assert.ok(repoListingPack.topics.every((topic) => /^[a-z0-9][a-z0-9-]{0,49}$/.test(topic)));
+    assert.match(repoListingPack.pinnedIssueBody, /## First release/);
+    assert.match(repoListingPack.ghCommands.join("\n"), /gh repo edit OWNER\/REPO/);
+    assert.match(repoListing, /# .* GitHub Repo Listing Pack/);
+    assert.match(repoListing, /## GitHub CLI Setup/);
+    assert.match(repoListing, /--add-topic ai/);
     assert.deepEqual(
       starGrowthStages.map((stage) => stage.milestone),
       ["1 star", "10 stars", "100 stars", "1,000 stars", "10,000 stars"]
