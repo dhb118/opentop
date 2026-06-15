@@ -1,0 +1,41 @@
+{
+  "name": "opentop",
+  "version": "0.1.0",
+  "entry": "index.html",
+  "createdAt": "2026-06-15T13:38:20.625Z",
+  "fileCount": 6,
+  "totalBytes": 282242,
+  "uploadHint": "Upload the contents of dist or opentop-demo.zip to any static host.",
+  "files": [
+    {
+      "path": "assets/index-D7b-_tCV.js",
+      "bytes": 121408,
+      "sha256": "e941ee57559437a46a8126e611bfd065d93e7ec64251e99eac7625bc756dcf26"
+    },
+    {
+      "path": "assets/index-mxem5mIa.css",
+      "bytes": 15750,
+      "sha256": "5b146090fa5902f8511b4b12221586eb1a50ec59deb67a9831e0564374ae93d3"
+    },
+    {
+      "path": "benchmarks.json",
+      "bytes": 2786,
+      "sha256": "d99e1431b5e3debafcc8436b68340802dfd988d14ef02af9e164883b962badc8"
+    },
+    {
+      "path": "gallery.json",
+      "bytes": 139534,
+      "sha256": "59a3141cf193a43a5109407ca0c4a64850dcff2fd63d44101bf1224f57af88b0"
+    },
+    {
+      "path": "index.html",
+      "bytes": 991,
+      "sha256": "c23365963c1d989c4cf520e0d729a82c7334ad7a574ce06a7d76858447b24638"
+    },
+    {
+      "path": "opentop-social.svg",
+      "bytes": 1773,
+      "sha256": "bb10d52f63309541a31c661f16763d5ca611b365026645b158d834c5cd3571f1"
+    }
+  ]
+}
