@@ -4,7 +4,7 @@
 [![Pages](https://github.com/dhb118/opentop/actions/workflows/pages.yml/badge.svg)](https://github.com/dhb118/opentop/actions/workflows/pages.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-d8ff4f.svg)](LICENSE)
 
-![OpenTop social preview](public/opentop-social.svg)
+![OpenTop interface showing the AI Opportunity Radar, sample briefs, and generated opportunity gallery](docs/assets/opentop-app-screenshot.png)
 
 OpenTop is an AI opportunity radar for builders who want to choose, shape, and launch open-source AI apps. It turns a messy market signal into ranked product ideas, scoring, a first-release scope, and a launch plan.
 
