@@ -11,6 +11,7 @@ This playbook turns the repository into a real GitHub launch asset.
 5. Run `pnpm smoke:pages` against the hosted demo.
 6. Create labels from `.github/labels.yml`.
 7. Open starter issues from `docs/STARTER_ISSUES.md` so new visitors can contribute immediately.
+8. Export the selected opportunity's Star Growth Plan and use it to stage the 1, 10, 100, 1k, and 10k star loops.
 
 ## Launch Copy
 
@@ -37,6 +38,7 @@ OpenTop cannot earn 10k stars from code alone. The repository needs compounding 
 
 - Weekly gallery updates with real generated ideas.
 - Public issues for every requested provider and exporter.
+- Exported Star Growth Plans that turn each selected wedge into staged proof, contribution, and distribution work.
 - Fast maintainer response for the first 100 contributors.
 - A hosted demo that works before visitors read the README.
 - Clear positioning: not another chatbot, but a decision tool for builders.

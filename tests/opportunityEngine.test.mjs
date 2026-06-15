@@ -13,6 +13,8 @@ import {
   buildRedditPost,
   buildRepoScaffoldPlan,
   buildShowHnPost,
+  buildStarGrowthPlanMarkdown,
+  buildStarGrowthStages,
   buildXThread
 } from "../src/launchExports.ts";
 import { parseModelAnalysis } from "../src/modelResponse.ts";
@@ -362,6 +364,8 @@ describe("launch text exports", () => {
     const launchKit = buildLaunchKit(opportunity);
     const contributorIssues = buildContributorIssueQueue(opportunity);
     const contributorQueue = buildContributorQueueMarkdown(opportunity);
+    const starGrowthStages = buildStarGrowthStages(opportunity);
+    const starGrowthPlan = buildStarGrowthPlanMarkdown(opportunity);
 
     assert.match(readme, new RegExp(`# ${opportunity.name}`));
     assert.match(showHn, /^Show HN:/);
@@ -382,6 +386,7 @@ describe("launch text exports", () => {
     assert.match(launchKit, /## X Thread Draft/);
     assert.match(launchKit, /## Reddit Draft/);
     assert.match(launchKit, /## Contributor Queue/);
+    assert.match(launchKit, /## Star Growth Plan/);
     assert.match(launchKit, new RegExp(opportunity.name));
     assert.ok(contributorIssues.length >= 5);
     assert.deepEqual(contributorIssues[0].labels, ["good-first-issue", "first-release", "help-wanted"]);
@@ -389,6 +394,15 @@ describe("launch text exports", () => {
     assert.match(contributorIssues[0].body, /- \[ \] Local tests and production build pass\./);
     assert.match(contributorQueue, /# .* Contributor Queue/);
     assert.match(contributorQueue, /Labels: `good-first-issue`/);
+    assert.deepEqual(
+      starGrowthStages.map((stage) => stage.milestone),
+      ["1 star", "10 stars", "100 stars", "1,000 stars", "10,000 stars"]
+    );
+    assert.match(starGrowthPlan, /# .* Star Growth Plan/);
+    assert.match(starGrowthPlan, /not a guarantee of stars/);
+    assert.match(starGrowthPlan, /## Score Context/);
+    assert.match(starGrowthPlan, /- \[ \] /);
+    assert.ok(starGrowthStages.every((stage) => stage.actions.length >= 3 && stage.proof.length >= 3 && stage.risks.length >= 2));
   });
 
   it("includes the selected scoring template in JSON opportunity exports", () => {

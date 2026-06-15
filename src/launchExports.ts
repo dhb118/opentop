@@ -6,6 +6,14 @@ export interface ContributorIssue {
   body: string;
 }
 
+export interface StarGrowthStage {
+  milestone: string;
+  objective: string;
+  actions: string[];
+  proof: string[];
+  risks: string[];
+}
+
 export function buildReadmeBrief(title: string, item: Opportunity): string {
   return `# ${title}
 
@@ -170,6 +178,10 @@ ${buildGitHubIssueBody(item).trim()}
 
 ${buildContributorQueueMarkdown(item).trim()}
 
+## Star Growth Plan
+
+${buildStarGrowthPlanMarkdown(item).trim()}
+
 ## Show HN Draft
 
 ${buildShowHnPost(item).trim()}
@@ -181,6 +193,144 @@ ${buildXThread(item).trim()}
 ## Reddit Draft
 
 ${buildRedditPost(item).trim()}
+`;
+}
+
+export function buildStarGrowthStages(item: Opportunity): StarGrowthStage[] {
+  const primaryChannel = pickFirstChannel(item.launchPlan);
+  const releaseSlice = item.firstRelease[0] ?? "Ship one narrow workflow that proves the wedge.";
+  const secondSlice = item.firstRelease[1] ?? "Add one example that makes the workflow easy to judge.";
+  const thirdSlice = item.firstRelease[2] ?? "Add contributor documentation and starter issues.";
+  const mainRisk = item.risks[0] ?? "The wedge may be too broad for visitors to understand quickly.";
+  const distributionRisk =
+    item.scores.distribution >= 8
+      ? "Strong distribution can still fail if the demo and README do not prove the outcome in the first minute."
+      : "Distribution score is not yet high enough; treat channel testing as required product work.";
+  const starRisk =
+    item.scores.starPotential >= 8
+      ? "High star potential depends on clear proof, not on generic launch copy."
+      : "Star potential needs stronger public proof before a large launch push.";
+
+  return [
+    {
+      milestone: "1 star",
+      objective: "Make the repository understandable enough for one trusted builder to star after a cold visit.",
+      actions: [
+        `Tighten the first README screen around this hook: ${item.repoHook}`,
+        `Ship the smallest first-release slice: ${releaseSlice}`,
+        "Add a no-signup quick start and one screenshot or generated output above the fold."
+      ],
+      proof: [
+        "A new visitor can explain the target user and outcome without reading the full README.",
+        "Local install, test, and build commands are visible and current.",
+        "At least one trusted target user has reviewed the repository link."
+      ],
+      risks: [mainRisk, "Do not ask broad audiences for stars before the first-screen proof is clear."]
+    },
+    {
+      milestone: "10 stars",
+      objective: "Turn early feedback into a repeatable public demo and contributor surface.",
+      actions: [
+        `Publish one before/after example for ${item.targetUser}`,
+        `Open starter issues from the contributor queue, starting with: ${secondSlice}`,
+        "Share the repository with a small trusted audience and ask for README clarity feedback."
+      ],
+      proof: [
+        "README links to one concrete example or gallery item.",
+        "Issues are enabled with good-first-issue labels and scoped acceptance criteria.",
+        "Feedback creates at least one README, example, or first-release improvement."
+      ],
+      risks: [distributionRisk, "Avoid optimizing for comments if the repository is still hard to run."]
+    },
+    {
+      milestone: "100 stars",
+      objective: "Convert the strongest launch channel into a durable acquisition loop.",
+      actions: [
+        `Turn this launch channel into a repeatable post: ${primaryChannel}`,
+        `Ship the next first-release slice: ${thirdSlice}`,
+        "Add a short demo video, social preview card, and copied launch posts that point back to GitHub."
+      ],
+      proof: [
+        "Every public post links to the repository, demo status, and one concrete example.",
+        "The repo profile has topics, license, homepage, starter issues, and current badges.",
+        "Questions from visitors are converted into docs, examples, or labeled issues."
+      ],
+      risks: [starRisk, "A channel spike without a contributor path usually decays after launch day."]
+    },
+    {
+      milestone: "1,000 stars",
+      objective: "Make the project forkable, extensible, and visibly maintained.",
+      actions: [
+        "Add templates, provider adapters, examples, or plugin points that let others reuse the core workflow.",
+        "Publish a weekly changelog or build note that shows active maintenance and real user problems.",
+        "Invite contributors to own docs, examples, provider integrations, and launch benchmark improvements."
+      ],
+      proof: [
+        "The repository has multiple paths for contribution beyond core code changes.",
+        "Examples cover at least three realistic use cases or launch channels.",
+        "Maintainer responses convert repeated support questions into durable documentation."
+      ],
+      risks: [
+        "A larger audience will amplify unclear setup, stale demos, and unsupported provider claims.",
+        "Keep scope tight; a broad AI platform pitch is harder to star than a sharp tool."
+      ]
+    },
+    {
+      milestone: "10,000 stars",
+      objective: "Become the reference open-source workflow for this specific AI builder problem.",
+      actions: [
+        `Name the category around the wedge: ${item.wedge}`,
+        "Publish comparison docs, migration examples, templates, and a public roadmap that make the project easy to cite.",
+        "Create a maintainer loop for triage, releases, docs freshness, security fixes, and community examples."
+      ],
+      proof: [
+        "External posts can describe the project in one sentence without copying the README.",
+        "The project has recurring examples, releases, and contributor activity that do not depend on one launch event.",
+        "The repository is safe to recommend: current demo status, license, setup, and contribution paths are visible."
+      ],
+      risks: [
+        "10k stars require distribution outside the maintainer's network; invest in repeatable proof and references.",
+        "Do not chase broad feature requests that weaken the original wedge."
+      ]
+    }
+  ];
+}
+
+export function buildStarGrowthPlanMarkdown(item: Opportunity): string {
+  const stages = buildStarGrowthStages(item);
+
+  return `# ${item.name} Star Growth Plan
+
+${item.repoHook}
+
+This plan translates the opportunity score into staged GitHub growth work. It is a roadmap for earning trust, contribution, and distribution; it is not a guarantee of stars.
+
+## Score Context
+
+- Overall: ${item.score}/10
+- Pain: ${item.scores.pain}/10
+- Urgency: ${item.scores.urgency}/10
+- Distribution: ${item.scores.distribution}/10
+- Buildability: ${item.scores.buildability}/10
+- Star potential: ${item.scores.starPotential}/10
+
+${stages
+  .map(
+    (stage) => `## ${stage.milestone}
+
+Objective: ${stage.objective}
+
+Actions:
+${stage.actions.map((entry) => `- [ ] ${entry}`).join("\n")}
+
+Proof:
+${stage.proof.map((entry) => `- ${entry}`).join("\n")}
+
+Risks:
+${stage.risks.map((entry) => `- ${entry}`).join("\n")}
+`
+  )
+  .join("\n")}
 `;
 }
 
@@ -303,6 +453,14 @@ ${item.launchPlan.map((entry) => `- [ ] ${entry}`).join("\n")}
 
 ${item.risks.map((entry) => `- ${entry}`).join("\n")}
 `;
+}
+
+function pickFirstChannel(launchPlan: string[]): string {
+  return (
+    launchPlan.find((entry) => /\b(Hacker News|Product Hunt|Reddit|GitHub|newsletter|X|Twitter)\b/i.test(entry)) ??
+    launchPlan[0] ??
+    "Share the strongest concrete demo with a developer audience."
+  );
 }
 
 function slugify(value: string): string {

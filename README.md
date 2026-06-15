@@ -47,7 +47,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 - Scoring template marketplace for local-first tools, provider SDKs, agent debugging, and launch generators.
 - Transparent weighted scoring explanation for every selected opportunity.
 - Copyable Markdown brief for GitHub issues, README sections, and launch drafts.
-- Export actions for README briefs, launch kits, contributor issue queues, GitHub issue bodies, repo scaffold plans, downloadable starter ZIPs, Show HN posts, X threads, Reddit posts, and JSON opportunity records.
+- Export actions for README briefs, launch kits, star growth plans, contributor issue queues, GitHub issue bodies, repo scaffold plans, downloadable starter ZIPs, Show HN posts, X threads, Reddit posts, and JSON opportunity records.
 - Downloadable PNG and SVG share cards for selected opportunities.
 - Shareable brief links that preserve the full input signal in the URL.
 - One-click sample briefs for local models, agents, prompt regression, and README positioning.
@@ -135,9 +135,10 @@ For Ollama:
 1. Publish a polished hosted demo and a 90-second screen recording.
 2. Add five high-quality sample briefs based on recognizable AI developer pains.
 3. Open starter issues for new scorers, export formats, and providers.
-4. Submit to Hacker News, Product Hunt, Reddit, and AI engineering newsletters.
-5. Write a transparent build log: "How I pick AI app ideas before writing code."
-6. Keep a public gallery of generated ideas so stars compound through examples.
+4. Export a Star Growth Plan for the strongest opportunity and use it to stage the 1, 10, 100, 1k, and 10k star loops.
+5. Submit to Hacker News, Product Hunt, Reddit, and AI engineering newsletters.
+6. Write a transparent build log: "How I pick AI app ideas before writing code."
+7. Keep a public gallery of generated ideas so stars compound through examples.
 
 ## License
 
