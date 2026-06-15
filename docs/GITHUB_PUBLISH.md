@@ -45,7 +45,7 @@ pnpm smoke:pages
 
 4. Add the hosted demo URL to the repository About section.
 5. Add screenshots or a GIF to `README.md`.
-6. Create labels from `.github/labels.yml`.
+6. Run the **Sync Labels** workflow or validate labels locally with `pnpm sync:labels`.
 7. Create the first public issues from `docs/STARTER_ISSUES.md`.
 8. Use `docs/LAUNCH_PLAYBOOK.md` for the first distribution posts.
 
@@ -80,3 +80,13 @@ The smoke check verifies:
 - Built CSS and JavaScript assets referenced by the page also return HTTP 200.
 
 If the page loads but asset checks fail, confirm the Pages workflow deployed the latest `dist` output and keep `base: "./"` in `vite.config.ts` so asset paths stay relative under `/opentop/`.
+
+## Label Sync
+
+Labels are defined in `.github/labels.yml`. To validate the file locally:
+
+```bash
+pnpm sync:labels
+```
+
+To create or update labels on GitHub, run the **Sync Labels** workflow from the Actions tab. The workflow uses `GITHUB_TOKEN` with `issues: write` and `contents: read` permissions.

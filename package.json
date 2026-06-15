@@ -19,6 +19,7 @@
     "generate:benchmarks": "node scripts/generate-benchmarks.mjs",
     "generate:gallery": "node scripts/generate-gallery.mjs",
     "preview": "vite preview --host 0.0.0.0",
+    "sync:labels": "node scripts/sync-labels.mjs --dry-run",
     "smoke:pages": "node scripts/smoke-pages.mjs",
     "test": "node --test tests/*.test.mjs",
     "typecheck": "tsc --noEmit"

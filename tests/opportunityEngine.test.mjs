@@ -20,6 +20,7 @@ import { benchmarkRepos } from "../src/benchmarkRepos.ts";
 import { buildBenchmarksJson, buildBenchmarksMarkdown } from "../scripts/generate-benchmarks.mjs";
 import { buildGalleryJson, buildGalleryMarkdown } from "../scripts/generate-gallery.mjs";
 import { extractAssetUrls, resolveSmokeOptions } from "../scripts/smoke-pages.mjs";
+import { parseLabelsYaml } from "../scripts/sync-labels.mjs";
 
 describe("analyzeLocally", () => {
   it("returns ranked launchable opportunities", () => {
@@ -351,5 +352,19 @@ describe("Pages smoke check helpers", () => {
 
     assert.equal(options.url, "https://example.com/demo/");
     assert.equal(options.expectedText, "OpenTop");
+  });
+});
+
+describe("GitHub label sync", () => {
+  it("parses committed labels into GitHub API payloads", async () => {
+    const labels = parseLabelsYaml(await readFile(".github/labels.yml", "utf8"));
+
+    assert.equal(labels.length, 8);
+    assert.deepEqual(labels[0], {
+      name: "good-first-opportunity",
+      color: "D8FF4F",
+      description: "Small contribution that improves OpenTop's launch value."
+    });
+    assert.ok(labels.every((label) => /^[0-9A-F]{6}$/.test(label.color)));
   });
 });

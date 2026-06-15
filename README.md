@@ -63,6 +63,7 @@ Run the local quality gate:
 ```bash
 pnpm generate:gallery
 pnpm generate:benchmarks
+pnpm sync:labels
 pnpm test
 pnpm build
 pnpm check:publish
