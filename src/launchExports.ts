@@ -131,6 +131,49 @@ ${item.risks.map((entry) => `- ${entry}`).join("\n")}
 `;
 }
 
+export function buildLaunchKit(item: Opportunity): string {
+  return `# ${item.name} Launch Kit
+
+${item.repoHook}
+
+## Positioning
+
+- Target user: ${item.targetUser}
+- Wedge: ${item.wedge}
+- Differentiator: ${item.differentiator}
+- Moat: ${item.moat}
+- Score: ${item.score}/10
+
+## Launch Checklist
+
+- [ ] Add a screenshot or short demo clip above the README fold.
+- [ ] Publish a no-login local quick start that works in under 60 seconds.
+- [ ] Open starter issues from the first-release scope below.
+- [ ] Share one concrete before/after example in every launch post.
+- [ ] Ask for feedback on the wedge, not on the whole product category.
+
+## README Brief
+
+${buildReadmeBrief(item.name, item).trim()}
+
+## GitHub Issue Body
+
+${buildGitHubIssueBody(item).trim()}
+
+## Show HN Draft
+
+${buildShowHnPost(item).trim()}
+
+## X Thread Draft
+
+${buildXThread(item).trim()}
+
+## Reddit Draft
+
+${buildRedditPost(item).trim()}
+`;
+}
+
 export function buildRepoScaffoldPlan(item: Opportunity): string {
   return `# ${item.name} Repository Scaffold
 

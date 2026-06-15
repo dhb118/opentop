@@ -46,7 +46,7 @@ OpenTop 围绕这些循环设计：粘贴趋势信号，得到排序后的应用
 - 评分矩阵覆盖痛点、紧迫性、分发、可构建性和 Star 潜力。
 - 评分模板市场，覆盖本地优先工具、Provider SDK、Agent 调试和发布生成器。
 - 为每个选中机会展示透明的加权评分解释。
-- 可复制 Markdown 简报，用于 GitHub issues、README 片段和发布草稿。
+- 可复制 Markdown 简报和 Launch Kit，用于 GitHub issues、README 片段和发布草稿。
 - 可导出 README 简报、GitHub issue 正文、仓库脚手架计划、可下载的入门仓库 ZIP、Show HN 帖子、X 线程、Reddit 帖子和 JSON 机会记录。
 - 可下载选中机会的 PNG 和 SVG 分享卡片。
 - 可分享的简报链接会在 URL 中保留完整输入信号。

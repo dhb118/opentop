@@ -6,6 +6,7 @@ import { buildBenchmarkComparisons } from "../src/benchmarkComparison.ts";
 import { defaultInput } from "../src/domain.ts";
 import {
   buildGitHubIssueBody,
+  buildLaunchKit,
   buildReadmeBrief,
   buildRedditPost,
   buildRepoScaffoldPlan,
@@ -347,6 +348,7 @@ describe("launch text exports", () => {
     const reddit = buildRedditPost(opportunity);
     const issue = buildGitHubIssueBody(opportunity);
     const scaffold = buildRepoScaffoldPlan(opportunity);
+    const launchKit = buildLaunchKit(opportunity);
 
     assert.match(readme, new RegExp(`# ${opportunity.name}`));
     assert.match(showHn, /^Show HN:/);
@@ -360,6 +362,13 @@ describe("launch text exports", () => {
     assert.match(scaffold, /## File Tree/);
     assert.match(scaffold, /README\.md/);
     assert.match(scaffold, /## Starter Issues/);
+    assert.match(launchKit, /# .* Launch Kit/);
+    assert.match(launchKit, /## Launch Checklist/);
+    assert.match(launchKit, /## GitHub Issue Body/);
+    assert.match(launchKit, /## Show HN Draft/);
+    assert.match(launchKit, /## X Thread Draft/);
+    assert.match(launchKit, /## Reddit Draft/);
+    assert.match(launchKit, new RegExp(opportunity.name));
   });
 
   it("includes the selected scoring template in JSON opportunity exports", () => {
