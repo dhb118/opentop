@@ -12,7 +12,7 @@ The app is TypeScript-first, runs locally without an API key, and can optionally
 
 Live demo target: `https://dhb118.github.io/opentop/`
 
-Example outputs: [Opportunity Gallery](docs/GALLERY.md)
+Example outputs: [Opportunity Gallery](docs/GALLERY.md), [AI Repo Benchmarks](docs/BENCHMARKS.md)
 
 Launch assets: [GitHub Publish Guide](docs/GITHUB_PUBLISH.md), [Starter Issues](docs/STARTER_ISSUES.md), [Launch Playbook](docs/LAUNCH_PLAYBOOK.md)
 
@@ -62,6 +62,7 @@ Run the local quality gate:
 
 ```bash
 pnpm generate:gallery
+pnpm generate:benchmarks
 pnpm test
 pnpm build
 pnpm check:publish
@@ -103,7 +104,7 @@ For Ollama:
 - Import trend signals from GitHub issues and browser bookmarks.
 - Export full repository scaffolds for selected ideas.
 - Add a scoring template marketplace.
-- Add benchmark examples for successful AI repos.
+- Turn benchmark examples into optional in-app scoring presets.
 
 ## Star Growth Plan
 

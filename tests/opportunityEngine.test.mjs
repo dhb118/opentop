@@ -9,6 +9,8 @@ import { analyzeLocally, scoreWeights } from "../src/opportunityEngine.ts";
 import { buildShareCardSvg, buildShareCardSvgDataUrl, shareCardDimensions } from "../src/shareCard.ts";
 import { parseTrendCsv, parseTrendNotes, parseTrendSignals } from "../src/trendImport.ts";
 import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
+import { benchmarkRepos } from "../src/benchmarkRepos.ts";
+import { buildBenchmarksJson, buildBenchmarksMarkdown } from "../scripts/generate-benchmarks.mjs";
 import { buildGalleryJson, buildGalleryMarkdown } from "../scripts/generate-gallery.mjs";
 import { extractAssetUrls, resolveSmokeOptions } from "../scripts/smoke-pages.mjs";
 
@@ -146,6 +148,30 @@ describe("generated opportunity gallery", () => {
 
     assert.equal(markdown, buildGalleryMarkdown());
     assert.equal(json, buildGalleryJson());
+  });
+});
+
+describe("generated benchmark examples", () => {
+  it("keeps committed benchmark files synchronized with structured examples", async () => {
+    const [markdown, json] = await Promise.all([
+      readFile("docs/BENCHMARKS.md", "utf8"),
+      readFile("public/benchmarks.json", "utf8")
+    ]);
+
+    assert.equal(markdown, buildBenchmarksMarkdown());
+    assert.equal(json, buildBenchmarksJson());
+  });
+
+  it("maps every benchmark to an OpenTop score dimension without private metrics", () => {
+    const dimensions = new Set(["pain", "urgency", "distribution", "buildability", "starPotential"]);
+
+    for (const benchmark of benchmarkRepos) {
+      assert.ok(dimensions.has(benchmark.dimension));
+      assert.match(benchmark.url, /^https:\/\/github\.com\//);
+      assert.match(benchmark.sourceUrl, /^https:\/\/github\.com\//);
+      assert.doesNotMatch(`${benchmark.publicSignal} ${benchmark.lesson}`, /\b\d[\d,.]*\s+stars?\b/i);
+      assert.doesNotMatch(`${benchmark.publicSignal} ${benchmark.lesson}`, /\b\d[\d,.]*\s+(ARR|revenue|valuation)\b/i);
+    }
   });
 });
 
