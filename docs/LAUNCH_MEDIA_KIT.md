@@ -7,6 +7,7 @@ Use this kit before posting OpenTop to GitHub, Product Hunt, Hacker News, Reddit
 - Primary screenshot: [OpenTop app screenshot](assets/opentop-app-screenshot.png).
 - Live demo capture: [OpenTop live demo capture](assets/opentop-live-demo.png).
 - Demo flow visual: [OpenTop 90-second demo flow](assets/opentop-demo-flow.svg).
+- Demo frame sequence: run `pnpm build` and `pnpm capture:demo-frames` to refresh the three PNG frames under `docs/assets/opentop-demo-frames/`.
 - Hosted demo: [verified rawcdn fallback](https://rawcdn.githack.com/dhb118/opentop/8af0b223db437d2c8235232e32e85ed9b8e6ca8c/).
 - Repo profile alt text: OpenTop interface showing AI opportunity scoring, sample briefs, and launch exports for open-source builders.
 
@@ -21,6 +22,15 @@ Use the in-app `Copy Demo Script` action for the selected opportunity. Keep the 
 5. End on the GitHub repository or hosted demo URL.
 
 The recording should not explain every feature. It should prove that a visitor can judge the product from one concrete before/after example.
+
+If a GIF or video recorder is not available, capture the source frames first:
+
+```bash
+pnpm build
+pnpm capture:demo-frames
+```
+
+Use the generated frames as a storyboard for the final recording: load a built-in brief, compare the score explanation, then copy the demo script export.
 
 ## Product Hunt Gallery
 

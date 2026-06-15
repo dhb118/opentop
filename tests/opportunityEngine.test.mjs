@@ -59,6 +59,7 @@ import {
 import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
 import { benchmarkRepos } from "../src/benchmarkRepos.ts";
 import { sampleBriefs } from "../src/sampleBriefs.ts";
+import { demoFramePlan, parseCaptureArgs } from "../scripts/capture-demo-frames.mjs";
 import { parseDeployArgs } from "../scripts/deploy-gh-pages.mjs";
 import { buildBenchmarksJson, buildBenchmarksMarkdown } from "../scripts/generate-benchmarks.mjs";
 import { buildGalleryJson, buildGalleryMarkdown, buildSampleBriefsMarkdown } from "../scripts/generate-gallery.mjs";
@@ -1208,6 +1209,36 @@ describe("prepublish check", () => {
   });
 });
 
+describe("demo frame capture script", () => {
+  it("keeps a stable three-frame recording storyboard", () => {
+    assert.deepEqual(
+      demoFramePlan().map((frame) => frame.filename),
+      ["01-load-built-in-brief.png", "02-compare-score-explanation.png", "03-copy-demo-script.png"]
+    );
+    assert.match(demoFramePlan()[2]?.label ?? "", /demo script/i);
+  });
+
+  it("parses demo frame capture options", () => {
+    assert.deepEqual(parseCaptureArgs([]), {
+      chromePath: "",
+      height: 1100,
+      outDir: "docs/assets/opentop-demo-frames",
+      sample: "readme-positioning-assistant",
+      url: "",
+      width: 1440
+    });
+    assert.deepEqual(parseCaptureArgs(["--url", "https://example.com", "--out", "frames", "--sample", "brief", "--width", "1200", "--height", "800"]), {
+      chromePath: "",
+      height: 800,
+      outDir: "frames",
+      sample: "brief",
+      url: "https://example.com",
+      width: 1200
+    });
+    assert.throws(() => parseCaptureArgs(["--width", "0"]), /positive integer/);
+  });
+});
+
 describe("launch export smoke harness", () => {
   it("executes a built app module and verifies launch export actions render", async () => {
     const tempDir = await mkdtemp(join(tmpdir(), "opentop-launch-smoke-"));
@@ -1258,7 +1289,8 @@ describe("launch documentation", () => {
       pullRequestTemplate,
       weeklyGalleryWorkflow,
       demoFlowSvg,
-      liveDemoPng
+      liveDemoPng,
+      demoFramePngs
     ] = await Promise.all([
       readFile("README.md", "utf8"),
       readFile("README.zh-CN.md", "utf8"),
@@ -1274,7 +1306,8 @@ describe("launch documentation", () => {
       readFile(".github/PULL_REQUEST_TEMPLATE.md", "utf8"),
       readFile("docs/WEEKLY_GALLERY_WORKFLOW.md", "utf8"),
       readFile("docs/assets/opentop-demo-flow.svg", "utf8"),
-      readFile("docs/assets/opentop-live-demo.png")
+      readFile("docs/assets/opentop-live-demo.png"),
+      Promise.all(demoFramePlan().map((frame) => readFile(`docs/assets/opentop-demo-frames/${frame.filename}`)))
     ]);
 
     assert.match(readme, /Public Launch Brief/);
@@ -1354,6 +1387,7 @@ describe("launch documentation", () => {
     assert.match(launchMediaKit, /# OpenTop Launch Media Kit/);
     assert.match(launchMediaKit, /OpenTop 90-second demo flow/);
     assert.match(launchMediaKit, /OpenTop live demo capture/);
+    assert.match(launchMediaKit, /pnpm capture:demo-frames/);
     assert.match(launchMediaKit, /Copy Demo Script/);
     assert.match(launchMediaKit, /Product Hunt Gallery/);
     assert.match(launchMediaKit, /GitHub Social Preview/);
@@ -1400,6 +1434,10 @@ describe("launch documentation", () => {
     assert.match(demoFlowSvg, /signal input, ranked opportunities, score proof, and launch export/);
     assert.deepEqual([...liveDemoPng.subarray(0, 8)], [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
     assert.ok(liveDemoPng.length > 100_000);
+    for (const frame of demoFramePngs) {
+      assert.deepEqual([...frame.subarray(0, 8)], [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+      assert.ok(frame.length > 100_000);
+    }
   });
 });
 

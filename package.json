@@ -15,6 +15,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
+    "capture:demo-frames": "node scripts/capture-demo-frames.mjs",
     "check:publish": "node scripts/prepublish-check.mjs",
     "deploy:pages:branch": "node scripts/deploy-gh-pages.mjs",
     "generate:benchmarks": "node scripts/generate-benchmarks.mjs",
