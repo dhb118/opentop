@@ -8,15 +8,15 @@
 
 ![OpenTop 界面截图：AI Opportunity Radar、示例简报和机会图库](docs/assets/opentop-app-screenshot.png)
 
-OpenTop 是面向 AI 开发者的选题雷达：把零散趋势、issue、链接和产品想法，变成可比较的开源 AI 应用方向。
+OpenTop 帮 AI 开发者从杂乱线索里选出值得做的开源应用。粘贴趋势、issue、竞品链接或调研笔记，它会把这些信号整理成可比较的产品机会，并给出首版范围和发布材料。
 
-输入一组研究信号后，它会给出三类结果：
+它主要产出三类结果：
 
-- 候选选题：按痛点、紧迫性、分发路径、可构建性和 Star 潜力排序。
-- 首版方案：说明目标用户、MVP 范围、验证步骤和主要风险。
-- 发布素材：生成 README 简报、公开发布简报、Launch Kit、Star 增长计划和 starter repo ZIP。
+- 机会排序：按痛点、紧迫性、分发路径、可构建性和 Star 潜力评分。
+- MVP 简报：明确目标用户、首版功能、验证步骤和主要风险。
+- 发布包：生成 README、公开发布简报、Launch Kit、Star 增长计划和 starter repo ZIP。
 
-默认本地运行，不需要 API Key；需要更强生成能力时，可接入 OpenAI 兼容接口、Anthropic、Bedrock、Vertex AI 或 Ollama。
+默认本地运行，不需要 API Key。需要更强生成能力时，可接入 OpenAI 兼容接口、Anthropic、Bedrock、Vertex AI 或 Ollama。
 
 在线演示暂不可用：GitHub Pages custom domain 仍在修复中。请先用下方命令本地运行，或用 [Demo 备用部署](docs/DEMO_FALLBACKS.md) 发布 Vercel/Netlify/静态 ZIP 版本。
 
@@ -30,13 +30,13 @@ OpenTop 是面向 AI 开发者的选题雷达：把零散趋势、issue、链接
 - 本地验证：`pnpm test`、`pnpm build`、`pnpm smoke:launch-exports` 和 `pnpm package:demo` 会在公开 demo 链接前验证生产应用和发布导出能力。
 - 示例验证：机会图库包含 14 个内置 AI 开发者简报，覆盖本地模型、Agent、RAG、eval、Provider 迁移、发布风险和 README 定位。
 - 导出验证：生产 bundle smoke check 会确认 `Copy Launch Brief`、`Copy Launch Kit`、`Copy Star Plan` 和 `Download Repo ZIP` 可渲染。
-- 发布验证：公开发布简报、新手任务和发布手册会同步 demo 状态、贡献入口和分发文案。
+- 发布验证：公开发布简报、新手任务、发布手册和 open issues [#11](https://github.com/dhb118/opentop/issues/11) / [#12](https://github.com/dhb118/opentop/issues/12) 会同步 demo 状态、贡献入口和分发文案。
 
 ## 适合谁
 
-- 想从 AI 趋势里快速筛选开源项目方向的开发者。
-- 需要把用户反馈、issue 或调研笔记整理成产品机会的维护者。
-- 想在发布前准备 demo、README、贡献入口和增长计划的团队。
+- 正在寻找下一个开源 AI 项目的开发者。
+- 想把用户反馈、issue 或调研笔记变成产品判断的维护者。
+- 需要在发布前准备 demo、README、贡献入口和传播素材的团队。
 
 ## 核心能力
 

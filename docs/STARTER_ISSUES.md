@@ -6,6 +6,13 @@ Use these as the first public issues for visitors who want to help OpenTop becom
 
 Create labels from [.github/labels.yml](../.github/labels.yml), then apply the suggested labels below.
 
+## Published GitHub Issues
+
+These public issues are already open and should be used as the current contribution entry points:
+
+- [#11 Fix GitHub Pages custom domain redirect](https://github.com/dhb118/opentop/issues/11): restore a reliable public demo URL.
+- [#12 Publish a working fallback demo URL and wire launch links](https://github.com/dhb118/opentop/issues/12): publish a fallback demo and update launch links.
+
 ## 1. Enable the working GitHub Pages branch demo
 
 Labels: `docs`, `growth`, `good-first-opportunity`

@@ -24,7 +24,7 @@ Launch assets: [GitHub Publish Guide](docs/GITHUB_PUBLISH.md), [Demo Fallbacks](
 - Local proof: `pnpm test`, `pnpm build`, `pnpm smoke:launch-exports`, and `pnpm package:demo` verify the production app and its launch exports before any public demo link is shared.
 - Example proof: the gallery includes 14 built-in AI builder briefs covering local models, agents, RAG, evals, provider migration, release risk, and README positioning.
 - Export proof: the production bundle smoke check verifies `Copy Launch Brief`, `Copy Launch Kit`, `Copy Star Plan`, and `Download Repo ZIP`.
-- Launch proof: the public launch brief, starter issues, and launch playbook keep demo status, contributor paths, and distribution copy aligned.
+- Launch proof: the public launch brief, starter issues, launch playbook, and open issues [#11](https://github.com/dhb118/opentop/issues/11) / [#12](https://github.com/dhb118/opentop/issues/12) keep demo status, contributor paths, and distribution copy aligned.
 
 ## Languages
 

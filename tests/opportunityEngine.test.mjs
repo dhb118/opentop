@@ -1020,36 +1020,41 @@ describe("launch export smoke harness", () => {
 
 describe("launch documentation", () => {
   it("keeps public launch docs linked and current", async () => {
-    const [readme, zhReadme, launchBrief, starterIssues, launchPlaybook, cloudflareDoc, publishDoc] = await Promise.all([
+    const [readme, zhReadme, launchBrief, starterIssues, launchPlaybook, cloudflareDoc, publishDoc, contributing] = await Promise.all([
       readFile("README.md", "utf8"),
       readFile("README.zh-CN.md", "utf8"),
       readFile("docs/PUBLIC_LAUNCH_BRIEF.md", "utf8"),
       readFile("docs/STARTER_ISSUES.md", "utf8"),
       readFile("docs/LAUNCH_PLAYBOOK.md", "utf8"),
       readFile("docs/CLOUDFLARE_PAGES.md", "utf8"),
-      readFile("docs/GITHUB_PUBLISH.md", "utf8")
+      readFile("docs/GITHUB_PUBLISH.md", "utf8"),
+      readFile("CONTRIBUTING.md", "utf8")
     ]);
 
     assert.match(readme, /Public Launch Brief/);
     assert.match(readme, /Cloudflare Pages Direct Upload/);
     assert.match(readme, /## Launch Evidence/);
     assert.match(readme, /14 built-in AI builder briefs/);
+    assert.match(readme, /https:\/\/github\.com\/dhb118\/opentop\/issues\/12/);
     assert.match(readme, /Copy Launch Brief/);
     assert.match(readme, /pnpm smoke:launch-exports/);
     assert.match(zhReadme, /公开发布简报/);
     assert.match(zhReadme, /Cloudflare Pages 直传/);
     assert.match(zhReadme, /## 发布证据/);
     assert.match(zhReadme, /14 个内置 AI 开发者简报/);
+    assert.match(zhReadme, /https:\/\/github\.com\/dhb118\/opentop\/issues\/12/);
     assert.match(zhReadme, /Copy Launch Brief/);
     assert.match(zhReadme, /pnpm smoke:launch-exports/);
-    assert.match(zhReadme, /面向 AI 开发者的选题雷达/);
-    assert.match(zhReadme, /输入一组研究信号后，它会给出三类结果/);
-    assert.match(zhReadme, /首版方案/);
+    assert.match(zhReadme, /OpenTop 帮 AI 开发者从杂乱线索里选出值得做的开源应用/);
+    assert.match(zhReadme, /它主要产出三类结果/);
+    assert.match(zhReadme, /MVP 简报/);
     assert.match(launchBrief, /# OpenTop Public Launch Brief/);
     assert.match(launchBrief, /## Current Launch Gate/);
     assert.match(launchBrief, /current demo status, local proof, and example proof/);
     assert.match(launchBrief, /Cloudflare Pages Direct Upload/);
     assert.match(starterIssues, /Enable the working GitHub Pages branch demo/);
+    assert.match(starterIssues, /#11 Fix GitHub Pages custom domain redirect/);
+    assert.match(starterIssues, /#12 Publish a working fallback demo URL and wire launch links/);
     assert.match(starterIssues, /Refine the public launch brief with real feedback/);
     assert.match(starterIssues, /Keep Cloudflare Pages direct-upload instructions current/);
     assert.match(starterIssues, /Keep end-to-end smoke coverage for launch exports current/);
@@ -1058,6 +1063,9 @@ describe("launch documentation", () => {
     assert.match(cloudflareDoc, /Cloudflare Pages Direct Upload/);
     assert.match(publishDoc, /Launch Export Smoke Check/);
     assert.match(publishDoc, /Copy Launch Brief/);
+    assert.match(contributing, /## Find Work/);
+    assert.match(contributing, /https:\/\/github\.com\/dhb118\/opentop\/issues\/11/);
+    assert.match(contributing, /https:\/\/github\.com\/dhb118\/opentop\/issues\/12/);
   });
 });
 
