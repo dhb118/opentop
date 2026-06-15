@@ -5,7 +5,7 @@ import { defaultInput } from "../src/domain.ts";
 import { buildGitHubIssueBody, buildReadmeBrief, buildRepoScaffoldPlan, buildShowHnPost } from "../src/launchExports.ts";
 import { parseModelAnalysis } from "../src/modelResponse.ts";
 import { analyzeLocally, scoreWeights } from "../src/opportunityEngine.ts";
-import { buildShareCardSvg } from "../src/shareCard.ts";
+import { buildShareCardSvg, buildShareCardSvgDataUrl, shareCardDimensions } from "../src/shareCard.ts";
 import { parseTrendCsv, parseTrendNotes, parseTrendSignals } from "../src/trendImport.ts";
 import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
 import { buildGalleryJson, buildGalleryMarkdown } from "../scripts/generate-gallery.mjs";
@@ -114,10 +114,21 @@ describe("share card export", () => {
     const opportunity = analyzeLocally(defaultInput).opportunities[0];
     const svg = buildShareCardSvg(opportunity);
 
+    assert.equal(shareCardDimensions.width, 1200);
+    assert.equal(shareCardDimensions.height, 630);
     assert.match(svg, /^<svg width="1200" height="630"/);
     assert.match(svg, /OPENTOP OPPORTUNITY/);
     assert.match(svg, new RegExp(opportunity.name));
     assert.match(svg, /image\/svg\+xml|<\/svg>/);
+  });
+
+  it("builds a browser-safe SVG data URL for PNG rendering", () => {
+    const opportunity = analyzeLocally(defaultInput).opportunities[0];
+    const dataUrl = buildShareCardSvgDataUrl(opportunity);
+
+    assert.match(dataUrl, /^data:image\/svg\+xml;charset=utf-8,/);
+    assert.match(decodeURIComponent(dataUrl), /OPENTOP OPPORTUNITY/);
+    assert.doesNotMatch(dataUrl, /\s<svg/);
   });
 
   it("escapes text before placing it into SVG markup", () => {

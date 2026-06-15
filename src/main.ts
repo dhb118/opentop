@@ -4,7 +4,7 @@ import type { AnalysisResult, Opportunity, OpportunityInput, ProviderSettings } 
 import { buildGitHubIssueBody, buildReadmeBrief, buildRepoScaffoldPlan, buildShowHnPost } from "./launchExports";
 import { analyzeLocally, scoreWeights } from "./opportunityEngine";
 import { sampleBriefs } from "./sampleBriefs";
-import { buildShareCardSvg } from "./shareCard";
+import { buildShareCardSvg, renderShareCardPngBlob } from "./shareCard";
 import { loadInput, loadSettings, saveInput, saveSettings } from "./storage";
 import { parseTrendSignals } from "./trendImport";
 import { createShareUrl, readBriefFromSearch } from "./urlState";
@@ -235,12 +235,35 @@ function bindEvents(): void {
     downloadJson(`${selected.id}.json`, selected);
   });
 
-  document.querySelector<HTMLButtonElement>("[data-download-card]")?.addEventListener("click", () => {
+  document.querySelector<HTMLButtonElement>("[data-download-card-svg]")?.addEventListener("click", () => {
     const selected = result?.opportunities.find((item) => item.id === selectedId);
     if (!selected) {
       return;
     }
     downloadSvg(`${selected.id}-share-card.svg`, buildShareCardSvg(selected));
+  });
+
+  document.querySelector<HTMLButtonElement>("[data-download-card-png]")?.addEventListener("click", async (event) => {
+    const selected = result?.opportunities.find((item) => item.id === selectedId);
+    if (!selected) {
+      return;
+    }
+
+    const button = event.currentTarget as HTMLButtonElement;
+    button.textContent = "Rendering...";
+    button.disabled = true;
+    try {
+      const blob = await renderShareCardPngBlob(selected);
+      downloadBlob(`${selected.id}-share-card.png`, blob);
+      button.textContent = "Downloaded";
+    } catch {
+      button.textContent = "PNG failed";
+    } finally {
+      window.setTimeout(() => {
+        button.textContent = "Download PNG";
+        button.disabled = false;
+      }, 1400);
+    }
   });
 }
 
@@ -340,7 +363,8 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
           <button class="secondary-action" data-copy="github-issue" type="button">Copy GitHub Issue</button>
           <button class="secondary-action" data-copy="repo-scaffold" type="button">Copy Repo Plan</button>
           <button class="secondary-action" data-copy="share-url" type="button">Copy Share Link</button>
-          <button class="secondary-action" data-download-card type="button">Download Card</button>
+          <button class="secondary-action" data-download-card-png type="button">Download PNG</button>
+          <button class="secondary-action" data-download-card-svg type="button">Download SVG</button>
           <button class="secondary-action" data-download type="button">Download JSON</button>
         </div>
       </div>
