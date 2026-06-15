@@ -32,9 +32,11 @@ gh repo edit dhb118/opentop --add-topic ai --add-topic typescript --add-topic st
 
 ```bash
 GITHUB_TOKEN=github_pat_... pnpm repo:profile:apply
+# or
+GH_TOKEN=github_pat_... pnpm repo:profile:apply
 ```
 
-The apply command uses the GitHub REST API to set the repository description, Website, issues setting, and discovery topics from this pack. The token must have permission to administer repository metadata.
+The apply command uses the GitHub REST API to set the repository description, Website, issues setting, and discovery topics from this pack. Set `GITHUB_TOKEN` or `GH_TOKEN`; the token must have permission to administer repository metadata.
 
 ## Audit Command
 

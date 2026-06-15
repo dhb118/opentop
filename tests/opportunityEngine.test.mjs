@@ -1094,6 +1094,47 @@ describe("repo profile pack", () => {
     assert.ok(JSON.parse(requests[1]?.options.body).names.includes("typescript"));
   });
 
+  it("accepts GH_TOKEN as a repo profile apply token", async () => {
+    const previousGitHubToken = process.env.GITHUB_TOKEN;
+    const previousGhToken = process.env.GH_TOKEN;
+    const requests = [];
+
+    process.env.GITHUB_TOKEN = "";
+    process.env.GH_TOKEN = "gh-token-123";
+
+    try {
+      const result = await applyRepoProfile({
+        fetchImpl: async (url, options) => {
+          requests.push({ options, url: String(url) });
+          return { ok: true, status: 200, statusText: "OK" };
+        },
+        profile: buildRepoProfile(
+          JSON.stringify({
+            description: "Expected description",
+            homepage: "https://example.com/demo/",
+            keywords: ["ai", "typescript"]
+          })
+        )
+      });
+
+      assert.equal(result.checks.every(([, ok]) => ok), true);
+      assert.equal(requests.length, 2);
+      assert.match(String(requests[0]?.options.headers.Authorization), /^Bearer gh-token-123$/);
+    } finally {
+      if (previousGitHubToken === undefined) {
+        delete process.env.GITHUB_TOKEN;
+      } else {
+        process.env.GITHUB_TOKEN = previousGitHubToken;
+      }
+
+      if (previousGhToken === undefined) {
+        delete process.env.GH_TOKEN;
+      } else {
+        process.env.GH_TOKEN = previousGhToken;
+      }
+    }
+  });
+
   it("audits public GitHub profile metadata without mutating it", async () => {
     const profile = buildRepoProfile(
       JSON.stringify({
@@ -1121,6 +1162,19 @@ describe("repo profile pack", () => {
     assert.equal(topicsCheck?.[1], false);
     assert.match(String(topicsCheck?.[2]), /typescript/);
     assert.equal(issuesCheck?.[1], true);
+  });
+
+  it("keeps repo profile audit network failure details visible", async () => {
+    const cause = new Error("connect EACCES 198.18.0.44:443");
+    cause.code = "EACCES";
+    const result = await auditRepoProfile({
+      fetchImpl: async () => {
+        throw new TypeError("fetch failed", { cause });
+      }
+    });
+
+    assert.equal(result.checks[0]?.[1], false);
+    assert.equal(result.checks[0]?.[2], "fetch failed - EACCES connect EACCES 198.18.0.44:443");
   });
 });
 

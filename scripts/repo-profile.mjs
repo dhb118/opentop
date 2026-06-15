@@ -51,9 +51,11 @@ ${buildGhCommands(profile).join("\n")}
 
 \`\`\`bash
 GITHUB_TOKEN=github_pat_... pnpm repo:profile:apply
+# or
+GH_TOKEN=github_pat_... pnpm repo:profile:apply
 \`\`\`
 
-The apply command uses the GitHub REST API to set the repository description, Website, issues setting, and discovery topics from this pack. The token must have permission to administer repository metadata.
+The apply command uses the GitHub REST API to set the repository description, Website, issues setting, and discovery topics from this pack. Set \`GITHUB_TOKEN\` or \`GH_TOKEN\`; the token must have permission to administer repository metadata.
 
 ## Audit Command
 
@@ -135,7 +137,7 @@ export async function auditRepoProfile({ fetchImpl = fetch, profile = buildRepoP
 export async function applyRepoProfile({ fetchImpl = fetch, profile = buildRepoProfile(), token = readToken() } = {}) {
   if (!token) {
     return {
-      checks: [["GitHub token is configured", false, "set GITHUB_TOKEN before running --apply"]],
+      checks: [["GitHub token is configured", false, "set GITHUB_TOKEN or GH_TOKEN before running --apply"]],
       profile
     };
   }
@@ -197,7 +199,7 @@ function readPackageJson() {
 }
 
 function readToken() {
-  return process.env.GITHUB_TOKEN ?? "";
+  return process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
 }
 
 function readString(value) {
@@ -225,7 +227,24 @@ function quoteForShell(value) {
 }
 
 function formatError(error) {
-  return error instanceof Error ? error.message : String(error);
+  if (!(error instanceof Error)) {
+    return String(error);
+  }
+
+  const details = [error.message || "request failed"];
+  const cause = error.cause;
+
+  if (cause && typeof cause === "object") {
+    const code = "code" in cause ? String(cause.code) : "";
+    const message = "message" in cause ? String(cause.message) : "";
+    const causeDetail = [code, message].filter(Boolean).join(" ");
+
+    if (causeDetail && !details.includes(causeDetail)) {
+      details.push(causeDetail);
+    }
+  }
+
+  return details.join(" - ");
 }
 
 async function main() {
