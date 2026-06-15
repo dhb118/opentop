@@ -1,4 +1,5 @@
 import type { AnalysisResult, OpportunityInput, ProviderSettings } from "./domain";
+import { parseModelAnalysis } from "./modelResponse";
 import { analyzeLocally } from "./opportunityEngine";
 
 interface ChatMessage {
@@ -53,11 +54,7 @@ export async function analyzeOpportunity(
     throw new Error("Model returned an empty response.");
   }
 
-  const parsed = JSON.parse(content) as AnalysisResult;
-  return {
-    ...parsed,
-    generatedBy: "model"
-  };
+  return parseModelAnalysis(content);
 }
 
 function buildMessages(input: OpportunityInput): ChatMessage[] {

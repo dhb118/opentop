@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 import { defaultInput } from "../src/domain.ts";
 import { buildGitHubIssueBody, buildReadmeBrief, buildRepoScaffoldPlan, buildShowHnPost } from "../src/launchExports.ts";
+import { parseModelAnalysis } from "../src/modelResponse.ts";
 import { analyzeLocally, scoreWeights } from "../src/opportunityEngine.ts";
 import { buildShareCardSvg } from "../src/shareCard.ts";
 import { parseTrendCsv } from "../src/trendImport.ts";
@@ -171,5 +172,32 @@ Issues,Maintainers need better README positioning`);
 
   it("returns null when no usable signal exists", () => {
     assert.equal(parseTrendCsv("source,signal\n,"), null);
+  });
+});
+
+describe("model response repair", () => {
+  it("parses fenced JSON model output", () => {
+    const parsed = parseModelAnalysis(`\`\`\`json
+${JSON.stringify({ summary: "ok", opportunities: [analyzeLocally(defaultInput).opportunities[0]] })}
+\`\`\``);
+
+    assert.equal(parsed.generatedBy, "model");
+    assert.equal(parsed.summary, "ok");
+    assert.equal(parsed.opportunities.length, 1);
+  });
+
+  it("repairs prose-wrapped JSON and clamps scores", () => {
+    const parsed = parseModelAnalysis(`Here is the result:
+{"summary":"wrapped","opportunities":[{"name":"Wrapped Idea","score":99,"scores":{"pain":11,"urgency":0,"distribution":"8","buildability":7,"starPotential":6}}]}
+Thanks.`);
+
+    assert.equal(parsed.opportunities[0].score, 10);
+    assert.equal(parsed.opportunities[0].scores.pain, 10);
+    assert.equal(parsed.opportunities[0].scores.urgency, 1);
+    assert.equal(parsed.opportunities[0].scores.distribution, 8);
+  });
+
+  it("rejects model output without valid opportunities", () => {
+    assert.throws(() => parseModelAnalysis(`{"summary":"empty","opportunities":[]}`), /valid opportunities/);
   });
 });

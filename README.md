@@ -31,6 +31,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 - Local demo engine for no-key analysis.
 - OpenAI-compatible endpoint support.
 - Ollama-compatible endpoint support through `/v1/chat/completions`.
+- Model response repair for fenced JSON, noisy wrappers, and out-of-range scores.
 - Editable opportunity assumptions: pain, urgency, and distribution.
 - Score matrix for pain, urgency, distribution, buildability, and star potential.
 - Transparent weighted scoring explanation for every selected opportunity.
