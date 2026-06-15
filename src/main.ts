@@ -6,6 +6,7 @@ import { analyzeLocally, scoreWeights } from "./opportunityEngine";
 import { sampleBriefs } from "./sampleBriefs";
 import { buildShareCardSvg } from "./shareCard";
 import { loadInput, loadSettings, saveInput, saveSettings } from "./storage";
+import { parseTrendCsv } from "./trendImport";
 import { createShareUrl, readBriefFromSearch } from "./urlState";
 
 const appRoot = requireAppRoot();
@@ -50,6 +51,15 @@ function render(): void {
                   .join("")}
               </div>
             </section>
+
+            <details class="import-panel">
+              <summary>Import Trend CSV</summary>
+              <label>
+                Trend rows
+                <textarea name="trendCsv" rows="5" placeholder="source,signal&#10;HN,Developers want local-first AI debugging&#10;GitHub,Prompt regression tools are getting starred"></textarea>
+              </label>
+              <button class="secondary-action" data-import-csv type="button">Use CSV Signals</button>
+            </details>
 
             <form id="briefForm">
               <label>
@@ -187,6 +197,29 @@ function bindEvents(): void {
         button.textContent = copyLabel(mode);
       }, 1400);
     });
+  });
+
+  document.querySelector<HTMLButtonElement>("[data-import-csv]")?.addEventListener("click", () => {
+    const input = document.querySelector<HTMLTextAreaElement>("[name='trendCsv']");
+    const parsed = parseTrendCsv(input?.value ?? "");
+    if (!parsed) {
+      const button = document.querySelector<HTMLButtonElement>("[data-import-csv]");
+      if (button) {
+        button.textContent = "No valid rows";
+        window.setTimeout(() => {
+          button.textContent = "Use CSV Signals";
+        }, 1400);
+      }
+      return;
+    }
+    currentInput = {
+      ...currentInput,
+      signal: parsed.signal,
+      channels: parsed.channels || currentInput.channels,
+      distribution: Math.max(currentInput.distribution, Math.min(10, 5 + Math.ceil(parsed.rowCount / 2)))
+    };
+    saveInput(currentInput);
+    void runAnalysis();
   });
 
   document.querySelector<HTMLButtonElement>("[data-download]")?.addEventListener("click", () => {

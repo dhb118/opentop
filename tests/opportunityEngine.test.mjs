@@ -5,6 +5,7 @@ import { defaultInput } from "../src/domain.ts";
 import { buildGitHubIssueBody, buildReadmeBrief, buildRepoScaffoldPlan, buildShowHnPost } from "../src/launchExports.ts";
 import { analyzeLocally, scoreWeights } from "../src/opportunityEngine.ts";
 import { buildShareCardSvg } from "../src/shareCard.ts";
+import { parseTrendCsv } from "../src/trendImport.ts";
 import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
 import { buildGalleryJson, buildGalleryMarkdown } from "../scripts/generate-gallery.mjs";
 
@@ -145,5 +146,30 @@ describe("launch text exports", () => {
     assert.match(scaffold, /## File Tree/);
     assert.match(scaffold, /README\.md/);
     assert.match(scaffold, /## Starter Issues/);
+  });
+});
+
+describe("trend CSV import", () => {
+  it("turns source and signal rows into a signal brief", () => {
+    const parsed = parseTrendCsv(`source,signal
+HN,"Developers want local-first AI debugging"
+GitHub,Prompt regression tools are getting starred`);
+
+    assert.equal(parsed?.rowCount, 2);
+    assert.equal(parsed?.channels, "HN, GitHub");
+    assert.match(parsed?.signal ?? "", /HN: Developers want local-first AI debugging/);
+    assert.match(parsed?.signal ?? "", /GitHub: Prompt regression tools are getting starred/);
+  });
+
+  it("handles simple newline rows without a header", () => {
+    const parsed = parseTrendCsv(`Reddit,Local model setup is still painful
+Issues,Maintainers need better README positioning`);
+
+    assert.equal(parsed?.rowCount, 2);
+    assert.match(parsed?.channels ?? "", /Reddit/);
+  });
+
+  it("returns null when no usable signal exists", () => {
+    assert.equal(parseTrendCsv("source,signal\n,"), null);
   });
 });

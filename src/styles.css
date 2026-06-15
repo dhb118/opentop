@@ -142,12 +142,23 @@ form {
 
 #briefForm,
 .sample-strip,
+.import-panel,
 .settings {
   padding: 22px;
 }
 
-.sample-strip {
+.sample-strip,
+.import-panel {
   border-bottom: 1px solid var(--line);
+}
+
+.import-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.import-panel label {
+  margin-top: 14px;
 }
 
 .sample-grid {
@@ -654,6 +665,7 @@ li + li {
   .topbar,
   #briefForm,
   .sample-strip,
+  .import-panel,
   .settings,
   .detail-panel {
     padding: 18px;
