@@ -5,6 +5,8 @@ import { buildModelRequest, defaultEndpointForProvider, defaultModelForProvider 
 import { buildBenchmarkComparisons } from "../src/benchmarkComparison.ts";
 import { defaultInput } from "../src/domain.ts";
 import {
+  buildContributorIssueQueue,
+  buildContributorQueueMarkdown,
   buildGitHubIssueBody,
   buildLaunchKit,
   buildReadmeBrief,
@@ -358,6 +360,8 @@ describe("launch text exports", () => {
     const issue = buildGitHubIssueBody(opportunity);
     const scaffold = buildRepoScaffoldPlan(opportunity);
     const launchKit = buildLaunchKit(opportunity);
+    const contributorIssues = buildContributorIssueQueue(opportunity);
+    const contributorQueue = buildContributorQueueMarkdown(opportunity);
 
     assert.match(readme, new RegExp(`# ${opportunity.name}`));
     assert.match(showHn, /^Show HN:/);
@@ -377,7 +381,14 @@ describe("launch text exports", () => {
     assert.match(launchKit, /## Show HN Draft/);
     assert.match(launchKit, /## X Thread Draft/);
     assert.match(launchKit, /## Reddit Draft/);
+    assert.match(launchKit, /## Contributor Queue/);
     assert.match(launchKit, new RegExp(opportunity.name));
+    assert.ok(contributorIssues.length >= 5);
+    assert.deepEqual(contributorIssues[0].labels, ["good-first-issue", "first-release", "help-wanted"]);
+    assert.match(contributorIssues[0].body, /## Acceptance/);
+    assert.match(contributorIssues[0].body, /- \[ \] Local tests and production build pass\./);
+    assert.match(contributorQueue, /# .* Contributor Queue/);
+    assert.match(contributorQueue, /Labels: `good-first-issue`/);
   });
 
   it("includes the selected scoring template in JSON opportunity exports", () => {

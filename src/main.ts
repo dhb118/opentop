@@ -4,6 +4,7 @@ import { buildBenchmarkComparisons } from "./benchmarkComparison";
 import type { BenchmarkDimension, BenchmarkRepo } from "./benchmarkRepos";
 import type { AnalysisResult, Opportunity, OpportunityInput, ProviderSettings } from "./domain";
 import {
+  buildContributorQueueMarkdown,
   buildGitHubIssueBody,
   buildLaunchKit,
   buildReadmeBrief,
@@ -609,6 +610,20 @@ function bindEvents(): void {
     }, 1400);
   });
 
+  document.querySelector<HTMLButtonElement>("[data-download-contributor-queue]")?.addEventListener("click", (event) => {
+    const selected = result?.opportunities.find((item) => item.id === selectedId);
+    if (!selected) {
+      return;
+    }
+
+    const button = event.currentTarget as HTMLButtonElement;
+    button.textContent = "Downloaded";
+    downloadMarkdown(`${repoScaffoldRootName(selected)}-contributor-queue.md`, buildContributorQueueMarkdown(selected));
+    window.setTimeout(() => {
+      button.textContent = "Download Contributor Queue";
+    }, 1400);
+  });
+
   document.querySelector<HTMLButtonElement>("[data-download-scaffold]")?.addEventListener("click", (event) => {
     const selected = result?.opportunities.find((item) => item.id === selectedId);
     if (!selected) {
@@ -755,8 +770,10 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
           <button class="secondary-action" data-copy="reddit" type="button">Copy Reddit</button>
           <button class="secondary-action" data-copy="github-issue" type="button">Copy GitHub Issue</button>
           <button class="secondary-action" data-copy="launch-kit" type="button">Copy Launch Kit</button>
+          <button class="secondary-action" data-copy="contributor-queue" type="button">Copy Contributor Queue</button>
           <button class="secondary-action" data-copy="repo-scaffold" type="button">Copy Repo Plan</button>
           <button class="secondary-action" data-download-launch-kit type="button">Download Launch Kit</button>
+          <button class="secondary-action" data-download-contributor-queue type="button">Download Contributor Queue</button>
           <button class="secondary-action" data-download-scaffold type="button">Download Repo ZIP</button>
           <button class="secondary-action" data-copy="share-url" type="button">Copy Share Link</button>
           <button class="secondary-action" data-download-card-png type="button">Download PNG</button>
@@ -1093,6 +1110,9 @@ function copyPayload(mode: string | undefined, item: AnalysisResult["opportuniti
   if (mode === "launch-kit") {
     return buildLaunchKit(item);
   }
+  if (mode === "contributor-queue") {
+    return buildContributorQueueMarkdown(item);
+  }
   if (mode === "x-thread") {
     return buildXThread(item);
   }
@@ -1117,6 +1137,9 @@ function copyLabel(mode: string | undefined): string {
   }
   if (mode === "launch-kit") {
     return "Copy Launch Kit";
+  }
+  if (mode === "contributor-queue") {
+    return "Copy Contributor Queue";
   }
   if (mode === "x-thread") {
     return "Copy X Thread";

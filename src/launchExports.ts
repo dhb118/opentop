@@ -1,5 +1,11 @@
 import type { Opportunity } from "./domain.ts";
 
+export interface ContributorIssue {
+  title: string;
+  labels: string[];
+  body: string;
+}
+
 export function buildReadmeBrief(title: string, item: Opportunity): string {
   return `# ${title}
 
@@ -160,6 +166,10 @@ ${buildReadmeBrief(item.name, item).trim()}
 
 ${buildGitHubIssueBody(item).trim()}
 
+## Contributor Queue
+
+${buildContributorQueueMarkdown(item).trim()}
+
 ## Show HN Draft
 
 ${buildShowHnPost(item).trim()}
@@ -171,6 +181,78 @@ ${buildXThread(item).trim()}
 ## Reddit Draft
 
 ${buildRedditPost(item).trim()}
+`;
+}
+
+export function buildContributorIssueQueue(item: Opportunity): ContributorIssue[] {
+  const releaseIssues = item.firstRelease.slice(0, 3).map((entry, index) => ({
+    title: `Build first-release slice ${index + 1}: ${entry}`,
+    labels: ["good-first-issue", "first-release", "help-wanted"],
+    body: buildContributorIssueBody({
+      item,
+      problem: entry,
+      context: item.repoHook,
+      acceptance: [
+        "The slice is implemented in a small, reviewable change.",
+        "README or example output is updated when user-facing behavior changes.",
+        "Local tests and production build pass."
+      ]
+    })
+  }));
+
+  const launchIssues: ContributorIssue[] = [
+    {
+      title: `Add README proof for ${item.name}`,
+      labels: ["docs", "growth", "good-first-issue"],
+      body: buildContributorIssueBody({
+        item,
+        problem: "Improve the first-screen GitHub proof so visitors can understand the wedge before reading the full README.",
+        context: `Focus on this differentiator: ${item.differentiator}`,
+        acceptance: [
+          "README includes a current screenshot, GIF, or concrete generated output.",
+          "The first screen explains who the project helps and what it produces.",
+          "The change avoids private metrics or unsupported star claims."
+        ]
+      })
+    },
+    {
+      title: `Create launch example for ${item.targetUser}`,
+      labels: ["example", "growth", "help-wanted"],
+      body: buildContributorIssueBody({
+        item,
+        problem: "Create one realistic example that shows the workflow end-to-end for the target user.",
+        context: `Target user: ${item.targetUser}`,
+        acceptance: [
+          "Example input and output are committed under docs or examples.",
+          "The example maps back to the scored wedge and launch plan.",
+          "The README links to the example from the first half of the page."
+        ]
+      })
+    }
+  ];
+
+  return [...releaseIssues, ...launchIssues];
+}
+
+export function buildContributorQueueMarkdown(item: Opportunity): string {
+  const issues = buildContributorIssueQueue(item);
+
+  return `# ${item.name} Contributor Queue
+
+${item.repoHook}
+
+Use these issues to make the repository easier to fork, extend, and star. They are intentionally small enough for first-time contributors.
+
+${issues
+  .map(
+    (issue, index) => `## ${index + 1}. ${issue.title}
+
+Labels: ${issue.labels.map((label) => `\`${label}\``).join(", ")}
+
+${issue.body.trim()}
+`
+  )
+  .join("\n")}
 `;
 }
 
@@ -228,4 +310,36 @@ function slugify(value: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
+}
+
+function buildContributorIssueBody({
+  item,
+  problem,
+  context,
+  acceptance
+}: {
+  item: Opportunity;
+  problem: string;
+  context: string;
+  acceptance: string[];
+}): string {
+  return `## Background
+
+${context}
+
+## Task
+
+${problem}
+
+## Acceptance
+
+${acceptance.map((entry) => `- [ ] ${entry}`).join("\n")}
+
+## Source Opportunity
+
+- Name: ${item.name}
+- Score: ${item.score}/10
+- Wedge: ${item.wedge}
+- Star potential: ${item.scores.starPotential}/10
+`;
 }

@@ -31,7 +31,7 @@ OpenTop 是一个本地优先的 AI 应用选题和发布工具。
 - 从 CSV、Markdown、笔记、书签、链接列表和公开 GitHub issue 导入研究信号。
 - 本地生成 AI 应用方向，并按痛点、紧迫性、分发、可构建性和 Star 潜力评分。
 - 使用评分模板切换不同策略，例如本地优先工具、Provider SDK、Agent 调试和发布生成器。
-- 输出 README 简报、Launch Kit、GitHub issue、Show HN、X 线程、Reddit 帖子和 JSON 记录。
+- 输出 README 简报、Launch Kit、贡献者 issue 队列、GitHub issue、Show HN、X 线程、Reddit 帖子和 JSON 记录。
 - 下载 PNG/SVG 分享卡片和可运行的 TypeScript starter repo ZIP。
 - 拉取公开 GitHub README，审计首屏钩子、截图、快速开始、demo、示例、贡献入口、信任信号和仓库主页元数据。
 - 对比公开 AI 仓库的成功模式，辅助判断一个想法是否值得继续做。
