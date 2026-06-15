@@ -12,11 +12,11 @@ OpenTop is an AI opportunity radar for builders who want to choose, shape, and l
 
 The app is TypeScript-first, runs locally without an API key, and can optionally call OpenAI-compatible chat completion APIs, direct Anthropic Messages APIs, Anthropic on Amazon Bedrock, Anthropic on Vertex AI, or Ollama.
 
-Live demo status: temporarily unavailable while GitHub Pages custom domain settings are being repaired. Use the Quick Start commands below to run OpenTop locally.
+Live demo status: temporarily unavailable while GitHub Pages custom domain settings are being repaired. Use the Quick Start commands below or publish a temporary [Vercel/Netlify fallback demo](docs/DEMO_FALLBACKS.md).
 
 Example outputs: [Opportunity Gallery](docs/GALLERY.md), [AI Repo Benchmarks](docs/BENCHMARKS.md)
 
-Launch assets: [GitHub Publish Guide](docs/GITHUB_PUBLISH.md), [Starter Issues](docs/STARTER_ISSUES.md), [Launch Playbook](docs/LAUNCH_PLAYBOOK.md)
+Launch assets: [GitHub Publish Guide](docs/GITHUB_PUBLISH.md), [Demo Fallbacks](docs/DEMO_FALLBACKS.md), [Starter Issues](docs/STARTER_ISSUES.md), [Launch Playbook](docs/LAUNCH_PLAYBOOK.md)
 
 ## Languages
 
@@ -81,10 +81,10 @@ pnpm build
 pnpm check:publish
 ```
 
-After GitHub Pages deploys:
+After GitHub Pages or a fallback host deploys:
 
 ```bash
-pnpm smoke:pages
+pnpm smoke:pages -- --url https://YOUR-DEMO-URL/
 ```
 
 ## Model Setup
@@ -132,7 +132,7 @@ For Ollama:
 
 ## Star Growth Plan
 
-1. Publish a polished hosted demo and a 90-second screen recording.
+1. Publish a polished hosted demo or fallback demo and a 90-second screen recording.
 2. Add five high-quality sample briefs based on recognizable AI developer pains.
 3. Open starter issues for new scorers, export formats, and providers.
 4. Export a GitHub Repo Listing Pack so the About description, topics, homepage, social preview, and pinned issue are ready.

@@ -918,6 +918,24 @@ describe("Pages smoke check helpers", () => {
     assert.equal(options.url, "https://example.com/demo/");
     assert.equal(options.expectedText, "OpenTop");
   });
+
+  it("keeps fallback static hosting configs ready for blocked Pages deploys", async () => {
+    const [vercelText, netlifyText, fallbackDoc] = await Promise.all([
+      readFile("vercel.json", "utf8"),
+      readFile("netlify.toml", "utf8"),
+      readFile("docs/DEMO_FALLBACKS.md", "utf8")
+    ]);
+    const vercel = JSON.parse(vercelText);
+
+    assert.equal(vercel.framework, "vite");
+    assert.equal(vercel.buildCommand, "pnpm build");
+    assert.equal(vercel.outputDirectory, "dist");
+    assert.match(netlifyText, /command = "pnpm build"/);
+    assert.match(netlifyText, /publish = "dist"/);
+    assert.match(fallbackDoc, /Deploy with Vercel/);
+    assert.match(fallbackDoc, /Deploy to Netlify/);
+    assert.match(fallbackDoc, /pnpm smoke:pages -- --url/);
+  });
 });
 
 describe("GitHub label sync", () => {

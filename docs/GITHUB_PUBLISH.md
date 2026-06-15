@@ -37,17 +37,18 @@ gh repo create opentop --public --source . --remote origin --push
 
 1. Confirm GitHub Actions passes.
 2. Enable GitHub Pages with **Source: GitHub Actions**.
-3. Run the Pages smoke check:
+3. If Actions or Pages cannot run, publish a temporary Vercel or Netlify fallback from `docs/DEMO_FALLBACKS.md`.
+4. Run the Pages or fallback smoke check:
 
 ```bash
-pnpm smoke:pages
+pnpm smoke:pages -- --url https://YOUR-DEMO-URL/
 ```
 
-4. Add the hosted demo URL to the repository About section.
-5. Add screenshots or a GIF to `README.md`.
-6. Run the **Sync Labels** workflow or validate labels locally with `pnpm sync:labels`.
-7. Create the first public issues from `docs/STARTER_ISSUES.md`.
-8. Use `docs/LAUNCH_PLAYBOOK.md` for the first distribution posts.
+5. Add the hosted demo URL to the repository About section.
+6. Add screenshots or a GIF to `README.md`.
+7. Run the **Sync Labels** workflow or validate labels locally with `pnpm sync:labels`.
+8. Create the first public issues from `docs/STARTER_ISSUES.md`.
+9. Use `docs/LAUNCH_PLAYBOOK.md` for the first distribution posts.
 
 ## Publish Check
 
@@ -80,6 +81,15 @@ The smoke check verifies:
 - Built CSS and JavaScript assets referenced by the page also return HTTP 200.
 
 If the page loads but asset checks fail, confirm the Pages workflow deployed the latest `dist` output and keep `base: "./"` in `vite.config.ts` so asset paths stay relative under `/opentop/`.
+
+## Fallback Demo Hosts
+
+If GitHub Pages is blocked by account settings, billing, or Actions availability, use `docs/DEMO_FALLBACKS.md` to publish the same static build on Vercel or Netlify. Both fallback configs are committed:
+
+- `vercel.json` builds with `pnpm build` and publishes `dist`.
+- `netlify.toml` builds with `pnpm build` and publishes `dist`.
+
+After a fallback deploy passes `pnpm smoke:pages -- --url https://YOUR-DEMO-URL/`, use that URL in the GitHub About homepage and launch posts until Pages recovers.
 
 ## Label Sync
 

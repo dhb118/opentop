@@ -14,11 +14,11 @@ OpenTop 是一个本地优先的 AI 应用选题和发布工具。
 
 默认不需要 API Key；需要更强生成能力时，也可以连接 OpenAI 兼容接口、Anthropic、Bedrock、Vertex AI 或 Ollama。
 
-在线演示暂不可用：GitHub Pages custom domain 仍在修复中。请先用下方命令在本地运行。
+在线演示暂不可用：GitHub Pages custom domain 仍在修复中。请先用下方命令在本地运行，或发布临时 [Vercel/Netlify fallback demo](docs/DEMO_FALLBACKS.md)。
 
 示例输出：[机会图库](docs/GALLERY.md) | [AI 仓库基准](docs/BENCHMARKS.md)
 
-发布资料：[GitHub 发布指南](docs/GITHUB_PUBLISH.md) | [新手任务](docs/STARTER_ISSUES.md) | [发布手册](docs/LAUNCH_PLAYBOOK.md)
+发布资料：[GitHub 发布指南](docs/GITHUB_PUBLISH.md) | [Demo 备用部署](docs/DEMO_FALLBACKS.md) | [新手任务](docs/STARTER_ISSUES.md) | [发布手册](docs/LAUNCH_PLAYBOOK.md)
 
 ## 适合谁
 
@@ -61,10 +61,10 @@ pnpm build
 pnpm check:publish
 ```
 
-GitHub Pages 恢复后再运行：
+GitHub Pages 或备用托管恢复后再运行：
 
 ```bash
-pnpm smoke:pages
+pnpm smoke:pages -- --url https://YOUR-DEMO-URL/
 ```
 
 ## 模型配置
@@ -83,7 +83,7 @@ API Key 只保存在浏览器本地设置里，不会提交到仓库。使用 Ve
 
 ## Star 增长计划
 
-1. 恢复可访问的在线 demo，并录制 90 秒演示视频。
+1. 恢复可访问的在线 demo 或备用 demo，并录制 90 秒演示视频。
 2. 补充来自真实 AI 开发痛点的高质量示例简报。
 3. 持续开放适合新贡献者的 issue：评分器、导出格式、Provider、示例和文档。
 4. 导出 GitHub 仓库展示包，提前准备 About 描述、topics、homepage、社交预览和 pinned issue。

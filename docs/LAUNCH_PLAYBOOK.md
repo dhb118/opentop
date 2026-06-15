@@ -8,12 +8,13 @@ This playbook turns the repository into a real GitHub launch asset.
 2. Enable GitHub Pages, Vercel, Netlify, or Cloudflare Pages for the hosted demo.
 3. Record a 90-second demo using the sample briefs.
 4. Add three screenshots to the README.
-5. Run `pnpm smoke:pages` against the hosted demo.
-6. Create labels from `.github/labels.yml`.
-7. Open starter issues from `docs/STARTER_ISSUES.md` so new visitors can contribute immediately.
-8. Export the selected opportunity's Star Growth Plan and use it to stage the 1, 10, 100, 1k, and 10k star loops.
-9. Export the GitHub Repo Listing Pack and apply the About description, topics, homepage, social preview, and pinned issue before posting.
-10. Run README Star Audit and copy the 7-day sprint so top fixes have owners before broad launch.
+5. If GitHub Pages is blocked, publish the fallback demo from `docs/DEMO_FALLBACKS.md`.
+6. Run `pnpm smoke:pages -- --url https://YOUR-DEMO-URL/` against the hosted demo.
+7. Create labels from `.github/labels.yml`.
+8. Open starter issues from `docs/STARTER_ISSUES.md` so new visitors can contribute immediately.
+9. Export the selected opportunity's Star Growth Plan and use it to stage the 1, 10, 100, 1k, and 10k star loops.
+10. Export the GitHub Repo Listing Pack and apply the About description, topics, homepage, social preview, and pinned issue before posting.
+11. Run README Star Audit and copy the 7-day sprint so top fixes have owners before broad launch.
 
 ## Launch Copy
 
@@ -43,6 +44,7 @@ OpenTop cannot earn 10k stars from code alone. The repository needs compounding 
 - Exported Star Growth Plans that turn each selected wedge into staged proof, contribution, and distribution work.
 - Repo listing packs that keep GitHub About metadata, topics, and pinned issues aligned with the sharpest wedge.
 - 7-day readiness sprints that convert README and repository profile gaps into launch-gate tasks.
+- A fallback demo host when GitHub Pages is unavailable.
 - Fast maintainer response for the first 100 contributors.
 - A hosted demo that works before visitors read the README.
 - Clear positioning: not another chatbot, but a decision tool for builders.
