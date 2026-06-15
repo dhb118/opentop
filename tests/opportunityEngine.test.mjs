@@ -1032,15 +1032,22 @@ describe("launch documentation", () => {
 
     assert.match(readme, /Public Launch Brief/);
     assert.match(readme, /Cloudflare Pages Direct Upload/);
+    assert.match(readme, /## Launch Evidence/);
+    assert.match(readme, /14 built-in AI builder briefs/);
+    assert.match(readme, /Copy Launch Brief/);
     assert.match(readme, /pnpm smoke:launch-exports/);
     assert.match(zhReadme, /公开发布简报/);
     assert.match(zhReadme, /Cloudflare Pages 直传/);
+    assert.match(zhReadme, /## 发布证据/);
+    assert.match(zhReadme, /14 个内置 AI 开发者简报/);
+    assert.match(zhReadme, /Copy Launch Brief/);
     assert.match(zhReadme, /pnpm smoke:launch-exports/);
     assert.match(zhReadme, /面向 AI 开发者的选题雷达/);
     assert.match(zhReadme, /输入一组研究信号后，它会给出三类结果/);
     assert.match(zhReadme, /首版方案/);
     assert.match(launchBrief, /# OpenTop Public Launch Brief/);
     assert.match(launchBrief, /## Current Launch Gate/);
+    assert.match(launchBrief, /current demo status, local proof, and example proof/);
     assert.match(launchBrief, /Cloudflare Pages Direct Upload/);
     assert.match(starterIssues, /Enable the working GitHub Pages branch demo/);
     assert.match(starterIssues, /Refine the public launch brief with real feedback/);

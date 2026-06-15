@@ -18,6 +18,14 @@ Example outputs: [Opportunity Gallery](docs/GALLERY.md), [AI Repo Benchmarks](do
 
 Launch assets: [GitHub Publish Guide](docs/GITHUB_PUBLISH.md), [Demo Fallbacks](docs/DEMO_FALLBACKS.md), [Cloudflare Pages Direct Upload](docs/CLOUDFLARE_PAGES.md), [Public Launch Brief](docs/PUBLIC_LAUNCH_BRIEF.md), [Starter Issues](docs/STARTER_ISSUES.md), [Launch Playbook](docs/LAUNCH_PLAYBOOK.md)
 
+## Launch Evidence
+
+- Demo status: GitHub Pages is not reliable yet, so the repository includes Vercel, Netlify, Cloudflare Pages Direct Upload, `gh-pages` branch deploy, and static ZIP fallback paths.
+- Local proof: `pnpm test`, `pnpm build`, `pnpm smoke:launch-exports`, and `pnpm package:demo` verify the production app and its launch exports before any public demo link is shared.
+- Example proof: the gallery includes 14 built-in AI builder briefs covering local models, agents, RAG, evals, provider migration, release risk, and README positioning.
+- Export proof: the production bundle smoke check verifies `Copy Launch Brief`, `Copy Launch Kit`, `Copy Star Plan`, and `Download Repo ZIP`.
+- Launch proof: the public launch brief, starter issues, and launch playbook keep demo status, contributor paths, and distribution copy aligned.
+
 ## Languages
 
 - [English](README.md) is the default GitHub landing page.

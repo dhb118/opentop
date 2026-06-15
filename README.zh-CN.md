@@ -24,6 +24,14 @@ OpenTop 是面向 AI 开发者的选题雷达：把零散趋势、issue、链接
 
 发布资料：[GitHub 发布指南](docs/GITHUB_PUBLISH.md) | [Demo 备用部署](docs/DEMO_FALLBACKS.md) | [Cloudflare Pages 直传](docs/CLOUDFLARE_PAGES.md) | [公开发布简报](docs/PUBLIC_LAUNCH_BRIEF.md) | [新手任务](docs/STARTER_ISSUES.md) | [发布手册](docs/LAUNCH_PLAYBOOK.md)
 
+## 发布证据
+
+- Demo 状态：GitHub Pages 仍不稳定，因此仓库已准备 Vercel、Netlify、Cloudflare Pages 直传、`gh-pages` 分支部署和静态 ZIP 备用路径。
+- 本地验证：`pnpm test`、`pnpm build`、`pnpm smoke:launch-exports` 和 `pnpm package:demo` 会在公开 demo 链接前验证生产应用和发布导出能力。
+- 示例验证：机会图库包含 14 个内置 AI 开发者简报，覆盖本地模型、Agent、RAG、eval、Provider 迁移、发布风险和 README 定位。
+- 导出验证：生产 bundle smoke check 会确认 `Copy Launch Brief`、`Copy Launch Kit`、`Copy Star Plan` 和 `Download Repo ZIP` 可渲染。
+- 发布验证：公开发布简报、新手任务和发布手册会同步 demo 状态、贡献入口和分发文案。
+
 ## 适合谁
 
 - 想从 AI 趋势里快速筛选开源项目方向的开发者。

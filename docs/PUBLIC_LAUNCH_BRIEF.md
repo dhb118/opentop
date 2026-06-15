@@ -15,7 +15,7 @@ OpenTop helps AI builders decide which open-source app idea is worth shipping be
 ## Proof Checklist
 
 - [ ] Public demo URL returns HTTP 200 and passes the smoke check.
-- [ ] README first screen shows who OpenTop helps, what it produces, how to run it locally, and the current demo path.
+- [ ] README first screen shows who OpenTop helps, what it produces, current demo status, local proof, and example proof.
 - [ ] Screenshot or short recording shows the actual interface and one generated opportunity.
 - [ ] Starter issues are current and map to real launch gaps.
 - [ ] Launch posts link to GitHub, the hosted or fallback demo, and one concrete generated example.
