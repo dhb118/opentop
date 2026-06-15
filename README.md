@@ -1,8 +1,16 @@
 # OpenTop
 
+[![CI](https://github.com/dhb118/opentop/actions/workflows/ci.yml/badge.svg)](https://github.com/dhb118/opentop/actions/workflows/ci.yml)
+[![Pages](https://github.com/dhb118/opentop/actions/workflows/pages.yml/badge.svg)](https://github.com/dhb118/opentop/actions/workflows/pages.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-d8ff4f.svg)](LICENSE)
+
+![OpenTop social preview](public/opentop-social.svg)
+
 OpenTop is an AI opportunity radar for builders who want to choose, shape, and launch open-source AI apps. It turns a messy market signal into ranked product ideas, scoring, a first-release scope, and a launch plan.
 
 The app is TypeScript-first, runs locally without an API key, and can optionally call OpenAI-compatible chat completion APIs or Ollama.
+
+Live demo target: `https://dhb118.github.io/opentop/`
 
 ## Why It Can Earn Stars
 
@@ -22,6 +30,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 - Editable opportunity assumptions: pain, urgency, and distribution.
 - Score matrix for pain, urgency, distribution, buildability, and star potential.
 - Copyable Markdown brief for GitHub issues, README sections, and launch drafts.
+- One-click sample briefs for local models, agents, prompt regression, and README positioning.
 - Responsive single-page interface built with Vite and TypeScript.
 
 ## Quick Start
@@ -57,9 +66,9 @@ For Ollama:
 
 ## Roadmap
 
+- Add screenshot capture and shareable opportunity cards.
 - Import trend signals from Markdown, CSV, GitHub issues, and browser bookmarks.
 - Export full repository scaffolds for selected ideas.
-- Add shareable public opportunity cards.
 - Add a scoring template marketplace.
 - Add benchmark examples for successful AI repos.
 

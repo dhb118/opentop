@@ -141,8 +141,40 @@ form {
 }
 
 #briefForm,
+.sample-strip,
 .settings {
   padding: 22px;
+}
+
+.sample-strip {
+  border-bottom: 1px solid var(--line);
+}
+
+.sample-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.sample-button {
+  min-height: 46px;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(245, 241, 230, 0.055);
+  color: var(--ink);
+  font: 700 12px/1.15 ui-monospace, SFMono-Regular, Consolas, monospace;
+  text-align: left;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.sample-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(216, 255, 79, 0.58);
+  background: rgba(216, 255, 79, 0.1);
 }
 
 .settings {
@@ -477,6 +509,7 @@ li + li {
 @media (max-width: 560px) {
   .topbar,
   #briefForm,
+  .sample-strip,
   .settings,
   .detail-panel {
     padding: 18px;

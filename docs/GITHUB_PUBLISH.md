@@ -36,7 +36,7 @@ gh repo create opentop --public --source . --remote origin --push
 ## After Push
 
 1. Confirm GitHub Actions passes.
-2. Enable a hosted demo through Vercel, Netlify, Cloudflare Pages, or GitHub Pages.
+2. Enable GitHub Pages with **Source: GitHub Actions**.
 3. Add the hosted demo URL to the repository About section.
 4. Add screenshots or a GIF to `README.md`.
 5. Create the starter labels and issues from `docs/LAUNCH_PLAYBOOK.md`.

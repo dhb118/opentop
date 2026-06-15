@@ -2,6 +2,7 @@ import "./styles.css";
 import { analyzeOpportunity } from "./aiClient";
 import type { AnalysisResult, OpportunityInput, ProviderSettings } from "./domain";
 import { analyzeLocally } from "./opportunityEngine";
+import { sampleBriefs } from "./sampleBriefs";
 import { loadInput, loadSettings, saveInput, saveSettings } from "./storage";
 
 const appRoot = requireAppRoot();
@@ -32,6 +33,21 @@ function render(): void {
 
         <div class="layout">
           <aside class="control-panel">
+            <section class="sample-strip" aria-label="Sample opportunity briefs">
+              <p class="eyebrow">Try a brief</p>
+              <div class="sample-grid">
+                ${sampleBriefs
+                  .map(
+                    (brief) => `
+                      <button class="sample-button" data-sample="${brief.id}" type="button">
+                        ${escapeHtml(brief.title)}
+                      </button>
+                    `
+                  )
+                  .join("")}
+              </div>
+            </section>
+
             <form id="briefForm">
               <label>
                 Audience
@@ -138,6 +154,18 @@ function bindEvents(): void {
     button.addEventListener("click", () => {
       selectedId = button.dataset.select ?? selectedId;
       render();
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>("[data-sample]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const sample = sampleBriefs.find((brief) => brief.id === button.dataset.sample);
+      if (!sample) {
+        return;
+      }
+      currentInput = sample.input;
+      saveInput(currentInput);
+      void runAnalysis();
     });
   });
 
