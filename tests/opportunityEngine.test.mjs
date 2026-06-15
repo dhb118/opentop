@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 import { defaultInput } from "../src/domain.ts";
-import { buildGitHubIssueBody, buildReadmeBrief, buildShowHnPost } from "../src/launchExports.ts";
+import { buildGitHubIssueBody, buildReadmeBrief, buildRepoScaffoldPlan, buildShowHnPost } from "../src/launchExports.ts";
 import { analyzeLocally, scoreWeights } from "../src/opportunityEngine.ts";
 import { buildShareCardSvg } from "../src/shareCard.ts";
 import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
@@ -130,16 +130,20 @@ describe("share card export", () => {
 });
 
 describe("launch text exports", () => {
-  it("builds README, Show HN, and GitHub issue artifacts from one opportunity", () => {
+  it("builds launch artifacts from one opportunity", () => {
     const opportunity = analyzeLocally(defaultInput).opportunities[0];
     const readme = buildReadmeBrief(opportunity.name, opportunity);
     const showHn = buildShowHnPost(opportunity);
     const issue = buildGitHubIssueBody(opportunity);
+    const scaffold = buildRepoScaffoldPlan(opportunity);
 
     assert.match(readme, new RegExp(`# ${opportunity.name}`));
     assert.match(showHn, /^Show HN:/);
     assert.match(issue, /## First release scope/);
     assert.match(issue, /- \[ \] /);
     assert.match(issue, /Star potential:/);
+    assert.match(scaffold, /## File Tree/);
+    assert.match(scaffold, /README\.md/);
+    assert.match(scaffold, /## Starter Issues/);
   });
 });

@@ -1,7 +1,7 @@
 import "./styles.css";
 import { analyzeOpportunity } from "./aiClient";
 import type { AnalysisResult, Opportunity, OpportunityInput, ProviderSettings } from "./domain";
-import { buildGitHubIssueBody, buildReadmeBrief, buildShowHnPost } from "./launchExports";
+import { buildGitHubIssueBody, buildReadmeBrief, buildRepoScaffoldPlan, buildShowHnPost } from "./launchExports";
 import { analyzeLocally, scoreWeights } from "./opportunityEngine";
 import { sampleBriefs } from "./sampleBriefs";
 import { buildShareCardSvg } from "./shareCard";
@@ -300,6 +300,7 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
           <button class="secondary-action" data-copy="markdown" type="button">Copy README Brief</button>
           <button class="secondary-action" data-copy="show-hn" type="button">Copy Show HN</button>
           <button class="secondary-action" data-copy="github-issue" type="button">Copy GitHub Issue</button>
+          <button class="secondary-action" data-copy="repo-scaffold" type="button">Copy Repo Plan</button>
           <button class="secondary-action" data-copy="share-url" type="button">Copy Share Link</button>
           <button class="secondary-action" data-download-card type="button">Download Card</button>
           <button class="secondary-action" data-download type="button">Download JSON</button>
@@ -454,6 +455,9 @@ function copyPayload(mode: string | undefined, item: AnalysisResult["opportuniti
   if (mode === "github-issue") {
     return buildGitHubIssueBody(item);
   }
+  if (mode === "repo-scaffold") {
+    return buildRepoScaffoldPlan(item);
+  }
   if (mode === "share-url") {
     return createShareUrl(currentInput, window.location.href);
   }
@@ -466,6 +470,9 @@ function copyLabel(mode: string | undefined): string {
   }
   if (mode === "github-issue") {
     return "Copy GitHub Issue";
+  }
+  if (mode === "repo-scaffold") {
+    return "Copy Repo Plan";
   }
   if (mode === "share-url") {
     return "Copy Share Link";

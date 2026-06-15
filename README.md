@@ -35,7 +35,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 - Score matrix for pain, urgency, distribution, buildability, and star potential.
 - Transparent weighted scoring explanation for every selected opportunity.
 - Copyable Markdown brief for GitHub issues, README sections, and launch drafts.
-- Export actions for README briefs, GitHub issue bodies, Show HN posts, and JSON opportunity records.
+- Export actions for README briefs, GitHub issue bodies, repo scaffold plans, Show HN posts, and JSON opportunity records.
 - Downloadable SVG share cards for selected opportunities.
 - Shareable brief links that preserve the full input signal in the URL.
 - One-click sample briefs for local models, agents, prompt regression, and README positioning.

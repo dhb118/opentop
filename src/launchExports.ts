@@ -74,3 +74,59 @@ ${item.firstRelease.map((entry) => `- [ ] ${entry}`).join("\n")}
 ${item.risks.map((entry) => `- ${entry}`).join("\n")}
 `;
 }
+
+export function buildRepoScaffoldPlan(item: Opportunity): string {
+  return `# ${item.name} Repository Scaffold
+
+${item.repoHook}
+
+## File Tree
+
+\`\`\`text
+${slugify(item.name)}/
+  README.md
+  LICENSE
+  package.json
+  src/
+    index.ts
+    app.ts
+    scoring.ts
+  docs/
+    launch-plan.md
+    examples.md
+  tests/
+    scoring.test.ts
+  .github/
+    workflows/ci.yml
+    ISSUE_TEMPLATE/feature_request.yml
+\`\`\`
+
+## README Structure
+
+- Product hook: ${item.repoHook}
+- Target user: ${item.targetUser}
+- Differentiator: ${item.differentiator}
+- Install and quick-start path
+- One screenshot or SVG share card
+- First successful workflow in under 60 seconds
+
+## First Release Scope
+
+${item.firstRelease.map((entry) => `- [ ] ${entry}`).join("\n")}
+
+## Starter Issues
+
+${item.launchPlan.map((entry) => `- [ ] ${entry}`).join("\n")}
+
+## Risks To Document
+
+${item.risks.map((entry) => `- ${entry}`).join("\n")}
+`;
+}
+
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
