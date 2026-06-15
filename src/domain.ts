@@ -1,4 +1,10 @@
-export type AiProvider = "demo" | "openai-compatible" | "ollama" | "anthropic";
+export type AiProvider =
+  | "demo"
+  | "openai-compatible"
+  | "ollama"
+  | "anthropic"
+  | "anthropic-bedrock"
+  | "anthropic-vertex";
 
 export interface ProviderSettings {
   provider: AiProvider;

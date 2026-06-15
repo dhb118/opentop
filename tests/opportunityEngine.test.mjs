@@ -181,6 +181,45 @@ describe("model provider requests", () => {
     assert.equal(body.response_format, undefined);
   });
 
+  it("builds an Anthropic Bedrock request with cloud defaults and header-only bearer token", () => {
+    const request = buildModelRequest(defaultInput, {
+      provider: "anthropic-bedrock",
+      endpoint: "",
+      apiKey: "bedrock-token",
+      model: ""
+    });
+    const body = JSON.parse(request.body);
+
+    assert.equal(defaultEndpointForProvider("anthropic-bedrock"), "https://bedrock-mantle.us-east-1.api.aws/anthropic/v1/messages");
+    assert.equal(defaultModelForProvider("anthropic-bedrock"), "anthropic.claude-haiku-4-5");
+    assert.equal(request.endpoint, "https://bedrock-mantle.us-east-1.api.aws/anthropic/v1/messages");
+    assert.equal(request.headers["x-api-key"], "bedrock-token");
+    assert.equal(request.headers["anthropic-version"], "2023-06-01");
+    assert.equal(body.model, "anthropic.claude-haiku-4-5");
+    assert.doesNotMatch(request.body, /bedrock-token/);
+  });
+
+  it("builds a Vertex AI Anthropic rawPredict request with model endpoint replacement", () => {
+    const request = buildModelRequest(defaultInput, {
+      provider: "anthropic-vertex",
+      endpoint:
+        "https://us-central1-aiplatform.googleapis.com/v1/projects/opentop/locations/us-central1/publishers/anthropic/models/MODEL:rawPredict",
+      apiKey: "ya29.vertex-token",
+      model: "claude-haiku-4-5@20251001"
+    });
+    const body = JSON.parse(request.body);
+
+    assert.equal(defaultModelForProvider("anthropic-vertex"), "claude-haiku-4-5@20251001");
+    assert.equal(
+      request.endpoint,
+      "https://us-central1-aiplatform.googleapis.com/v1/projects/opentop/locations/us-central1/publishers/anthropic/models/claude-haiku-4-5@20251001:rawPredict"
+    );
+    assert.equal(request.headers.Authorization, "Bearer ya29.vertex-token");
+    assert.equal(body.anthropic_version, "vertex-2023-10-16");
+    assert.equal(body.model, undefined);
+    assert.doesNotMatch(request.body, /ya29\.vertex-token/);
+  });
+
   it("keeps OpenAI-compatible requests on chat completions defaults", () => {
     const request = buildModelRequest(defaultInput, {
       provider: "openai-compatible",

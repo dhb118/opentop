@@ -60,8 +60,11 @@ export async function analyzeOpportunity(
 }
 
 export function buildModelRequest(input: OpportunityInput, settings: ProviderSettings): ModelRequest {
-  if (settings.provider === "anthropic") {
-    return buildAnthropicRequest(input, settings);
+  if (isAnthropicMessagesProvider(settings.provider)) {
+    return buildAnthropicMessagesRequest(input, settings);
+  }
+  if (settings.provider === "anthropic-vertex") {
+    return buildAnthropicVertexRequest(input, settings);
   }
 
   return buildChatCompletionRequest(input, settings);
@@ -74,6 +77,12 @@ export function defaultEndpointForProvider(provider: ProviderSettings["provider"
   if (provider === "anthropic") {
     return "https://api.anthropic.com/v1/messages";
   }
+  if (provider === "anthropic-bedrock") {
+    return "https://bedrock-mantle.us-east-1.api.aws/anthropic/v1/messages";
+  }
+  if (provider === "anthropic-vertex") {
+    return "https://global-aiplatform.googleapis.com/v1/projects/PROJECT_ID/locations/global/publishers/anthropic/models/MODEL:rawPredict";
+  }
   return "https://api.openai.com/v1/chat/completions";
 }
 
@@ -83,6 +92,12 @@ export function defaultModelForProvider(provider: ProviderSettings["provider"]):
   }
   if (provider === "anthropic") {
     return "claude-sonnet-4-5";
+  }
+  if (provider === "anthropic-bedrock") {
+    return "anthropic.claude-haiku-4-5";
+  }
+  if (provider === "anthropic-vertex") {
+    return "claude-haiku-4-5@20251001";
   }
   return "gpt-4.1-mini";
 }
@@ -106,9 +121,9 @@ function buildChatCompletionRequest(input: OpportunityInput, settings: ProviderS
   };
 }
 
-function buildAnthropicRequest(input: OpportunityInput, settings: ProviderSettings): ModelRequest {
+function buildAnthropicMessagesRequest(input: OpportunityInput, settings: ProviderSettings): ModelRequest {
   const apiKey = settings.apiKey.trim();
-  const endpoint = settings.endpoint.trim() || defaultEndpointForProvider("anthropic");
+  const endpoint = settings.endpoint.trim() || defaultEndpointForProvider(settings.provider);
 
   return {
     endpoint,
@@ -118,7 +133,32 @@ function buildAnthropicRequest(input: OpportunityInput, settings: ProviderSettin
       ...(apiKey ? { "x-api-key": apiKey } : {})
     },
     body: JSON.stringify({
-      model: settings.model.trim() || defaultModelForProvider("anthropic"),
+      model: settings.model.trim() || defaultModelForProvider(settings.provider),
+      max_tokens: 2600,
+      system: systemPrompt,
+      messages: [
+        {
+          role: "user",
+          content: JSON.stringify(input)
+        }
+      ]
+    })
+  };
+}
+
+function buildAnthropicVertexRequest(input: OpportunityInput, settings: ProviderSettings): ModelRequest {
+  const apiKey = settings.apiKey.trim();
+  const model = settings.model.trim() || defaultModelForProvider("anthropic-vertex");
+  const endpoint = resolveVertexEndpoint(settings.endpoint.trim() || defaultEndpointForProvider("anthropic-vertex"), model);
+
+  return {
+    endpoint,
+    headers: {
+      "Content-Type": "application/json",
+      ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {})
+    },
+    body: JSON.stringify({
+      anthropic_version: "vertex-2023-10-16",
       max_tokens: 2600,
       system: systemPrompt,
       messages: [
@@ -145,7 +185,7 @@ function buildMessages(input: OpportunityInput): ChatMessage[] {
 }
 
 function extractModelContent(data: unknown, provider: ProviderSettings["provider"]): string | undefined {
-  if (provider === "anthropic") {
+  if (isAnthropicProvider(provider)) {
     return (data as AnthropicMessageResponse).content
       ?.filter((block) => block.type === "text" || !block.type)
       .map((block) => block.text)
@@ -155,4 +195,20 @@ function extractModelContent(data: unknown, provider: ProviderSettings["provider
   }
 
   return (data as ChatCompletionResponse).choices?.[0]?.message?.content;
+}
+
+function isAnthropicProvider(provider: ProviderSettings["provider"]): boolean {
+  return isAnthropicMessagesProvider(provider) || provider === "anthropic-vertex";
+}
+
+function isAnthropicMessagesProvider(provider: ProviderSettings["provider"]): boolean {
+  return provider === "anthropic" || provider === "anthropic-bedrock";
+}
+
+function resolveVertexEndpoint(endpoint: string, model: string): string {
+  return endpoint.replace(/\bMODEL\b/g, encodeVertexModel(model));
+}
+
+function encodeVertexModel(model: string): string {
+  return encodeURIComponent(model).replace(/%40/g, "@");
 }

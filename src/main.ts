@@ -143,6 +143,8 @@ function render(): void {
                     ${option("openai-compatible", "OpenAI-compatible", settings.provider)}
                     ${option("ollama", "Ollama", settings.provider)}
                     ${option("anthropic", "Anthropic", settings.provider)}
+                    ${option("anthropic-bedrock", "Anthropic on Bedrock", settings.provider)}
+                    ${option("anthropic-vertex", "Anthropic on Vertex AI", settings.provider)}
                   </select>
                 </label>
                 <label>
@@ -790,6 +792,12 @@ function labelForProvider(provider: ProviderSettings["provider"]): string {
   }
   if (provider === "anthropic") {
     return "Anthropic ready";
+  }
+  if (provider === "anthropic-bedrock") {
+    return "Bedrock ready";
+  }
+  if (provider === "anthropic-vertex") {
+    return "Vertex ready";
   }
   return "API ready";
 }

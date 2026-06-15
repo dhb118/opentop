@@ -10,7 +10,7 @@
 
 OpenTop is an AI opportunity radar for builders who want to choose, shape, and launch open-source AI apps. It turns a messy market signal into ranked product ideas, scoring, a first-release scope, and a launch plan.
 
-The app is TypeScript-first, runs locally without an API key, and can optionally call OpenAI-compatible chat completion APIs, Anthropic Messages APIs, or Ollama.
+The app is TypeScript-first, runs locally without an API key, and can optionally call OpenAI-compatible chat completion APIs, direct Anthropic Messages APIs, Anthropic on Amazon Bedrock, Anthropic on Vertex AI, or Ollama.
 
 Live demo target: `https://dhb118.github.io/opentop/`
 
@@ -39,7 +39,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 
 - Local demo engine for no-key analysis.
 - OpenAI-compatible endpoint support.
-- Anthropic Messages API provider preset.
+- Anthropic provider presets for the direct Messages API, Amazon Bedrock, and Vertex AI.
 - Ollama-compatible endpoint support through `/v1/chat/completions`.
 - Model response repair for fenced JSON, noisy wrappers, and out-of-range scores.
 - Editable opportunity assumptions: pain, urgency, and distribution.
@@ -102,6 +102,24 @@ For Anthropic:
 - Endpoint: `https://api.anthropic.com/v1/messages`
 - Model: `claude-sonnet-4-5` or another Claude Messages API model
 - API Key: stored only in your browser settings, never committed
+
+For Anthropic on Amazon Bedrock:
+
+- Provider: `Anthropic on Bedrock`
+- Endpoint: `https://bedrock-mantle.us-east-1.api.aws/anthropic/v1/messages`
+- Model: `anthropic.claude-haiku-4-5` or another Claude model ID available in your Bedrock region
+- API Key: a short-lived Bedrock bearer token, stored only in your browser settings
+- Notes: IAM and SigV4 flows should go through an SDK or trusted gateway; the browser preset targets the bearer-token Messages API path documented by Anthropic.
+- Docs: [Claude in Amazon Bedrock](https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock)
+
+For Anthropic on Vertex AI:
+
+- Provider: `Anthropic on Vertex AI`
+- Endpoint: `https://global-aiplatform.googleapis.com/v1/projects/PROJECT_ID/locations/global/publishers/anthropic/models/MODEL:rawPredict`
+- Model: `claude-haiku-4-5@20251001` or another Vertex AI Claude model ID
+- API Key: a Google OAuth access token, stored only in your browser settings
+- Notes: replace `PROJECT_ID` before calling the model. OpenTop substitutes the `MODEL` placeholder from the Model field.
+- Docs: [Claude on Vertex AI](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/partner-models/claude/use-claude)
 
 For Ollama:
 

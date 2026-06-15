@@ -10,7 +10,7 @@
 
 OpenTop 是一款面向构建者的 AI 机会雷达，用来选择、打磨并发布开源 AI 应用。它可以把混乱的市场信号转换成排序后的产品想法、评分、首版范围和发布计划。
 
-这个应用以 TypeScript 为核心，无需 API Key 即可本地运行，也可以按需调用 OpenAI 兼容的 Chat Completions API、Anthropic Messages API 或 Ollama。
+这个应用以 TypeScript 为核心，无需 API Key 即可本地运行，也可以按需调用 OpenAI 兼容的 Chat Completions API、直连 Anthropic Messages API、Amazon Bedrock 上的 Anthropic、Vertex AI 上的 Anthropic 或 Ollama。
 
 在线演示目标：`https://dhb118.github.io/opentop/`
 
@@ -39,7 +39,7 @@ OpenTop 围绕这些循环设计：粘贴趋势信号，得到排序后的应用
 
 - 无需 API Key 的本地演示引擎。
 - 支持 OpenAI 兼容端点。
-- 内置 Anthropic Messages API 提供商预设。
+- 内置直连 Anthropic Messages API、Amazon Bedrock 和 Vertex AI 的 Anthropic 提供商预设。
 - 通过 `/v1/chat/completions` 支持 Ollama 兼容端点。
 - 可修复带代码围栏、噪声包装和越界评分的模型响应。
 - 可编辑机会假设：痛点、紧迫性和分发能力。
@@ -102,6 +102,24 @@ Anthropic：
 - Endpoint：`https://api.anthropic.com/v1/messages`
 - Model：`claude-sonnet-4-5` 或其他 Claude Messages API 模型
 - API Key：只保存在你的浏览器设置中，不会提交到仓库
+
+Amazon Bedrock 上的 Anthropic：
+
+- Provider：`Anthropic on Bedrock`
+- Endpoint：`https://bedrock-mantle.us-east-1.api.aws/anthropic/v1/messages`
+- Model：`anthropic.claude-haiku-4-5` 或你的 Bedrock 区域可用的其他 Claude 模型 ID
+- API Key：短期 Bedrock bearer token，只保存在浏览器设置中
+- 说明：IAM 和 SigV4 流程应通过 SDK 或可信网关处理；浏览器预设面向 Anthropic 文档中的 bearer-token Messages API 路径。
+- 文档：[Claude in Amazon Bedrock](https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock)
+
+Vertex AI 上的 Anthropic：
+
+- Provider：`Anthropic on Vertex AI`
+- Endpoint：`https://global-aiplatform.googleapis.com/v1/projects/PROJECT_ID/locations/global/publishers/anthropic/models/MODEL:rawPredict`
+- Model：`claude-haiku-4-5@20251001` 或其他 Vertex AI Claude 模型 ID
+- API Key：Google OAuth access token，只保存在浏览器设置中
+- 说明：调用前请替换 `PROJECT_ID`。OpenTop 会用 Model 字段替换 endpoint 中的 `MODEL` 占位符。
+- 文档：[Claude on Vertex AI](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/partner-models/claude/use-claude)
 
 Ollama：
 
