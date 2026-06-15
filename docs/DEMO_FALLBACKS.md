@@ -4,6 +4,20 @@ Use this when GitHub Pages or GitHub Actions cannot publish the live demo.
 
 OpenTop is a static Vite app. Any host that can run `pnpm build` and publish `dist` can serve it. If the host cannot run Node, build locally and upload the demo ZIP. Keep `vite.config.ts` on relative assets so the same build works on GitHub Pages, Vercel, Netlify, and most static hosts.
 
+Current verified fallback:
+
+- Demo URL: https://raw.githack.com/dhb118/opentop/gh-pages/
+- Source: latest pushed `gh-pages` branch.
+- Reason: GitHub Actions jobs currently do not start because the account is locked by a billing issue, so the GitHub Pages workflow cannot deploy.
+
+Current verified fixed demo:
+
+- Demo URL: https://rawcdn.githack.com/dhb118/opentop/e9206889ac867c0b807c44116642f9fe852f1c12/
+- Source: `gh-pages` commit `e9206889ac867c0b807c44116642f9fe852f1c12`.
+- Use this URL in README, GitHub About, and launch posts while the branch URL is CDN-cached or GitHub Pages is blocked.
+
+Do not use jsDelivr as the primary demo URL for `index.html`: it can return the HTML with `text/plain`, which passes a plain HTTP 200 check but does not behave like a browser-hosted app.
+
 ## Vercel
 
 [Deploy with Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdhb118%2Fopentop&project-name=opentop&repository-name=opentop)
@@ -60,6 +74,8 @@ After upload, run:
 pnpm smoke:pages -- --url https://YOUR-DEMO-URL/
 ```
 
+The smoke check requires the entry page to return `text/html`, contain the OpenTop marker, and load referenced CSS/JavaScript assets with HTTP 200.
+
 ## GitHub Pages Branch Deploy
 
 Use this when GitHub Actions cannot run but the repository can serve Pages from a branch.
@@ -76,6 +92,18 @@ Then open the repository settings and set **Pages > Build and deployment > Sourc
 - Folder: `/`
 
 The script writes the same static build, `.nojekyll`, `opentop-demo.zip`, and `opentop-demo-manifest.json` to the `gh-pages` branch. It does not push unless `--push` is present.
+
+When GitHub Pages settings are unavailable, the pushed branch can still be served through raw.githack:
+
+```bash
+pnpm smoke:pages -- --url https://raw.githack.com/dhb118/opentop/gh-pages/
+```
+
+If the branch URL is cached, smoke the fixed rawcdn commit URL instead:
+
+```bash
+pnpm smoke:pages -- --url https://rawcdn.githack.com/dhb118/opentop/e9206889ac867c0b807c44116642f9fe852f1c12/
+```
 
 ## Release Checklist
 

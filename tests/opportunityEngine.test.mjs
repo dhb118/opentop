@@ -61,7 +61,7 @@ import { buildBenchmarksJson, buildBenchmarksMarkdown } from "../scripts/generat
 import { buildGalleryJson, buildGalleryMarkdown, buildSampleBriefsMarkdown } from "../scripts/generate-gallery.mjs";
 import { buildDemoManifest, buildDemoZipBytes } from "../scripts/package-demo.mjs";
 import { runLaunchExportSmoke } from "../scripts/smoke-launch-exports.mjs";
-import { extractAssetUrls, resolveSmokeOptions } from "../scripts/smoke-pages.mjs";
+import { extractAssetUrls, isHtmlContentType, resolveSmokeOptions } from "../scripts/smoke-pages.mjs";
 import { parseLabelsYaml } from "../scripts/sync-labels.mjs";
 
 describe("analyzeLocally", () => {
@@ -949,6 +949,13 @@ describe("Pages smoke check helpers", () => {
 
     assert.equal(options.url, "https://example.com/demo/");
     assert.equal(options.expectedText, "OpenTop");
+    assert.match(options.userAgent, /Mozilla/);
+  });
+
+  it("accepts only browser-served HTML pages as demo entrypoints", () => {
+    assert.equal(isHtmlContentType("text/html; charset=utf-8"), true);
+    assert.equal(isHtmlContentType("application/xhtml+xml"), false);
+    assert.equal(isHtmlContentType("text/plain; charset=utf-8"), false);
   });
 
   it("keeps fallback static hosting configs ready for blocked Pages deploys", async () => {
@@ -963,6 +970,10 @@ describe("Pages smoke check helpers", () => {
     const packageJson = JSON.parse(packageText);
     const vercel = JSON.parse(vercelText);
 
+    assert.equal(
+      packageJson.homepage,
+      "https://rawcdn.githack.com/dhb118/opentop/e9206889ac867c0b807c44116642f9fe852f1c12/"
+    );
     assert.equal(packageJson.scripts["package:demo"], "node scripts/package-demo.mjs");
     assert.equal(packageJson.scripts["deploy:pages:branch"], "node scripts/deploy-gh-pages.mjs");
     assert.equal(packageJson.scripts["smoke:launch-exports"], "node scripts/smoke-launch-exports.mjs");
@@ -974,6 +985,13 @@ describe("Pages smoke check helpers", () => {
     assert.match(fallbackDoc, /Deploy with Vercel/);
     assert.match(fallbackDoc, /Deploy to Netlify/);
     assert.match(fallbackDoc, /pnpm package:demo/);
+    assert.match(
+      fallbackDoc,
+      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/e9206889ac867c0b807c44116642f9fe852f1c12\//
+    );
+    assert.match(fallbackDoc, /billing issue/);
+    assert.match(fallbackDoc, /text\/plain/);
+    assert.match(fallbackDoc, /text\/html/);
     assert.match(fallbackDoc, /pnpm deploy:pages:branch -- --push/);
     assert.match(fallbackDoc, /Deploy from a branch/);
     assert.match(fallbackDoc, /Cloudflare Pages Direct Upload/);
@@ -983,6 +1001,8 @@ describe("Pages smoke check helpers", () => {
     assert.match(cloudflareDoc, /opentop-demo\.zip/);
     assert.match(cloudflareDoc, /GitHub About homepage/);
     assert.match(publishDoc, /deploy:pages:branch/);
+    assert.match(publishDoc, /rawcdn\.githack/);
+    assert.match(publishDoc, /text\/html/);
     assert.match(publishDoc, /CLOUDFLARE_PAGES\.md/);
     assert.match(fallbackDoc, /pnpm smoke:pages -- --url/);
   });
@@ -1036,6 +1056,11 @@ describe("launch documentation", () => {
     assert.match(readme, /## Launch Evidence/);
     assert.match(readme, /14 built-in AI builder briefs/);
     assert.match(readme, /https:\/\/github\.com\/dhb118\/opentop\/issues\/12/);
+    assert.match(
+      readme,
+      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/e9206889ac867c0b807c44116642f9fe852f1c12\//
+    );
+    assert.match(readme, /billing lock/);
     assert.match(readme, /Copy Launch Brief/);
     assert.match(readme, /pnpm smoke:launch-exports/);
     assert.match(zhReadme, /公开发布简报/);
@@ -1043,6 +1068,11 @@ describe("launch documentation", () => {
     assert.match(zhReadme, /## 发布证据/);
     assert.match(zhReadme, /14 个内置 AI 开发者简报/);
     assert.match(zhReadme, /https:\/\/github\.com\/dhb118\/opentop\/issues\/12/);
+    assert.match(
+      zhReadme,
+      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/e9206889ac867c0b807c44116642f9fe852f1c12\//
+    );
+    assert.match(zhReadme, /billing lock/);
     assert.match(zhReadme, /Copy Launch Brief/);
     assert.match(zhReadme, /pnpm smoke:launch-exports/);
     assert.match(zhReadme, /OpenTop 帮 AI 开发者从杂乱线索里选出值得做的开源应用/);
@@ -1052,6 +1082,10 @@ describe("launch documentation", () => {
     assert.match(launchBrief, /## Current Launch Gate/);
     assert.match(launchBrief, /current demo status, local proof, and example proof/);
     assert.match(launchBrief, /Cloudflare Pages Direct Upload/);
+    assert.match(
+      launchBrief,
+      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/e9206889ac867c0b807c44116642f9fe852f1c12\//
+    );
     assert.match(starterIssues, /Enable the working GitHub Pages branch demo/);
     assert.match(starterIssues, /#11 Fix GitHub Pages custom domain redirect/);
     assert.match(starterIssues, /#12 Publish a working fallback demo URL and wire launch links/);

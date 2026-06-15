@@ -40,4 +40,4 @@ What would make OpenTop more useful for deciding whether an AI app idea is worth
 
 ## Current Launch Gate
 
-OpenTop should not be broadly launched until one public demo URL works reliably. Until GitHub Pages is fully restored, use the branch deploy, Vercel, Netlify, Cloudflare Pages Direct Upload, or static ZIP fallback path from the demo fallback guide.
+OpenTop now has a verified fallback demo at https://rawcdn.githack.com/dhb118/opentop/e9206889ac867c0b807c44116642f9fe852f1c12/. GitHub Actions and GitHub Pages remain blocked by an account billing lock, so use the rawcdn fallback in launch copy until the native Pages URL passes the smoke check again. Keep Vercel, Netlify, Cloudflare Pages Direct Upload, and the static ZIP path ready as secondary fallbacks.

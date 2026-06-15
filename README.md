@@ -12,7 +12,7 @@ OpenTop is an AI opportunity radar for builders who want to choose, shape, and l
 
 The app is TypeScript-first, runs locally without an API key, and can optionally call OpenAI-compatible chat completion APIs, direct Anthropic Messages APIs, Anthropic on Amazon Bedrock, Anthropic on Vertex AI, or Ollama.
 
-Live demo status: temporarily unavailable while GitHub Pages custom domain settings are being repaired. Use the Quick Start commands below or publish a temporary [fallback demo](docs/DEMO_FALLBACKS.md) on Vercel, Netlify, or any static host from the demo ZIP.
+Live demo: [verified rawcdn fallback](https://rawcdn.githack.com/dhb118/opentop/e9206889ac867c0b807c44116642f9fe852f1c12/). GitHub Pages is still blocked because GitHub Actions cannot start while the account has a billing lock, so this fixed `gh-pages` build is the public demo until Pages recovers.
 
 Example outputs: [Opportunity Gallery](docs/GALLERY.md), [AI Repo Benchmarks](docs/BENCHMARKS.md)
 
@@ -20,7 +20,7 @@ Launch assets: [GitHub Publish Guide](docs/GITHUB_PUBLISH.md), [Demo Fallbacks](
 
 ## Launch Evidence
 
-- Demo status: GitHub Pages is not reliable yet, so the repository includes Vercel, Netlify, Cloudflare Pages Direct Upload, `gh-pages` branch deploy, and static ZIP fallback paths.
+- Demo status: the verified fallback demo serves a fixed `gh-pages` build through rawcdn while GitHub Actions and GitHub Pages are blocked by an account billing lock.
 - Local proof: `pnpm test`, `pnpm build`, `pnpm smoke:launch-exports`, and `pnpm package:demo` verify the production app and its launch exports before any public demo link is shared.
 - Example proof: the gallery includes 14 built-in AI builder briefs covering local models, agents, RAG, evals, provider migration, release risk, and README positioning.
 - Export proof: the production bundle smoke check verifies `Copy Launch Brief`, `Copy Launch Kit`, `Copy Star Plan`, and `Download Repo ZIP`.

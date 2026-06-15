@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -6,7 +7,12 @@ import { sampleBriefs } from "../src/sampleBriefs.ts";
 import { createShareUrl } from "../src/urlState.ts";
 
 const projectRoot = dirname(dirname(fileURLToPath(import.meta.url)));
-const demoUrl = "https://dhb118.github.io/opentop/";
+const demoUrl = readDemoUrl();
+
+function readDemoUrl() {
+  const packageJson = JSON.parse(readFileSync(join(projectRoot, "package.json"), "utf8"));
+  return packageJson.homepage ?? "https://dhb118.github.io/opentop/";
+}
 
 export function buildGallery() {
   return sampleBriefs.map((brief) => {

@@ -77,6 +77,7 @@ pnpm smoke:pages -- --url https://<owner>.github.io/opentop/
 The smoke check verifies:
 
 - The hosted page returns HTTP 200.
+- The hosted page is served as `text/html`.
 - The HTML includes the OpenTop app marker.
 - Built CSS and JavaScript assets referenced by the page also return HTTP 200.
 
@@ -95,12 +96,13 @@ The check runs the built app module in a lightweight DOM harness and verifies `C
 
 ## Fallback Demo Hosts
 
-If GitHub Pages is blocked by account settings, billing, or Actions availability, use `docs/DEMO_FALLBACKS.md` to publish the same static build on Vercel, Netlify, Cloudflare Pages Direct Upload, or another static host. The Vercel and Netlify configs are committed:
+If GitHub Pages is blocked by account settings, billing, or Actions availability, use `docs/DEMO_FALLBACKS.md` to publish the same static build on Vercel, Netlify, Cloudflare Pages Direct Upload, raw.githack/rawcdn over the `gh-pages` branch, or another static host. The Vercel and Netlify configs are committed:
 
 - `vercel.json` builds with `pnpm build` and publishes `dist`.
 - `netlify.toml` builds with `pnpm build` and publishes `dist`.
 - `pnpm package:demo` writes `dist/opentop-demo.zip` and `dist/opentop-demo-manifest.json` for hosts that need a manual static upload.
 - `pnpm deploy:pages:branch -- --push` publishes the static build to `gh-pages` for branch-based GitHub Pages deploys.
+- `https://rawcdn.githack.com/dhb118/opentop/e9206889ac867c0b807c44116642f9fe852f1c12/` serves the verified pushed branch build while GitHub Actions is blocked.
 - `docs/CLOUDFLARE_PAGES.md` explains when to upload `dist` directly and when to use the generated ZIP.
 
 After a fallback deploy passes `pnpm smoke:pages -- --url https://YOUR-DEMO-URL/`, use that URL in the GitHub About homepage and launch posts until Pages recovers.
