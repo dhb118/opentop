@@ -1,7 +1,12 @@
 import { defaultInput, type OpportunityInput } from "./domain.ts";
 
 export function encodeBrief(input: OpportunityInput): string {
-  return encodeURIComponent(JSON.stringify(input));
+  const bytes = new TextEncoder().encode(JSON.stringify(input));
+  let binary = "";
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 
 export function decodeBrief(value: string | null): OpportunityInput | null {
@@ -10,7 +15,11 @@ export function decodeBrief(value: string | null): OpportunityInput | null {
   }
 
   try {
-    const parsed = JSON.parse(decodeURIComponent(value)) as Partial<OpportunityInput>;
+    const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+    const binary = atob(padded);
+    const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+    const parsed = JSON.parse(new TextDecoder().decode(bytes)) as Partial<OpportunityInput>;
     return normalizeInput(parsed);
   } catch {
     return null;

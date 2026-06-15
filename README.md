@@ -12,6 +12,8 @@ The app is TypeScript-first, runs locally without an API key, and can optionally
 
 Live demo target: `https://dhb118.github.io/opentop/`
 
+Example outputs: [Opportunity Gallery](docs/GALLERY.md)
+
 ## Why It Can Earn Stars
 
 Open-source AI projects usually spread when they do three things well:
@@ -51,6 +53,7 @@ pnpm build
 Run the local quality gate:
 
 ```bash
+pnpm generate:gallery
 pnpm test
 pnpm build
 ```

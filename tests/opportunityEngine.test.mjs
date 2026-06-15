@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 import { defaultInput } from "../src/domain.ts";
 import { analyzeLocally } from "../src/opportunityEngine.ts";
 import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
+import { buildGalleryJson, buildGalleryMarkdown } from "../scripts/generate-gallery.mjs";
 
 describe("analyzeLocally", () => {
   it("returns ranked launchable opportunities", () => {
@@ -59,17 +61,15 @@ describe("brief URL state", () => {
 
   it("normalizes untrusted brief URL values", () => {
     const decoded = decodeBrief(
-      encodeURIComponent(
-        JSON.stringify({
-          audience: "",
-          signal: "short signal",
-          constraints: "constraints",
-          channels: "channels",
-          pain: 99,
-          urgency: "2",
-          distribution: "not-a-number"
-        })
-      )
+      encodeBrief({
+        audience: "",
+        signal: "short signal",
+        constraints: "constraints",
+        channels: "channels",
+        pain: 99,
+        urgency: "2",
+        distribution: "not-a-number"
+      })
     );
 
     assert.equal(decoded?.audience, defaultInput.audience);
@@ -77,5 +77,17 @@ describe("brief URL state", () => {
     assert.equal(decoded?.pain, 10);
     assert.equal(decoded?.urgency, 2);
     assert.equal(decoded?.distribution, defaultInput.distribution);
+  });
+});
+
+describe("generated opportunity gallery", () => {
+  it("keeps committed gallery files synchronized with sample briefs", async () => {
+    const [markdown, json] = await Promise.all([
+      readFile("docs/GALLERY.md", "utf8"),
+      readFile("public/gallery.json", "utf8")
+    ]);
+
+    assert.equal(markdown, buildGalleryMarkdown());
+    assert.equal(json, buildGalleryJson());
   });
 });
