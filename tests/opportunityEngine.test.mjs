@@ -63,6 +63,7 @@ import { parseDeployArgs } from "../scripts/deploy-gh-pages.mjs";
 import { buildBenchmarksJson, buildBenchmarksMarkdown } from "../scripts/generate-benchmarks.mjs";
 import { buildGalleryJson, buildGalleryMarkdown, buildSampleBriefsMarkdown } from "../scripts/generate-gallery.mjs";
 import { buildDemoManifest, buildDemoZipBytes } from "../scripts/package-demo.mjs";
+import { checkGitHubRepo, formatError as formatPrepublishError } from "../scripts/prepublish-check.mjs";
 import { runLaunchExportSmoke } from "../scripts/smoke-launch-exports.mjs";
 import { extractAssetUrls, isHtmlContentType, resolveSmokeOptions } from "../scripts/smoke-pages.mjs";
 import { applyRepoProfile, auditRepoProfile, buildRepoProfile, buildRepoProfileMarkdown } from "../scripts/repo-profile.mjs";
@@ -1120,6 +1121,36 @@ describe("repo profile pack", () => {
     assert.equal(topicsCheck?.[1], false);
     assert.match(String(topicsCheck?.[2]), /typescript/);
     assert.equal(issuesCheck?.[1], true);
+  });
+});
+
+describe("prepublish check", () => {
+  it("reports public GitHub repository star counts", async () => {
+    const result = await checkGitHubRepo({
+      fetchImpl: async () => ({
+        ok: true,
+        json: async () => ({
+          full_name: "dhb118/opentop",
+          stargazers_count: 42
+        })
+      })
+    });
+
+    assert.deepEqual(result, {
+      ok: true,
+      detail: "dhb118/opentop, 42 stars"
+    });
+  });
+
+  it("keeps low-level network failure details visible", () => {
+    const cause = new Error("connect EACCES 198.18.0.44:443");
+    cause.code = "EACCES";
+    const error = new TypeError("fetch failed", { cause });
+
+    assert.equal(
+      formatPrepublishError(error),
+      "fetch failed - EACCES connect EACCES 198.18.0.44:443"
+    );
   });
 });
 
