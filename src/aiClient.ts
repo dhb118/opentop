@@ -1,4 +1,5 @@
 import type { AnalysisResult, OpportunityInput, ProviderSettings } from "./domain.ts";
+import type { AppLocale } from "./localization.ts";
 import { parseModelAnalysis } from "./modelResponse.ts";
 import { analyzeLocally } from "./opportunityEngine.ts";
 
@@ -29,17 +30,18 @@ export interface ModelRequest {
 }
 
 const systemPrompt =
-  "You are OpenTop, an exacting AI product strategist for open-source TypeScript apps. Return only valid JSON matching { summary: string, opportunities: Opportunity[] } where each Opportunity has id, name, tagline, targetUser, wedge, differentiator, moat, score, scores, firstRelease, launchPlan, repoHook, risks. Scores are 1-10.";
+  "You are OpenTop, an exacting AI product strategist for open-source TypeScript apps. Return only valid JSON matching { summary: string, opportunities: Opportunity[] } where each Opportunity has id, name, tagline, targetUser, wedge, differentiator, moat, score, scores, firstRelease, launchPlan, repoHook, risks. Scores are 1-10. Keep ids ASCII kebab-case.";
 
 export async function analyzeOpportunity(
   input: OpportunityInput,
-  settings: ProviderSettings
+  settings: ProviderSettings,
+  locale: AppLocale = "en"
 ): Promise<AnalysisResult> {
   if (settings.provider === "demo") {
-    return analyzeLocally(input);
+    return analyzeLocally(input, undefined, locale);
   }
 
-  const request = buildModelRequest(input, settings);
+  const request = buildModelRequest(input, settings, locale);
   const response = await fetch(request.endpoint, {
     method: "POST",
     headers: request.headers,
@@ -59,15 +61,19 @@ export async function analyzeOpportunity(
   return parseModelAnalysis(content);
 }
 
-export function buildModelRequest(input: OpportunityInput, settings: ProviderSettings): ModelRequest {
+export function buildModelRequest(
+  input: OpportunityInput,
+  settings: ProviderSettings,
+  locale: AppLocale = "en"
+): ModelRequest {
   if (isAnthropicMessagesProvider(settings.provider)) {
-    return buildAnthropicMessagesRequest(input, settings);
+    return buildAnthropicMessagesRequest(input, settings, locale);
   }
   if (settings.provider === "anthropic-vertex") {
-    return buildAnthropicVertexRequest(input, settings);
+    return buildAnthropicVertexRequest(input, settings, locale);
   }
 
-  return buildChatCompletionRequest(input, settings);
+  return buildChatCompletionRequest(input, settings, locale);
 }
 
 export function defaultEndpointForProvider(provider: ProviderSettings["provider"]): string {
@@ -102,7 +108,7 @@ export function defaultModelForProvider(provider: ProviderSettings["provider"]):
   return "gpt-4.1-mini";
 }
 
-function buildChatCompletionRequest(input: OpportunityInput, settings: ProviderSettings): ModelRequest {
+function buildChatCompletionRequest(input: OpportunityInput, settings: ProviderSettings, locale: AppLocale): ModelRequest {
   const model = settings.model.trim() || defaultModelForProvider(settings.provider);
   const endpoint = settings.endpoint.trim() || defaultEndpointForProvider(settings.provider);
 
@@ -116,12 +122,16 @@ function buildChatCompletionRequest(input: OpportunityInput, settings: ProviderS
       model,
       temperature: 0.4,
       response_format: { type: "json_object" },
-      messages: buildMessages(input)
+      messages: buildMessages(input, locale)
     })
   };
 }
 
-function buildAnthropicMessagesRequest(input: OpportunityInput, settings: ProviderSettings): ModelRequest {
+function buildAnthropicMessagesRequest(
+  input: OpportunityInput,
+  settings: ProviderSettings,
+  locale: AppLocale
+): ModelRequest {
   const apiKey = settings.apiKey.trim();
   const endpoint = settings.endpoint.trim() || defaultEndpointForProvider(settings.provider);
 
@@ -135,7 +145,7 @@ function buildAnthropicMessagesRequest(input: OpportunityInput, settings: Provid
     body: JSON.stringify({
       model: settings.model.trim() || defaultModelForProvider(settings.provider),
       max_tokens: 2600,
-      system: systemPrompt,
+      system: systemPromptForLocale(locale),
       messages: [
         {
           role: "user",
@@ -146,7 +156,7 @@ function buildAnthropicMessagesRequest(input: OpportunityInput, settings: Provid
   };
 }
 
-function buildAnthropicVertexRequest(input: OpportunityInput, settings: ProviderSettings): ModelRequest {
+function buildAnthropicVertexRequest(input: OpportunityInput, settings: ProviderSettings, locale: AppLocale): ModelRequest {
   const apiKey = settings.apiKey.trim();
   const model = settings.model.trim() || defaultModelForProvider("anthropic-vertex");
   const endpoint = resolveVertexEndpoint(settings.endpoint.trim() || defaultEndpointForProvider("anthropic-vertex"), model);
@@ -160,7 +170,7 @@ function buildAnthropicVertexRequest(input: OpportunityInput, settings: Provider
     body: JSON.stringify({
       anthropic_version: "vertex-2023-10-16",
       max_tokens: 2600,
-      system: systemPrompt,
+      system: systemPromptForLocale(locale),
       messages: [
         {
           role: "user",
@@ -171,17 +181,25 @@ function buildAnthropicVertexRequest(input: OpportunityInput, settings: Provider
   };
 }
 
-function buildMessages(input: OpportunityInput): ChatMessage[] {
+function buildMessages(input: OpportunityInput, locale: AppLocale): ChatMessage[] {
   return [
     {
       role: "system",
-      content: systemPrompt
+      content: systemPromptForLocale(locale)
     },
     {
       role: "user",
       content: JSON.stringify(input)
     }
   ];
+}
+
+function systemPromptForLocale(locale: AppLocale): string {
+  if (locale === "zh-CN") {
+    return `${systemPrompt} Output all user-facing string fields in Simplified Chinese: summary, name, tagline, targetUser, wedge, differentiator, moat, firstRelease, launchPlan, repoHook, and risks. Keep product names concise and natural for Chinese developers.`;
+  }
+
+  return `${systemPrompt} Output all user-facing string fields in English.`;
 }
 
 function extractModelContent(data: unknown, provider: ProviderSettings["provider"]): string | undefined {

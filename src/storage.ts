@@ -1,7 +1,9 @@
 import { defaultInput, defaultSettings, type OpportunityInput, type ProviderSettings } from "./domain";
+import { defaultLocale, normalizeLocale, type AppLocale } from "./localization";
 import { defaultScoringProfileId, getScoringProfile } from "./scoringProfiles";
 
 const inputKey = "opentop.input.v1";
+const localeKey = "opentop.locale.v1";
 const settingsKey = "opentop.settings.v1";
 const scoringProfileKey = "opentop.scoringProfile.v1";
 
@@ -14,12 +16,24 @@ function readJson<T>(key: string, fallback: T): T {
   }
 }
 
-export function loadInput(): OpportunityInput {
-  return readJson(inputKey, defaultInput);
+export function loadInput(fallback: OpportunityInput = defaultInput): OpportunityInput {
+  return readJson(inputKey, fallback);
 }
 
 export function saveInput(input: OpportunityInput): void {
   localStorage.setItem(inputKey, JSON.stringify(input));
+}
+
+export function loadLocale(fallback: AppLocale = defaultLocale): AppLocale {
+  try {
+    return normalizeLocale(JSON.parse(localStorage.getItem(localeKey) ?? JSON.stringify(fallback)));
+  } catch {
+    return fallback;
+  }
+}
+
+export function saveLocale(locale: AppLocale): void {
+  localStorage.setItem(localeKey, JSON.stringify(normalizeLocale(locale)));
 }
 
 export function loadSettings(): ProviderSettings {

@@ -12,6 +12,8 @@ OpenTop is an AI opportunity radar for builders who want to choose, shape, and l
 
 The app is TypeScript-first, runs locally without an API key, and can optionally call OpenAI-compatible chat completion APIs, direct Anthropic Messages APIs, Anthropic on Amazon Bedrock, Anthropic on Vertex AI, or Ollama.
 
+Chinese-friendly localization is built in: OpenTop follows Chinese browser locales by default, keeps a persistent English / Simplified Chinese switch in the app, and asks local demo output or configured model providers to return Chinese opportunity text when Simplified Chinese is selected.
+
 Live demo: [verified rawcdn fallback](https://rawcdn.githack.com/dhb118/opentop/8af0b223db437d2c8235232e32e85ed9b8e6ca8c/). GitHub Pages is still blocked because GitHub Actions cannot start while the account has a billing lock, so this fixed `gh-pages` build is the public demo until Pages recovers.
 
 Try it in 90 seconds:
@@ -65,6 +67,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 - Anthropic provider presets for the direct Messages API, Amazon Bedrock, and Vertex AI.
 - Ollama-compatible endpoint support through `/v1/chat/completions`.
 - Model response repair for fenced JSON, noisy wrappers, and out-of-range scores.
+- Persistent English / Simplified Chinese UI preference with Chinese default briefs, Chinese local demo output, and Chinese model prompts.
 - Editable opportunity assumptions: pain, urgency, and distribution.
 - Score matrix for pain, urgency, distribution, buildability, and star potential.
 - Scoring template marketplace for local-first tools, provider SDKs, agent debugging, and launch generators.

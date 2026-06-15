@@ -21,6 +21,14 @@ import {
   buildXThread
 } from "./launchExports";
 import { isOpportunityNavigationKey, nextOpportunityIndex } from "./keyboardNavigation";
+import {
+  defaultInputForLocale,
+  detectDefaultLocale,
+  localeOptions,
+  normalizeLocale,
+  textForLocale,
+  type AppLocale
+} from "./localization";
 import { analyzeLocally, totalScore } from "./opportunityEngine";
 import { buildOpportunityJsonExport } from "./opportunityJsonExport";
 import {
@@ -34,7 +42,7 @@ import {
   type ReadmeStarAudit
 } from "./readmeAudit";
 import { buildRepoScaffoldZipBlob, repoScaffoldRootName } from "./repoScaffold";
-import { sampleBriefs } from "./sampleBriefs";
+import { sampleBriefsForLocale } from "./sampleBriefs";
 import {
   defaultScoringProfileId,
   getScoringProfile,
@@ -44,9 +52,11 @@ import {
 import { buildShareCardSvg, renderShareCardPngBlob } from "./shareCard";
 import {
   loadInput,
+  loadLocale,
   loadScoringProfileId,
   loadSettings,
   saveInput,
+  saveLocale,
   saveScoringProfileId,
   saveSettings
 } from "./storage";
@@ -62,7 +72,8 @@ const benchmarkDimensions = new Set<BenchmarkDimension>([
   "starPotential"
 ]);
 
-let currentInput = readBriefFromSearch(window.location.search) ?? loadInput();
+let locale: AppLocale = loadLocale(detectDefaultLocale(navigator.languages));
+let currentInput = readBriefFromSearch(window.location.search) ?? loadInput(defaultInputForLocale(locale));
 let settings = loadSettings();
 let selectedScoringProfileId = loadScoringProfileId();
 let result: AnalysisResult | null = null;
@@ -83,26 +94,43 @@ void runAnalysis();
 void loadBenchmarks();
 
 function render(): void {
+  const ui = textForLocale(locale);
+  const localizedSampleBriefs = sampleBriefsForLocale(locale);
+
   appRoot.innerHTML = `
     <main class="shell">
-      <section class="workspace" aria-label="OpenTop workspace">
+      <section class="workspace" aria-label="${escapeHtml(ui.workspaceAria)}">
         <header class="topbar">
           <div>
             <p class="eyebrow">OpenTop</p>
-            <h1>AI Opportunity Radar</h1>
+            <h1>${escapeHtml(ui.appTitle)}</h1>
           </div>
-          <div class="status-pill" title="Current inference mode">
-            <span class="pulse"></span>
-            ${labelForProvider(settings.provider)}
+          <div class="topbar-actions">
+            <label class="locale-switch">
+              <span>${escapeHtml(ui.language)}</span>
+              <select name="locale" aria-label="${escapeHtml(ui.language)}">
+                ${localeOptions
+                  .map(
+                    (option) => `
+                      <option value="${option.value}" ${option.value === locale ? "selected" : ""}>${escapeHtml(option.label)}</option>
+                    `
+                  )
+                  .join("")}
+              </select>
+            </label>
+            <div class="status-pill" title="${escapeHtml(ui.currentInferenceMode)}">
+              <span class="pulse"></span>
+              ${escapeHtml(labelForProvider(settings.provider))}
+            </div>
           </div>
         </header>
 
         <div class="layout">
           <aside class="control-panel">
-            <section class="sample-strip" aria-label="Sample opportunity briefs">
-              <p class="eyebrow">Try a brief</p>
+            <section class="sample-strip" aria-label="${escapeHtml(ui.tryBrief)}">
+              <p class="eyebrow">${escapeHtml(ui.tryBrief)}</p>
               <div class="sample-grid">
-                ${sampleBriefs
+                ${localizedSampleBriefs
                   .map(
                     (brief) => `
                       <button class="sample-button" data-sample="${brief.id}" type="button">
@@ -115,13 +143,13 @@ function render(): void {
             </section>
 
             <details class="import-panel">
-              <summary>Import Trend Signals</summary>
+              <summary>${escapeHtml(ui.importSignals)}</summary>
               <label>
-                Paste CSV, bullets, notes, bookmark links, or GitHub issue URLs
-                <textarea name="trendSignals" rows="5" placeholder="Local-first AI debugging https://news.ycombinator.com/item?id=4242&#10;<A HREF=&quot;https://github.com/example/repo&quot;>Agent debugging toolkit</A>&#10;- Reddit: Local model setup is still painful"></textarea>
+                ${escapeHtml(ui.trendSignalsLabel)}
+                <textarea name="trendSignals" rows="5" placeholder="${escapeHtml(ui.trendSignalsPlaceholder)}"></textarea>
               </label>
               <div class="import-actions">
-                <button class="secondary-action" data-import-trends type="button">Use Signals</button>
+                <button class="secondary-action" data-import-trends type="button">${escapeHtml(ui.useSignals)}</button>
                 <span data-import-feedback aria-live="polite">${escapeHtml(importFeedback)}</span>
               </div>
             </details>
@@ -132,40 +160,40 @@ function render(): void {
 
             <form id="briefForm">
               <label>
-                Audience
+                ${escapeHtml(ui.audience)}
                 <input name="audience" value="${escapeHtml(currentInput.audience)}" />
               </label>
               <label>
-                Signal Brief
+                ${escapeHtml(ui.signalBrief)}
                 <textarea name="signal" rows="7">${escapeHtml(currentInput.signal)}</textarea>
               </label>
               <label>
-                Constraints
+                ${escapeHtml(ui.constraints)}
                 <textarea name="constraints" rows="4">${escapeHtml(currentInput.constraints)}</textarea>
               </label>
               <label>
-                Launch Channels
+                ${escapeHtml(ui.launchChannels)}
                 <textarea name="channels" rows="4">${escapeHtml(currentInput.channels)}</textarea>
               </label>
 
               <div class="slider-grid">
-                ${slider("pain", "Pain", currentInput.pain)}
-                ${slider("urgency", "Urgency", currentInput.urgency)}
-                ${slider("distribution", "Distribution", currentInput.distribution)}
+                ${slider("pain", ui.pain, currentInput.pain)}
+                ${slider("urgency", ui.urgency, currentInput.urgency)}
+                ${slider("distribution", ui.distribution, currentInput.distribution)}
               </div>
 
               <button class="primary-action" type="submit" ${isBusy ? "disabled" : ""}>
-                ${isBusy ? "Analyzing..." : "Analyze"}
+                ${isBusy ? escapeHtml(ui.analyzing) : escapeHtml(ui.analyze)}
               </button>
             </form>
 
             <details class="settings">
-              <summary>Model Settings</summary>
+              <summary>${escapeHtml(ui.modelSettings)}</summary>
               <form id="settingsForm">
                 <label>
-                  Provider
+                  ${escapeHtml(ui.provider)}
                   <select name="provider">
-                    ${option("demo", "Demo engine", settings.provider)}
+                    ${option("demo", labelForProvider("demo"), settings.provider)}
                     ${option("openai-compatible", "OpenAI-compatible", settings.provider)}
                     ${option("ollama", "Ollama", settings.provider)}
                     ${option("anthropic", "Anthropic", settings.provider)}
@@ -174,28 +202,28 @@ function render(): void {
                   </select>
                 </label>
                 <label>
-                  Endpoint
+                  ${escapeHtml(ui.endpoint)}
                   <input name="endpoint" placeholder="https://api.openai.com/v1/chat/completions" value="${escapeHtml(settings.endpoint)}" />
                 </label>
                 <label>
-                  API Key
+                  ${escapeHtml(ui.apiKey)}
                   <input name="apiKey" type="password" autocomplete="off" value="${escapeHtml(settings.apiKey)}" />
                 </label>
                 <label>
-                  Model
+                  ${escapeHtml(ui.model)}
                   <input name="model" placeholder="gpt-4.1-mini or llama3.1" value="${escapeHtml(settings.model)}" />
                 </label>
-                <button type="submit" class="secondary-action">Save Settings</button>
+                <button type="submit" class="secondary-action">${escapeHtml(ui.saveSettings)}</button>
               </form>
             </details>
           </aside>
 
           <section class="radar-panel">
             <div class="canvas-wrap">
-              <canvas id="radarCanvas" width="760" height="360" aria-label="Opportunity score radar"></canvas>
+              <canvas id="radarCanvas" width="760" height="360" aria-label="${escapeHtml(ui.scoreExplanation)}"></canvas>
               <div class="canvas-copy">
-                <span>${result ? result.generatedBy : "warming-up"}</span>
-                <strong>${result ? escapeHtml(result.summary) : "Reading the signal brief and preparing the first opportunity map."}</strong>
+                <span>${result ? result.generatedBy : escapeHtml(ui.warmingUp)}</span>
+                <strong>${result ? escapeHtml(result.summary) : escapeHtml(ui.preparingMap)}</strong>
               </div>
             </div>
 
@@ -224,36 +252,37 @@ function requireAppRoot(): HTMLDivElement {
 }
 
 function renderReadmeAuditPanel(): string {
+  const ui = textForLocale(locale);
   const result = readmeAuditResult;
   const isOpen = readmeAuditText || result ? "open" : "";
 
   return `
     <details class="readme-audit-panel" ${isOpen}>
-      <summary>README Star Audit</summary>
+      <summary>${escapeHtml(ui.readmeAudit)}</summary>
       <label>
-        GitHub repository URL
+        ${escapeHtml(ui.githubRepositoryUrl)}
         <input name="readmeRepoUrl" placeholder="https://github.com/owner/repo" value="${escapeHtml(readmeAuditRepoUrl)}" />
       </label>
       <label>
-        Paste or fetch a project README
+        ${escapeHtml(ui.pasteOrFetchReadme)}
         <textarea name="readmeAudit" rows="5" placeholder="# My AI Tool&#10;&#10;A local-first assistant for...">${escapeHtml(readmeAuditText)}</textarea>
       </label>
       <div class="readme-audit-actions">
-        <button class="secondary-action" data-fetch-readme type="button">Fetch README</button>
-        <button class="secondary-action" data-audit-readme type="button">Audit README</button>
+        <button class="secondary-action" data-fetch-readme type="button">${escapeHtml(ui.fetchReadme)}</button>
+        <button class="secondary-action" data-audit-readme type="button">${escapeHtml(ui.auditReadme)}</button>
         ${
           result
-            ? `<button class="secondary-action" data-copy-readme-audit type="button">Copy Audit</button>`
+            ? `<button class="secondary-action" data-copy-readme-audit type="button">${escapeHtml(ui.copyAudit)}</button>`
             : ""
         }
         ${
           result
-            ? `<button class="secondary-action" data-copy-star-sprint type="button">Copy 7-Day Sprint</button>`
+            ? `<button class="secondary-action" data-copy-star-sprint type="button">${escapeHtml(ui.copySprint)}</button>`
             : ""
         }
         ${
           repoStarProfileResult
-            ? `<button class="secondary-action" data-copy-repo-profile type="button">Copy Profile</button>`
+            ? `<button class="secondary-action" data-copy-repo-profile type="button">${escapeHtml(ui.copyProfile)}</button>`
             : ""
         }
         <span data-readme-audit-feedback aria-live="polite">${escapeHtml(readmeAuditFeedback)}</span>
@@ -265,10 +294,11 @@ function renderReadmeAuditPanel(): string {
 }
 
 function renderReadmeAuditResult(result: ReadmeStarAudit): string {
+  const ui = textForLocale(locale);
   const topFixes =
     result.topFixes.length > 0
       ? result.topFixes.map((item) => `<li>${escapeHtml(item.fix)}</li>`).join("")
-      : "<li>No critical gaps found. Keep screenshots, examples, and demo links current.</li>";
+      : `<li>${escapeHtml(ui.noCriticalGaps)}</li>`;
   const checks = result.items
     .map(
       (item) => `
@@ -285,11 +315,11 @@ function renderReadmeAuditResult(result: ReadmeStarAudit): string {
       <div class="readme-audit-score">
         <strong>${result.score}</strong>
         <span>${escapeHtml(result.grade)}</span>
-        <small>${result.passedCount}/${result.totalCount} checks</small>
+        <small>${result.passedCount}/${result.totalCount} ${escapeHtml(ui.checks)}</small>
       </div>
       <p>${escapeHtml(result.summary)}</p>
       <div>
-        <h3>Top fixes</h3>
+        <h3>${escapeHtml(ui.topFixes)}</h3>
         <ol>${topFixes}</ol>
       </div>
       <div class="readme-audit-checks">
@@ -300,10 +330,11 @@ function renderReadmeAuditResult(result: ReadmeStarAudit): string {
 }
 
 function renderRepoStarProfile(profile: GitHubRepoStarProfile): string {
+  const ui = textForLocale(locale);
   const topFixes =
     profile.topFixes.length > 0
       ? profile.topFixes.map((item) => `<li>${escapeHtml(item.fix)}</li>`).join("")
-      : "<li>No critical profile gaps found. Keep the demo URL, topics, and starter issues current.</li>";
+      : `<li>${escapeHtml(ui.noCriticalGaps)}</li>`;
   const stats = [
     ["Stars", String(profile.stats.stars)],
     ["Forks", String(profile.stats.forks)],
@@ -324,7 +355,7 @@ function renderRepoStarProfile(profile: GitHubRepoStarProfile): string {
         ${stats.map(([label, value]) => `<span><b>${escapeHtml(value)}</b>${escapeHtml(label)}</span>`).join("")}
       </div>
       <div>
-        <h3>Profile fixes</h3>
+        <h3>${escapeHtml(ui.profileFixes)}</h3>
         <ol>${topFixes}</ol>
       </div>
     </section>
@@ -332,12 +363,13 @@ function renderRepoStarProfile(profile: GitHubRepoStarProfile): string {
 }
 
 function renderScoringMarketplace(): string {
+  const ui = textForLocale(locale);
   const activeProfile = selectedScoringProfile();
 
   return `
     <section class="scoring-marketplace" aria-label="Scoring template marketplace">
       <div class="marketplace-heading">
-        <p class="eyebrow">Scoring templates</p>
+        <p class="eyebrow">${escapeHtml(ui.scoringTemplates)}</p>
         <strong>${escapeHtml(activeProfile.name)}</strong>
         <span>${escapeHtml(activeProfile.bestFor)}</span>
       </div>
@@ -377,6 +409,25 @@ function renderScoringProfileButton(profile: ScoringProfile, activeProfileId: st
 }
 
 function bindEvents(): void {
+  document.querySelector<HTMLSelectElement>("[name='locale']")?.addEventListener("change", (event) => {
+    const select = event.currentTarget as HTMLSelectElement;
+    const nextLocale = normalizeLocale(select.value);
+    if (nextLocale === locale) {
+      return;
+    }
+
+    const previousLocale = locale;
+    const shouldSwapDefaultInput = isDefaultLocaleInput(currentInput, previousLocale);
+    locale = nextLocale;
+    saveLocale(locale);
+    if (!readBriefFromSearch(window.location.search) && shouldSwapDefaultInput) {
+      currentInput = defaultInputForLocale(locale);
+      saveInput(currentInput);
+    }
+    result = null;
+    void runAnalysis();
+  });
+
   document.querySelector<HTMLFormElement>("#briefForm")?.addEventListener("submit", (event) => {
     event.preventDefault();
     currentInput = readInput(event.currentTarget as HTMLFormElement);
@@ -430,7 +481,7 @@ function bindEvents(): void {
 
   document.querySelectorAll<HTMLButtonElement>("[data-sample]").forEach((button) => {
     button.addEventListener("click", () => {
-      const sample = sampleBriefs.find((brief) => brief.id === button.dataset.sample);
+      const sample = sampleBriefsForLocale(locale).find((brief) => brief.id === button.dataset.sample);
       if (!sample) {
         return;
       }
@@ -456,7 +507,7 @@ function bindEvents(): void {
       }
       const mode = button.dataset.copy;
       await navigator.clipboard.writeText(copyPayload(mode, selected));
-      button.textContent = "Copied";
+      button.textContent = textForLocale(locale).copied;
       window.setTimeout(() => {
         button.textContent = copyLabel(mode);
       }, 1400);
@@ -469,12 +520,15 @@ function bindEvents(): void {
     const feedback = document.querySelector<HTMLSpanElement>("[data-import-feedback]");
     const rawSignals = input?.value ?? "";
     const githubIssueCount = parseGitHubIssueUrls(rawSignals).length;
+    const ui = textForLocale(locale);
 
     button.disabled = true;
     if (githubIssueCount > 0) {
       updateImportFeedback(
         feedback,
-        `Fetching ${githubIssueCount} public GitHub issue${githubIssueCount === 1 ? "" : "s"}...`
+        locale === "zh-CN"
+          ? `正在抓取 ${githubIssueCount} 个公开 GitHub issue...`
+          : `Fetching ${githubIssueCount} public GitHub issue${githubIssueCount === 1 ? "" : "s"}...`
       );
     }
 
@@ -482,15 +536,19 @@ function bindEvents(): void {
       const parsed = githubIssueCount > 0 ? await fetchGitHubIssueSignals(rawSignals) : parseTrendSignals(rawSignals);
 
       if (!parsed) {
-        updateImportFeedback(feedback, "No usable signals found");
+        updateImportFeedback(feedback, ui.noUsableSignals);
         return;
       }
 
       updateImportFeedback(
         feedback,
-        `Imported ${parsed.rowCount} ${labelForTrendImport(parsed.format)}${
-          parsed.ignoredCount > 0 ? `, skipped ${parsed.ignoredCount}` : ""
-        }${parsed.failures?.length ? `, failed ${parsed.failures.length}` : ""}`
+        locale === "zh-CN"
+          ? `已导入 ${parsed.rowCount} 条${labelForTrendImport(parsed.format)}${
+              parsed.ignoredCount > 0 ? `，跳过 ${parsed.ignoredCount} 条` : ""
+            }${parsed.failures?.length ? `，失败 ${parsed.failures.length} 条` : ""}`
+          : `Imported ${parsed.rowCount} ${labelForTrendImport(parsed.format)}${
+              parsed.ignoredCount > 0 ? `, skipped ${parsed.ignoredCount}` : ""
+            }${parsed.failures?.length ? `, failed ${parsed.failures.length}` : ""}`
       );
       currentInput = {
         ...currentInput,
@@ -501,7 +559,7 @@ function bindEvents(): void {
       saveInput(currentInput);
       void runAnalysis();
     } catch (error) {
-      updateImportFeedback(feedback, error instanceof Error ? error.message : "Could not import GitHub issues");
+      updateImportFeedback(feedback, error instanceof Error ? error.message : ui.couldNotImportIssues);
     } finally {
       button.disabled = false;
     }
@@ -524,7 +582,7 @@ function bindEvents(): void {
     const repoUrl = repoUrlInput?.value ?? "";
 
     button.disabled = true;
-    readmeAuditFeedback = "Fetching README...";
+    readmeAuditFeedback = textForLocale(locale).fetchingReadme;
     updateReadmeAuditFeedback(readmeAuditFeedback);
 
     try {
@@ -537,7 +595,7 @@ function bindEvents(): void {
       render();
     } catch (error) {
       readmeAuditRepoUrl = repoUrl;
-      readmeAuditFeedback = error instanceof Error ? error.message : "Could not fetch README";
+      readmeAuditFeedback = error instanceof Error ? error.message : textForLocale(locale).couldNotFetchReadme;
       updateReadmeAuditFeedback(readmeAuditFeedback);
     } finally {
       button.disabled = false;
@@ -551,9 +609,9 @@ function bindEvents(): void {
 
     const button = event.currentTarget as HTMLButtonElement;
     await navigator.clipboard.writeText(formatReadmeStarAudit(readmeAuditResult));
-    button.textContent = "Copied";
+    button.textContent = textForLocale(locale).copied;
     window.setTimeout(() => {
-      button.textContent = "Copy Audit";
+      button.textContent = textForLocale(locale).copyAudit;
     }, 1400);
   });
 
@@ -564,9 +622,9 @@ function bindEvents(): void {
 
     const button = event.currentTarget as HTMLButtonElement;
     await navigator.clipboard.writeText(formatGitHubRepoStarProfile(repoStarProfileResult));
-    button.textContent = "Copied";
+    button.textContent = textForLocale(locale).copied;
     window.setTimeout(() => {
-      button.textContent = "Copy Profile";
+      button.textContent = textForLocale(locale).copyProfile;
     }, 1400);
   });
 
@@ -577,9 +635,9 @@ function bindEvents(): void {
 
     const button = event.currentTarget as HTMLButtonElement;
     await navigator.clipboard.writeText(formatStarReadinessSprint(readmeAuditResult, repoStarProfileResult));
-    button.textContent = "Copied";
+    button.textContent = textForLocale(locale).copied;
     window.setTimeout(() => {
-      button.textContent = "Copy 7-Day Sprint";
+      button.textContent = textForLocale(locale).copySprint;
     }, 1400);
   });
 
@@ -606,17 +664,18 @@ function bindEvents(): void {
     }
 
     const button = event.currentTarget as HTMLButtonElement;
-    button.textContent = "Rendering...";
+    const ui = textForLocale(locale);
+    button.textContent = ui.rendering;
     button.disabled = true;
     try {
       const blob = await renderShareCardPngBlob(selected);
       downloadBlob(`${selected.id}-share-card.png`, blob);
-      button.textContent = "Downloaded";
+      button.textContent = ui.downloaded;
     } catch {
-      button.textContent = "PNG failed";
+      button.textContent = ui.pngFailed;
     } finally {
       window.setTimeout(() => {
-        button.textContent = "Download PNG";
+        button.textContent = downloadLabel("card-png");
         button.disabled = false;
       }, 1400);
     }
@@ -629,10 +688,10 @@ function bindEvents(): void {
     }
 
     const button = event.currentTarget as HTMLButtonElement;
-    button.textContent = "Downloaded";
+    button.textContent = textForLocale(locale).downloaded;
     downloadMarkdown(`${repoScaffoldRootName(selected)}-public-launch-brief.md`, buildPublicLaunchBriefMarkdown(selected));
     window.setTimeout(() => {
-      button.textContent = "Download Launch Brief";
+      button.textContent = downloadLabel("launch-brief");
     }, 1400);
   });
 
@@ -643,10 +702,10 @@ function bindEvents(): void {
     }
 
     const button = event.currentTarget as HTMLButtonElement;
-    button.textContent = "Downloaded";
+    button.textContent = textForLocale(locale).downloaded;
     downloadMarkdown(`${repoScaffoldRootName(selected)}-launch-kit.md`, buildLaunchKit(selected));
     window.setTimeout(() => {
-      button.textContent = "Download Launch Kit";
+      button.textContent = downloadLabel("launch-kit");
     }, 1400);
   });
 
@@ -657,10 +716,10 @@ function bindEvents(): void {
     }
 
     const button = event.currentTarget as HTMLButtonElement;
-    button.textContent = "Downloaded";
+    button.textContent = textForLocale(locale).downloaded;
     downloadMarkdown(`${repoScaffoldRootName(selected)}-contributor-queue.md`, buildContributorQueueMarkdown(selected));
     window.setTimeout(() => {
-      button.textContent = "Download Contributor Queue";
+      button.textContent = downloadLabel("contributor-queue");
     }, 1400);
   });
 
@@ -671,10 +730,10 @@ function bindEvents(): void {
     }
 
     const button = event.currentTarget as HTMLButtonElement;
-    button.textContent = "Downloaded";
+    button.textContent = textForLocale(locale).downloaded;
     downloadMarkdown(`${repoScaffoldRootName(selected)}-star-growth-plan.md`, buildStarGrowthPlanMarkdown(selected));
     window.setTimeout(() => {
-      button.textContent = "Download Star Plan";
+      button.textContent = downloadLabel("star-plan");
     }, 1400);
   });
 
@@ -685,10 +744,10 @@ function bindEvents(): void {
     }
 
     const button = event.currentTarget as HTMLButtonElement;
-    button.textContent = "Downloaded";
+    button.textContent = textForLocale(locale).downloaded;
     downloadMarkdown(`${repoScaffoldRootName(selected)}-repo-listing-pack.md`, buildRepoListingPackMarkdown(selected));
     window.setTimeout(() => {
-      button.textContent = "Download Repo Listing";
+      button.textContent = downloadLabel("repo-listing");
     }, 1400);
   });
 
@@ -699,11 +758,11 @@ function bindEvents(): void {
     }
 
     const button = event.currentTarget as HTMLButtonElement;
-    button.textContent = "Building ZIP...";
+    button.textContent = textForLocale(locale).buildingZip;
     button.disabled = true;
     downloadBlob(`${repoScaffoldRootName(selected)}.zip`, buildRepoScaffoldZipBlob(selected));
     window.setTimeout(() => {
-      button.textContent = "Download Repo ZIP";
+      button.textContent = downloadLabel("repo-zip");
       button.disabled = false;
     }, 1400);
   });
@@ -713,12 +772,12 @@ async function runAnalysis(): Promise<void> {
   isBusy = true;
   render();
   try {
-    result = applyScoringProfile(await analyzeOpportunity(currentInput, settings), selectedScoringProfile());
+    result = applyScoringProfile(await analyzeOpportunity(currentInput, settings, locale), selectedScoringProfile());
     selectedId = result.opportunities[0]?.id ?? "";
   } catch (error) {
     result = {
       generatedBy: "local-engine",
-      summary: error instanceof Error ? error.message : "Model request failed. Falling back to local analysis.",
+      summary: error instanceof Error ? error.message : textForLocale(locale).modelFallback,
       opportunities: []
     };
   } finally {
@@ -792,16 +851,19 @@ function restorePendingFocus(): void {
 }
 
 function renderGalleryRail(): string {
+  const ui = textForLocale(locale);
+  const localizedSampleBriefs = sampleBriefsForLocale(locale);
+
   return `
-    <section class="gallery-rail" aria-label="Opportunity gallery">
+    <section class="gallery-rail" aria-label="${escapeHtml(ui.opportunityGallery)}">
       <div>
-        <p class="eyebrow">Opportunity gallery</p>
-        <h2>Proof before setup</h2>
+        <p class="eyebrow">${escapeHtml(ui.opportunityGallery)}</p>
+        <h2>${escapeHtml(ui.proofBeforeSetup)}</h2>
       </div>
       <div class="gallery-cards">
-        ${sampleBriefs
+        ${localizedSampleBriefs
           .map((brief) => {
-            const top = analyzeLocally(brief.input, selectedScoringProfile().weights).opportunities[0];
+            const top = analyzeLocally(brief.input, selectedScoringProfile().weights, locale).opportunities[0];
             const shareUrl = createShareUrl(brief.input, window.location.href);
             return `
               <article class="gallery-card">
@@ -811,8 +873,8 @@ function renderGalleryRail(): string {
                 </div>
                 <p>${escapeHtml(top.name)} - ${escapeHtml(top.wedge)}</p>
                 <div class="gallery-actions">
-                  <button class="secondary-action" data-sample="${brief.id}" type="button">Load</button>
-                  <a href="${escapeHtml(shareUrl)}">Open link</a>
+                  <button class="secondary-action" data-sample="${brief.id}" type="button">${escapeHtml(ui.load)}</button>
+                  <a href="${escapeHtml(shareUrl)}">${escapeHtml(ui.openLink)}</a>
                 </div>
               </article>
             `;
@@ -824,39 +886,41 @@ function renderGalleryRail(): string {
 }
 
 function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities"][number]>): string {
+  const ui = textForLocale(locale);
+
   return `
     <article class="detail-panel">
       <div class="detail-heading">
         <div>
-          <p class="eyebrow">Selected wedge</p>
+          <p class="eyebrow">${escapeHtml(ui.selectedWedge)}</p>
           <h2>${escapeHtml(item.name)}</h2>
         </div>
         <div class="action-row">
-          <button class="secondary-action" data-copy="markdown" type="button">Copy README Brief</button>
-          <button class="secondary-action" data-copy="show-hn" type="button">Copy Show HN</button>
-          <button class="secondary-action" data-copy="build-log" type="button">Copy Build Log</button>
-          <button class="secondary-action" data-copy="product-hunt" type="button">Copy Product Hunt</button>
-          <button class="secondary-action" data-copy="demo-script" type="button">Copy Demo Script</button>
-          <button class="secondary-action" data-copy="x-thread" type="button">Copy X Thread</button>
-          <button class="secondary-action" data-copy="newsletter" type="button">Copy Newsletter</button>
-          <button class="secondary-action" data-copy="reddit" type="button">Copy Reddit</button>
-          <button class="secondary-action" data-copy="github-issue" type="button">Copy GitHub Issue</button>
-          <button class="secondary-action" data-copy="launch-brief" type="button">Copy Launch Brief</button>
-          <button class="secondary-action" data-copy="launch-kit" type="button">Copy Launch Kit</button>
-          <button class="secondary-action" data-copy="contributor-queue" type="button">Copy Contributor Queue</button>
-          <button class="secondary-action" data-copy="star-plan" type="button">Copy Star Plan</button>
-          <button class="secondary-action" data-copy="repo-listing" type="button">Copy Repo Listing</button>
-          <button class="secondary-action" data-copy="repo-scaffold" type="button">Copy Repo Plan</button>
-          <button class="secondary-action" data-download-launch-brief type="button">Download Launch Brief</button>
-          <button class="secondary-action" data-download-launch-kit type="button">Download Launch Kit</button>
-          <button class="secondary-action" data-download-contributor-queue type="button">Download Contributor Queue</button>
-          <button class="secondary-action" data-download-star-plan type="button">Download Star Plan</button>
-          <button class="secondary-action" data-download-repo-listing type="button">Download Repo Listing</button>
-          <button class="secondary-action" data-download-scaffold type="button">Download Repo ZIP</button>
-          <button class="secondary-action" data-copy="share-url" type="button">Copy Share Link</button>
-          <button class="secondary-action" data-download-card-png type="button">Download PNG</button>
-          <button class="secondary-action" data-download-card-svg type="button">Download SVG</button>
-          <button class="secondary-action" data-download type="button">Download JSON</button>
+          ${copyButton("markdown")}
+          ${copyButton("show-hn")}
+          ${copyButton("build-log")}
+          ${copyButton("product-hunt")}
+          ${copyButton("demo-script")}
+          ${copyButton("x-thread")}
+          ${copyButton("newsletter")}
+          ${copyButton("reddit")}
+          ${copyButton("github-issue")}
+          ${copyButton("launch-brief")}
+          ${copyButton("launch-kit")}
+          ${copyButton("contributor-queue")}
+          ${copyButton("star-plan")}
+          ${copyButton("repo-listing")}
+          ${copyButton("repo-scaffold")}
+          ${downloadButton("launch-brief", "data-download-launch-brief")}
+          ${downloadButton("launch-kit", "data-download-launch-kit")}
+          ${downloadButton("contributor-queue", "data-download-contributor-queue")}
+          ${downloadButton("star-plan", "data-download-star-plan")}
+          ${downloadButton("repo-listing", "data-download-repo-listing")}
+          ${downloadButton("repo-zip", "data-download-scaffold")}
+          ${copyButton("share-url")}
+          ${downloadButton("card-png", "data-download-card-png")}
+          ${downloadButton("card-svg", "data-download-card-svg")}
+          ${downloadButton("json", "data-download")}
         </div>
       </div>
       <p class="tagline">${escapeHtml(item.tagline)}</p>
@@ -868,18 +932,19 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
       ${renderScoreMath(item)}
       ${renderBenchmarkPanel(item)}
       <div class="detail-grid">
-        ${detailBlock("Wedge", item.wedge)}
-        ${detailBlock("Differentiator", item.differentiator)}
-        ${detailBlock("Moat", item.moat)}
-        ${listBlock("First Release", item.firstRelease)}
-        ${listBlock("Launch Plan", item.launchPlan)}
-        ${listBlock("Risks", item.risks)}
+        ${detailBlock(ui.wedge, item.wedge)}
+        ${detailBlock(ui.differentiator, item.differentiator)}
+        ${detailBlock(ui.moat, item.moat)}
+        ${listBlock(ui.firstRelease, item.firstRelease)}
+        ${listBlock(ui.launchPlan, item.launchPlan)}
+        ${listBlock(ui.risks, item.risks)}
       </div>
     </article>
   `;
 }
 
 function renderScoreMath(item: Opportunity): string {
+  const ui = textForLocale(locale);
   const profile = selectedScoringProfile();
   const rows = Object.entries(profile.weights)
     .map(([key, weight]) => {
@@ -894,10 +959,14 @@ function renderScoreMath(item: Opportunity): string {
     .join("");
 
   return `
-    <section class="score-math" aria-label="Score explanation">
+    <section class="score-math" aria-label="${escapeHtml(ui.scoreExplanation)}">
       <div>
-        <h3>Score math</h3>
-        <p>${escapeHtml(profile.name)} weights round to ${item.score}/10.</p>
+        <h3>${escapeHtml(ui.scoreMath)}</h3>
+        <p>${
+          locale === "zh-CN"
+            ? `${escapeHtml(profile.name)} 权重计算后得到 ${item.score}/10。`
+            : `${escapeHtml(profile.name)} weights round to ${item.score}/10.`
+        }</p>
       </div>
       <div class="score-math-grid">
         ${rows}
@@ -907,15 +976,17 @@ function renderScoreMath(item: Opportunity): string {
 }
 
 function renderBenchmarkPanel(item: Opportunity): string {
+  const ui = textForLocale(locale);
+
   if (benchmarkStatus === "loading") {
     return `
-      <section class="benchmark-panel" aria-label="Benchmark lessons">
+      <section class="benchmark-panel" aria-label="${escapeHtml(ui.benchmarkLessons)}">
         <div class="benchmark-heading">
           <div>
-            <p class="eyebrow">Benchmark proof</p>
-            <h3>Loading public repo lessons...</h3>
+            <p class="eyebrow">${escapeHtml(ui.benchmarkProof)}</p>
+            <h3>${escapeHtml(ui.loadingBenchmarks)}</h3>
           </div>
-          <p>Lessons load from the committed public benchmark JSON.</p>
+          <p>${escapeHtml(ui.benchmarkLoadingNote)}</p>
         </div>
       </section>
     `;
@@ -923,13 +994,13 @@ function renderBenchmarkPanel(item: Opportunity): string {
 
   if (benchmarkStatus === "failed") {
     return `
-      <section class="benchmark-panel" aria-label="Benchmark lessons">
+      <section class="benchmark-panel" aria-label="${escapeHtml(ui.benchmarkLessons)}">
         <div class="benchmark-heading">
           <div>
-            <p class="eyebrow">Benchmark proof</p>
-            <h3>Benchmark lessons unavailable</h3>
+            <p class="eyebrow">${escapeHtml(ui.benchmarkProof)}</p>
+            <h3>${escapeHtml(ui.benchmarkUnavailable)}</h3>
           </div>
-          <p>Could not load public benchmark examples from benchmarks.json.</p>
+          <p>${escapeHtml(ui.benchmarkUnavailableNote)}</p>
         </div>
       </section>
     `;
@@ -940,14 +1011,14 @@ function renderBenchmarkPanel(item: Opportunity): string {
       (comparison) => `
         <article class="benchmark-card ${comparison.alignment}">
           <div class="benchmark-card-top">
-            <span>${comparison.score}/10 ${escapeHtml(comparison.dimensionLabel)}</span>
+            <span>${comparison.score}/10 ${humanize(comparison.dimension)}</span>
             <a href="${escapeHtml(comparison.url)}" target="_blank" rel="noreferrer">${escapeHtml(comparison.repo)}</a>
           </div>
-          <p><b>Public signal</b>${escapeHtml(comparison.signal)}</p>
-          <p><b>Lesson</b>${escapeHtml(comparison.lesson)}</p>
-          <p><b>OpenTop use</b>${escapeHtml(comparison.use)}</p>
+          <p><b>${escapeHtml(ui.publicSignal)}</b>${escapeHtml(comparison.signal)}</p>
+          <p><b>${escapeHtml(ui.lesson)}</b>${escapeHtml(comparison.lesson)}</p>
+          <p><b>${escapeHtml(ui.openTopUse)}</b>${escapeHtml(comparison.use)}</p>
           <a class="benchmark-source" href="${escapeHtml(comparison.sourceUrl)}" target="_blank" rel="noreferrer">
-            View evidence
+            ${escapeHtml(ui.viewEvidence)}
           </a>
         </article>
       `
@@ -955,13 +1026,13 @@ function renderBenchmarkPanel(item: Opportunity): string {
     .join("");
 
   return `
-    <section class="benchmark-panel" aria-label="Benchmark lessons">
+    <section class="benchmark-panel" aria-label="${escapeHtml(ui.benchmarkLessons)}">
       <div class="benchmark-heading">
         <div>
-          <p class="eyebrow">Benchmark proof</p>
-          <h3>Patterns from public AI repos</h3>
+          <p class="eyebrow">${escapeHtml(ui.benchmarkProof)}</p>
+          <h3>${escapeHtml(ui.publicRepoPatterns)}</h3>
         </div>
-        <p>Each benchmark maps to one OpenTop score dimension. No star counts or private metrics are used.</p>
+        <p>${escapeHtml(ui.benchmarkNote)}</p>
       </div>
       <div class="benchmark-grid">
         ${cards}
@@ -1059,6 +1130,14 @@ function listBlock(title: string, items: string[]): string {
   return `<section><h3>${title}</h3><ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section>`;
 }
 
+function copyButton(mode: string): string {
+  return `<button class="secondary-action" data-copy="${mode}" type="button">${escapeHtml(copyLabel(mode))}</button>`;
+}
+
+function downloadButton(mode: string, attribute: string): string {
+  return `<button class="secondary-action" ${attribute} type="button">${escapeHtml(downloadLabel(mode))}</button>`;
+}
+
 function selectedScoringProfile(): ScoringProfile {
   return getScoringProfile(selectedScoringProfileId);
 }
@@ -1078,35 +1157,11 @@ function applyScoringProfile(analysis: AnalysisResult, profile: ScoringProfile):
 }
 
 function labelForProvider(provider: ProviderSettings["provider"]): string {
-  if (provider === "demo") {
-    return "Demo engine";
-  }
-  if (provider === "ollama") {
-    return "Ollama ready";
-  }
-  if (provider === "anthropic") {
-    return "Anthropic ready";
-  }
-  if (provider === "anthropic-bedrock") {
-    return "Bedrock ready";
-  }
-  if (provider === "anthropic-vertex") {
-    return "Vertex ready";
-  }
-  return "API ready";
+  return textForLocale(locale).providerLabels[provider];
 }
 
 function labelForTrendImport(format: "csv" | "notes" | "github-issues" | "links"): string {
-  if (format === "csv") {
-    return "CSV rows";
-  }
-  if (format === "github-issues") {
-    return "GitHub issues";
-  }
-  if (format === "links") {
-    return "links";
-  }
-  return "notes";
+  return textForLocale(locale).trendLabels[format];
 }
 
 function parseBenchmarkRepos(value: unknown): BenchmarkRepo[] {
@@ -1175,6 +1230,11 @@ function updateReadmeAuditFeedback(message: string): void {
 }
 
 function humanize(value: string): string {
+  const ui = textForLocale(locale);
+  if (value in ui.dimensionLabels) {
+    return ui.dimensionLabels[value as keyof typeof ui.dimensionLabels];
+  }
+
   return value.replace(/[A-Z]/g, (letter) => ` ${letter}`).toLowerCase();
 }
 
@@ -1228,52 +1288,37 @@ function copyPayload(mode: string | undefined, item: AnalysisResult["opportuniti
 }
 
 function copyLabel(mode: string | undefined): string {
-  if (mode === "show-hn") {
-    return "Copy Show HN";
+  return textForLocale(locale).copyLabels[mode ?? "markdown"] ?? textForLocale(locale).copyLabels.markdown;
+}
+
+function downloadLabel(mode: string): string {
+  if (locale === "zh-CN") {
+    const labels: Record<string, string> = {
+      "launch-brief": "下载发布简报",
+      "launch-kit": "下载 Launch Kit",
+      "contributor-queue": "下载贡献任务",
+      "star-plan": "下载 Star 增长计划",
+      "repo-listing": "下载仓库 Profile",
+      "repo-zip": "下载仓库 ZIP",
+      "card-png": "下载 PNG",
+      "card-svg": "下载 SVG",
+      json: "下载 JSON"
+    };
+    return labels[mode] ?? "下载";
   }
-  if (mode === "product-hunt") {
-    return "Copy Product Hunt";
-  }
-  if (mode === "build-log") {
-    return "Copy Build Log";
-  }
-  if (mode === "newsletter") {
-    return "Copy Newsletter";
-  }
-  if (mode === "demo-script") {
-    return "Copy Demo Script";
-  }
-  if (mode === "github-issue") {
-    return "Copy GitHub Issue";
-  }
-  if (mode === "launch-brief") {
-    return "Copy Launch Brief";
-  }
-  if (mode === "launch-kit") {
-    return "Copy Launch Kit";
-  }
-  if (mode === "contributor-queue") {
-    return "Copy Contributor Queue";
-  }
-  if (mode === "star-plan") {
-    return "Copy Star Plan";
-  }
-  if (mode === "repo-listing") {
-    return "Copy Repo Listing";
-  }
-  if (mode === "x-thread") {
-    return "Copy X Thread";
-  }
-  if (mode === "reddit") {
-    return "Copy Reddit";
-  }
-  if (mode === "repo-scaffold") {
-    return "Copy Repo Plan";
-  }
-  if (mode === "share-url") {
-    return "Copy Share Link";
-  }
-  return "Copy README Brief";
+
+  const labels: Record<string, string> = {
+    "launch-brief": "Download Launch Brief",
+    "launch-kit": "Download Launch Kit",
+    "contributor-queue": "Download Contributor Queue",
+    "star-plan": "Download Star Plan",
+    "repo-listing": "Download Repo Listing",
+    "repo-zip": "Download Repo ZIP",
+    "card-png": "Download PNG",
+    "card-svg": "Download SVG",
+    json: "Download JSON"
+  };
+  return labels[mode] ?? "Download";
 }
 
 function downloadJson(filename: string, item: AnalysisResult["opportunities"][number]): void {
@@ -1300,7 +1345,11 @@ function downloadBlob(filename: string, blob: Blob): void {
 }
 
 function analyzeFallback(input: OpportunityInput): AnalysisResult {
-  return analyzeLocally(input, selectedScoringProfile().weights);
+  return analyzeLocally(input, selectedScoringProfile().weights, locale);
+}
+
+function isDefaultLocaleInput(input: OpportunityInput, inputLocale: AppLocale): boolean {
+  return JSON.stringify(input) === JSON.stringify(defaultInputForLocale(inputLocale));
 }
 
 function escapeHtml(value: string): string {

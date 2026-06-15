@@ -27,6 +27,7 @@ import {
   buildStarGrowthStages,
   buildXThread
 } from "../src/launchExports.ts";
+import { defaultInputForLocale, detectDefaultLocale } from "../src/localization.ts";
 import { parseModelAnalysis } from "../src/modelResponse.ts";
 import { analyzeLocally, scoreWeights, totalScore } from "../src/opportunityEngine.ts";
 import { buildOpportunityJsonExport } from "../src/opportunityJsonExport.ts";
@@ -59,7 +60,7 @@ import {
 } from "../src/trendImport.ts";
 import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
 import { benchmarkRepos } from "../src/benchmarkRepos.ts";
-import { sampleBriefs } from "../src/sampleBriefs.ts";
+import { sampleBriefs, sampleBriefsForLocale } from "../src/sampleBriefs.ts";
 import { demoFramePlan, parseCaptureArgs } from "../scripts/capture-demo-frames.mjs";
 import { parseDeployArgs } from "../scripts/deploy-gh-pages.mjs";
 import { buildBenchmarksJson, buildBenchmarksMarkdown } from "../scripts/generate-benchmarks.mjs";
@@ -119,6 +120,17 @@ describe("analyzeLocally", () => {
       assert.ok(opportunity.launchPlan.length >= 4);
       assert.ok(opportunity.risks.length >= 3);
     }
+  });
+
+  it("supports Simplified Chinese defaults and local output", () => {
+    const zhInput = defaultInputForLocale("zh-CN");
+    const result = analyzeLocally(zhInput, undefined, "zh-CN");
+
+    assert.equal(detectDefaultLocale(["zh-CN", "en-US"]), "zh-CN");
+    assert.match(zhInput.audience, /开发者/);
+    assert.match(result.summary, /可发布的 AI 应用方向/);
+    assert.match(result.opportunities[0].tagline, /写代码前/);
+    assert.match(result.opportunities[0].launchPlan.join("\n"), /透明构建日志/);
   });
 });
 
@@ -267,6 +279,24 @@ describe("model provider requests", () => {
     assert.equal(body.response_format.type, "json_object");
     assert.equal(body.messages[0].role, "system");
   });
+
+  it("asks model providers for Simplified Chinese output when locale is Chinese", () => {
+    const request = buildModelRequest(
+      defaultInputForLocale("zh-CN"),
+      {
+        provider: "openai-compatible",
+        endpoint: "",
+        apiKey: "",
+        model: ""
+      },
+      "zh-CN"
+    );
+    const body = JSON.parse(request.body);
+
+    assert.match(body.messages[0].content, /Simplified Chinese/);
+    assert.match(body.messages[0].content, /Keep ids ASCII kebab-case/);
+    assert.match(body.messages[1].content, /独立开发者/);
+  });
 });
 
 describe("generated opportunity gallery", () => {
@@ -296,6 +326,18 @@ describe("generated opportunity gallery", () => {
       assert.ok(brief.input.urgency >= 1 && brief.input.urgency <= 10);
       assert.ok(brief.input.distribution >= 1 && brief.input.distribution <= 10);
     }
+  });
+
+  it("keeps localized Chinese sample briefs aligned with the public gallery set", () => {
+    const zhBriefs = sampleBriefsForLocale("zh-CN");
+
+    assert.equal(zhBriefs.length, sampleBriefs.length);
+    assert.deepEqual(
+      zhBriefs.map((brief) => brief.id),
+      sampleBriefs.map((brief) => brief.id)
+    );
+    assert.ok(zhBriefs.every((brief) => /[\u4e00-\u9fff]/.test(`${brief.title} ${brief.input.signal}`)));
+    assert.match(zhBriefs[0].input.channels, /GitHub/);
   });
 
   it("keeps committed gallery files synchronized with sample briefs", async () => {
@@ -1339,6 +1381,8 @@ describe("launch documentation", () => {
     assert.match(readme, /Copy Launch Brief/);
     assert.match(readme, /Copy Demo Script/);
     assert.match(readme, /build log posts/);
+    assert.match(readme, /Chinese-friendly localization is built in/);
+    assert.match(readme, /Simplified Chinese UI preference/);
     assert.match(readme, /pnpm smoke:launch-exports/);
     assert.match(zhReadme, /公开发布简报/);
     assert.match(zhReadme, /发布素材包/);
@@ -1362,6 +1406,8 @@ describe("launch documentation", () => {
     assert.match(zhReadme, /Copy Launch Brief/);
     assert.match(zhReadme, /Copy Demo Script/);
     assert.match(zhReadme, /公开构建日志/);
+    assert.match(zhReadme, /中文体验是内置能力/);
+    assert.match(zhReadme, /中文本地分析结果/);
     assert.match(zhReadme, /pnpm smoke:launch-exports/);
     assert.match(zhReadme, /OpenTop 是给 AI 应用开发者用的选题雷达/);
     assert.match(zhReadme, /它主要回答三个问题/);
