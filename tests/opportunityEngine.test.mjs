@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 import { defaultInput } from "../src/domain.ts";
+import { buildGitHubIssueBody, buildReadmeBrief, buildShowHnPost } from "../src/launchExports.ts";
 import { analyzeLocally, scoreWeights } from "../src/opportunityEngine.ts";
 import { buildShareCardSvg } from "../src/shareCard.ts";
 import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
@@ -125,5 +126,20 @@ describe("share card export", () => {
 
     assert.match(svg, /A &lt;B&gt; &amp; &quot;C&quot;/);
     assert.doesNotMatch(svg, /A <B> & "C"/);
+  });
+});
+
+describe("launch text exports", () => {
+  it("builds README, Show HN, and GitHub issue artifacts from one opportunity", () => {
+    const opportunity = analyzeLocally(defaultInput).opportunities[0];
+    const readme = buildReadmeBrief(opportunity.name, opportunity);
+    const showHn = buildShowHnPost(opportunity);
+    const issue = buildGitHubIssueBody(opportunity);
+
+    assert.match(readme, new RegExp(`# ${opportunity.name}`));
+    assert.match(showHn, /^Show HN:/);
+    assert.match(issue, /## First release scope/);
+    assert.match(issue, /- \[ \] /);
+    assert.match(issue, /Star potential:/);
   });
 });

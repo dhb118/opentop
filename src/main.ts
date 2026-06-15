@@ -1,6 +1,7 @@
 import "./styles.css";
 import { analyzeOpportunity } from "./aiClient";
 import type { AnalysisResult, Opportunity, OpportunityInput, ProviderSettings } from "./domain";
+import { buildGitHubIssueBody, buildReadmeBrief, buildShowHnPost } from "./launchExports";
 import { analyzeLocally, scoreWeights } from "./opportunityEngine";
 import { sampleBriefs } from "./sampleBriefs";
 import { buildShareCardSvg } from "./shareCard";
@@ -298,6 +299,7 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
         <div class="action-row">
           <button class="secondary-action" data-copy="markdown" type="button">Copy README Brief</button>
           <button class="secondary-action" data-copy="show-hn" type="button">Copy Show HN</button>
+          <button class="secondary-action" data-copy="github-issue" type="button">Copy GitHub Issue</button>
           <button class="secondary-action" data-copy="share-url" type="button">Copy Share Link</button>
           <button class="secondary-action" data-download-card type="button">Download Card</button>
           <button class="secondary-action" data-download type="button">Download JSON</button>
@@ -445,58 +447,25 @@ function humanize(value: string): string {
   return value.replace(/[A-Z]/g, (letter) => ` ${letter}`).toLowerCase();
 }
 
-function toMarkdown(title: string, item: AnalysisResult["opportunities"][number]): string {
-  return `# ${title}
-
-${item.repoHook}
-
-## Why this can work
-
-- Target user: ${item.targetUser}
-- Wedge: ${item.wedge}
-- Differentiator: ${item.differentiator}
-- Moat: ${item.moat}
-
-## First release
-
-${item.firstRelease.map((entry) => `- ${entry}`).join("\n")}
-
-## Launch plan
-
-${item.launchPlan.map((entry) => `- ${entry}`).join("\n")}
-`;
-}
-
-function toShowHnPost(item: AnalysisResult["opportunities"][number]): string {
-  return `Show HN: ${item.name} - ${item.repoHook}
-
-I built ${item.name} for ${item.targetUser}.
-
-The wedge: ${item.wedge}
-
-Why it is different: ${item.differentiator}
-
-First release scope:
-${item.firstRelease.map((entry) => `- ${entry}`).join("\n")}
-
-Launch plan:
-${item.launchPlan.map((entry) => `- ${entry}`).join("\n")}
-`;
-}
-
 function copyPayload(mode: string | undefined, item: AnalysisResult["opportunities"][number]): string {
   if (mode === "show-hn") {
-    return toShowHnPost(item);
+    return buildShowHnPost(item);
+  }
+  if (mode === "github-issue") {
+    return buildGitHubIssueBody(item);
   }
   if (mode === "share-url") {
     return createShareUrl(currentInput, window.location.href);
   }
-  return toMarkdown(item.name, item);
+  return buildReadmeBrief(item.name, item);
 }
 
 function copyLabel(mode: string | undefined): string {
   if (mode === "show-hn") {
     return "Copy Show HN";
+  }
+  if (mode === "github-issue") {
+    return "Copy GitHub Issue";
   }
   if (mode === "share-url") {
     return "Copy Share Link";
