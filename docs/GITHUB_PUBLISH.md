@@ -112,7 +112,7 @@ pnpm build
 pnpm smoke:launch-exports
 ```
 
-The check runs the built app module in a lightweight DOM harness and verifies `Copy Launch Brief`, `Copy Launch Kit`, `Copy Star Plan`, and `Download Repo ZIP` render.
+The check runs the built app module in a lightweight DOM harness and verifies `Copy Launch Brief`, `Copy Launch Kit`, `Copy Product Hunt`, `Copy Newsletter`, `Copy Star Plan`, and `Download Repo ZIP` render.
 
 ## Fallback Demo Hosts
 
@@ -122,7 +122,7 @@ If GitHub Pages is blocked by account settings, billing, or Actions availability
 - `netlify.toml` builds with `pnpm build` and publishes `dist`.
 - `pnpm package:demo` writes `dist/opentop-demo.zip` and `dist/opentop-demo-manifest.json` for hosts that need a manual static upload.
 - `pnpm deploy:pages:branch -- --push` publishes the static build to `gh-pages` for branch-based GitHub Pages deploys.
-- `https://rawcdn.githack.com/dhb118/opentop/e9206889ac867c0b807c44116642f9fe852f1c12/` serves the verified pushed branch build while GitHub Actions is blocked.
+- `https://rawcdn.githack.com/dhb118/opentop/c649701ee280ef1e1aab6d86eb2affc98553e2d8/` serves the verified pushed branch build while GitHub Actions is blocked.
 - `docs/CLOUDFLARE_PAGES.md` explains when to upload `dist` directly and when to use the generated ZIP.
 
 After a fallback deploy passes `pnpm smoke:pages -- --url https://YOUR-DEMO-URL/`, use that URL in the GitHub About homepage and launch posts until Pages recovers.

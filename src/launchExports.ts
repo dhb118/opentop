@@ -130,6 +130,70 @@ I would like feedback on the first-release scope and whether the wedge is specif
 `;
 }
 
+export function buildProductHuntLaunchDraft(item: Opportunity): string {
+  const firstRelease = item.firstRelease.slice(0, 3).map((entry) => `- ${entry}`).join("\n");
+
+  return `# Product Hunt Launch Draft: ${item.name}
+
+## Tagline
+
+${trimForGitHubDescription(item.repoHook)}
+
+## Short Description
+
+${item.name} helps ${item.targetUser} turn an AI workflow signal into a scoped, launch-ready open-source project plan.
+
+## Maker Comment
+
+I built ${item.name} because ${item.targetUser} often see AI trends, issues, and tool ideas before they know which project is worth shipping.
+
+The demo focuses on one loop: paste a signal, compare opportunities by pain, urgency, distribution, buildability, and star potential, then copy launch artifacts for GitHub.
+
+First release proof:
+${firstRelease}
+
+I would like feedback on whether the wedge is specific enough and which export would make this more useful before a public GitHub launch.
+
+## Gallery Notes
+
+- Show the score matrix first.
+- Show one generated README or launch brief.
+- Show the share card or opportunity gallery so visitors can judge output quality quickly.
+`;
+}
+
+export function buildNewsletterPitch(item: Opportunity): string {
+  const primaryChannel = pickFirstChannel(item.launchPlan);
+  const firstSlice = item.firstRelease[0] ?? "Ship one narrow workflow that proves the wedge.";
+
+  return `Subject: ${item.name} - ${item.repoHook}
+
+Hi,
+
+I am launching ${item.name}, a TypeScript-first open-source AI tool for ${item.targetUser}.
+
+The problem: ${item.wedge}
+
+The useful loop:
+
+1. Paste a trend signal, GitHub issue, link list, or product hunch.
+2. Compare generated opportunities by pain, urgency, distribution, buildability, and star potential.
+3. Copy a README brief, launch brief, repo listing pack, contributor queue, or starter repo plan.
+
+Why it may be useful for your readers:
+
+- It runs locally without requiring an API key.
+- It makes the tradeoffs behind an AI project idea visible before code is written.
+- It produces GitHub-ready launch and contribution artifacts instead of only brainstorming text.
+
+First release slice: ${firstSlice}
+
+Best channel fit: ${primaryChannel}
+
+I would be grateful for feedback on whether the scoring dimensions match how builders actually decide which AI projects to ship.
+`;
+}
+
 export function buildGitHubIssueBody(item: Opportunity): string {
   return `## Problem
 
@@ -223,6 +287,14 @@ ${buildXThread(item).trim()}
 ## Reddit Draft
 
 ${buildRedditPost(item).trim()}
+
+## Product Hunt Draft
+
+${buildProductHuntLaunchDraft(item).trim()}
+
+## Newsletter Pitch
+
+${buildNewsletterPitch(item).trim()}
 `;
 }
 

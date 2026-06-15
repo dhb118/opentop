@@ -5,7 +5,7 @@ Use this before sending launch traffic to GitHub. The repository About panel is 
 ## GitHub About
 
 - Description: AI opportunity radar for builders who want to choose, shape, and launch open-source AI apps.
-- Website: https://rawcdn.githack.com/dhb118/opentop/e9206889ac867c0b807c44116642f9fe852f1c12/
+- Website: https://rawcdn.githack.com/dhb118/opentop/c649701ee280ef1e1aab6d86eb2affc98553e2d8/
 - Topics: `ai`, `typescript`, `startup-ideas`, `open-source`, `prompt-engineering`, `ollama`, `openai-compatible`, `ai-tools`, `developer-tools`, `launch-tools`, `github-readme`
 - Pinned issue: https://github.com/dhb118/opentop/issues/12
 - Social preview alt text: OpenTop interface showing AI opportunity scoring, sample briefs, and launch exports for open-source builders.
@@ -14,7 +14,7 @@ Use this before sending launch traffic to GitHub. The repository About panel is 
 
 ```bash
 gh repo edit dhb118/opentop --description "AI opportunity radar for builders who want to choose, shape, and launch open-source AI apps."
-gh repo edit dhb118/opentop --homepage https://rawcdn.githack.com/dhb118/opentop/e9206889ac867c0b807c44116642f9fe852f1c12/
+gh repo edit dhb118/opentop --homepage https://rawcdn.githack.com/dhb118/opentop/c649701ee280ef1e1aab6d86eb2affc98553e2d8/
 gh repo edit dhb118/opentop --enable-issues
 gh repo edit dhb118/opentop --add-topic ai --add-topic typescript --add-topic startup-ideas --add-topic open-source --add-topic prompt-engineering --add-topic ollama --add-topic openai-compatible --add-topic ai-tools --add-topic developer-tools --add-topic launch-tools --add-topic github-readme
 ```

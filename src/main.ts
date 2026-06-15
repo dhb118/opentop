@@ -7,6 +7,8 @@ import {
   buildContributorQueueMarkdown,
   buildGitHubIssueBody,
   buildLaunchKit,
+  buildNewsletterPitch,
+  buildProductHuntLaunchDraft,
   buildPublicLaunchBriefMarkdown,
   buildReadmeBrief,
   buildRedditPost,
@@ -830,7 +832,9 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
         <div class="action-row">
           <button class="secondary-action" data-copy="markdown" type="button">Copy README Brief</button>
           <button class="secondary-action" data-copy="show-hn" type="button">Copy Show HN</button>
+          <button class="secondary-action" data-copy="product-hunt" type="button">Copy Product Hunt</button>
           <button class="secondary-action" data-copy="x-thread" type="button">Copy X Thread</button>
+          <button class="secondary-action" data-copy="newsletter" type="button">Copy Newsletter</button>
           <button class="secondary-action" data-copy="reddit" type="button">Copy Reddit</button>
           <button class="secondary-action" data-copy="github-issue" type="button">Copy GitHub Issue</button>
           <button class="secondary-action" data-copy="launch-brief" type="button">Copy Launch Brief</button>
@@ -1174,6 +1178,12 @@ function copyPayload(mode: string | undefined, item: AnalysisResult["opportuniti
   if (mode === "show-hn") {
     return buildShowHnPost(item);
   }
+  if (mode === "product-hunt") {
+    return buildProductHuntLaunchDraft(item);
+  }
+  if (mode === "newsletter") {
+    return buildNewsletterPitch(item);
+  }
   if (mode === "github-issue") {
     return buildGitHubIssueBody(item);
   }
@@ -1210,6 +1220,12 @@ function copyPayload(mode: string | undefined, item: AnalysisResult["opportuniti
 function copyLabel(mode: string | undefined): string {
   if (mode === "show-hn") {
     return "Copy Show HN";
+  }
+  if (mode === "product-hunt") {
+    return "Copy Product Hunt";
+  }
+  if (mode === "newsletter") {
+    return "Copy Newsletter";
   }
   if (mode === "github-issue") {
     return "Copy GitHub Issue";

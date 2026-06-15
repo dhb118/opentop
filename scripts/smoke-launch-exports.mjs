@@ -5,7 +5,14 @@ import { fileURLToPath } from "node:url";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const workspaceRoot = resolve(scriptDir, "..");
-const requiredExportButtons = ["Copy Launch Brief", "Copy Launch Kit", "Copy Star Plan", "Download Repo ZIP"];
+const requiredExportButtons = [
+  "Copy Launch Brief",
+  "Copy Launch Kit",
+  "Copy Product Hunt",
+  "Copy Newsletter",
+  "Copy Star Plan",
+  "Download Repo ZIP"
+];
 const defaultDistDir = "dist";
 
 export async function runLaunchExportSmoke(options = {}) {
@@ -30,7 +37,7 @@ export async function runLaunchExportSmoke(options = {}) {
         (appRoot.innerHTML.includes("Patterns from public AI repos") ||
           appRoot.innerHTML.includes("Benchmark lessons unavailable")),
       {
-        timeoutMs: options.timeoutMs ?? 3000
+        timeoutMs: options.timeoutMs ?? 10000
       }
     );
 

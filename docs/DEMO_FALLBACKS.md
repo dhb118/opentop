@@ -12,8 +12,8 @@ Current verified fallback:
 
 Current verified fixed demo:
 
-- Demo URL: https://rawcdn.githack.com/dhb118/opentop/e9206889ac867c0b807c44116642f9fe852f1c12/
-- Source: `gh-pages` commit `e9206889ac867c0b807c44116642f9fe852f1c12`.
+- Demo URL: https://rawcdn.githack.com/dhb118/opentop/c649701ee280ef1e1aab6d86eb2affc98553e2d8/
+- Source: `gh-pages` commit `c649701ee280ef1e1aab6d86eb2affc98553e2d8`.
 - Use this URL in README, GitHub About, and launch posts while the branch URL is CDN-cached or GitHub Pages is blocked.
 
 Do not use jsDelivr as the primary demo URL for `index.html`: it can return the HTML with `text/plain`, which passes a plain HTTP 200 check but does not behave like a browser-hosted app.
@@ -102,7 +102,7 @@ pnpm smoke:pages -- --url https://raw.githack.com/dhb118/opentop/gh-pages/
 If the branch URL is cached, smoke the fixed rawcdn commit URL instead:
 
 ```bash
-pnpm smoke:pages -- --url https://rawcdn.githack.com/dhb118/opentop/e9206889ac867c0b807c44116642f9fe852f1c12/
+pnpm smoke:pages -- --url https://rawcdn.githack.com/dhb118/opentop/c649701ee280ef1e1aab6d86eb2affc98553e2d8/
 ```
 
 ## Release Checklist

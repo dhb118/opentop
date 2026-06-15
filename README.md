@@ -12,7 +12,7 @@ OpenTop is an AI opportunity radar for builders who want to choose, shape, and l
 
 The app is TypeScript-first, runs locally without an API key, and can optionally call OpenAI-compatible chat completion APIs, direct Anthropic Messages APIs, Anthropic on Amazon Bedrock, Anthropic on Vertex AI, or Ollama.
 
-Live demo: [verified rawcdn fallback](https://rawcdn.githack.com/dhb118/opentop/e9206889ac867c0b807c44116642f9fe852f1c12/). GitHub Pages is still blocked because GitHub Actions cannot start while the account has a billing lock, so this fixed `gh-pages` build is the public demo until Pages recovers.
+Live demo: [verified rawcdn fallback](https://rawcdn.githack.com/dhb118/opentop/c649701ee280ef1e1aab6d86eb2affc98553e2d8/). GitHub Pages is still blocked because GitHub Actions cannot start while the account has a billing lock, so this fixed `gh-pages` build is the public demo until Pages recovers.
 
 Example outputs: [Opportunity Gallery](docs/GALLERY.md), [AI Repo Benchmarks](docs/BENCHMARKS.md)
 
@@ -23,7 +23,7 @@ Launch assets: [GitHub Publish Guide](docs/GITHUB_PUBLISH.md), [Repo Profile Pac
 - Demo status: the verified fallback demo serves a fixed `gh-pages` build through rawcdn while GitHub Actions and GitHub Pages are blocked by an account billing lock.
 - Local proof: `pnpm test`, `pnpm build`, `pnpm smoke:launch-exports`, and `pnpm package:demo` verify the production app and its launch exports before any public demo link is shared.
 - Example proof: the gallery includes 14 built-in AI builder briefs covering local models, agents, RAG, evals, provider migration, release risk, and README positioning.
-- Export proof: the production bundle smoke check verifies `Copy Launch Brief`, `Copy Launch Kit`, `Copy Star Plan`, and `Download Repo ZIP`.
+- Export proof: the production bundle smoke check verifies `Copy Launch Brief`, `Copy Launch Kit`, `Copy Product Hunt`, `Copy Newsletter`, `Copy Star Plan`, and `Download Repo ZIP`.
 - Launch proof: the public launch brief, starter issues, launch playbook, and open issues [#11](https://github.com/dhb118/opentop/issues/11) / [#12](https://github.com/dhb118/opentop/issues/12) keep demo status, contributor paths, and distribution copy aligned.
 - Repo profile proof: the [Repo Profile Pack](docs/REPO_PROFILE.md) gives the exact About description, Website, topics, pinned issue, and audit command needed before broad launch traffic.
 
@@ -56,7 +56,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 - Scoring template marketplace for local-first tools, provider SDKs, agent debugging, and launch generators.
 - Transparent weighted scoring explanation for every selected opportunity.
 - Copyable Markdown brief for GitHub issues, README sections, and launch drafts.
-- Export actions for README briefs, public launch briefs, launch kits, star growth plans, GitHub repo listing packs, contributor issue queues, GitHub issue bodies, repo scaffold plans, downloadable starter ZIPs, Show HN posts, X threads, Reddit posts, and JSON opportunity records.
+- Export actions for README briefs, public launch briefs, launch kits, star growth plans, GitHub repo listing packs, contributor issue queues, GitHub issue bodies, repo scaffold plans, downloadable starter ZIPs, Show HN posts, Product Hunt drafts, X threads, newsletter pitches, Reddit posts, and JSON opportunity records.
 - Downloadable PNG and SVG share cards for selected opportunities.
 - Shareable brief links that preserve the full input signal in the URL.
 - One-click sample briefs for local models, agents, RAG, evals, provider migration, release risk, and README positioning.

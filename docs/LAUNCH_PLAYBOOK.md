@@ -17,7 +17,8 @@ This playbook turns the repository into a real GitHub launch asset.
 11. Export the selected opportunity's Star Growth Plan and use it to stage the 1, 10, 100, 1k, and 10k star loops.
 12. Review the Public Launch Brief so every post has the same demo story, proof checklist, channel sequence, and follow-up loop.
 13. Export the GitHub Repo Listing Pack and apply the About description, topics, homepage, social preview, and pinned issue before posting.
-14. Run README Star Audit and copy the 7-day sprint so top fixes have owners before broad launch.
+14. Copy the Product Hunt draft and newsletter pitch from the launch export panel.
+15. Run README Star Audit and copy the 7-day sprint so top fixes have owners before broad launch.
 
 ## Launch Copy
 
@@ -33,9 +34,10 @@ Long:
 
 - GitHub README with demo GIF above the fold.
 - Hacker News "Show HN" post with one clear before/after example.
-- Product Hunt launch with a short screen recording.
+- Product Hunt launch with a short screen recording and maker comment from the generated draft.
 - Reddit post in `r/LocalLLaMA` focused on Ollama/local mode.
 - X/Twitter thread showing 4 generated app ideas from one trend signal.
+- AI engineering newsletter pitch with the same proof points as the README and public launch brief.
 - Blog post explaining the scoring model and inviting pull requests.
 
 ## 10k Star Strategy
@@ -46,6 +48,7 @@ OpenTop cannot earn 10k stars from code alone. The repository needs compounding 
 - Public issues for every requested provider and exporter.
 - Exported Star Growth Plans that turn each selected wedge into staged proof, contribution, and distribution work.
 - Public Launch Briefs that keep demo story, proof, channel copy, and follow-up tasks aligned across launch surfaces.
+- Product Hunt drafts and newsletter pitches that reuse the strongest proof instead of inventing new copy per channel.
 - Repo listing packs that keep GitHub About metadata, topics, and pinned issues aligned with the sharpest wedge.
 - 7-day readiness sprints that convert README and repository profile gaps into launch-gate tasks.
 - A fallback demo host, `gh-pages` branch deploy, and uploadable static ZIP when GitHub Pages Actions are unavailable.
