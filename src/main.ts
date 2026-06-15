@@ -1,7 +1,7 @@
 import "./styles.css";
 import { analyzeOpportunity } from "./aiClient";
-import type { AnalysisResult, OpportunityInput, ProviderSettings } from "./domain";
-import { analyzeLocally } from "./opportunityEngine";
+import type { AnalysisResult, Opportunity, OpportunityInput, ProviderSettings } from "./domain";
+import { analyzeLocally, scoreWeights } from "./opportunityEngine";
 import { sampleBriefs } from "./sampleBriefs";
 import { buildShareCardSvg } from "./shareCard";
 import { loadInput, loadSettings, saveInput, saveSettings } from "./storage";
@@ -309,6 +309,7 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
           .map(([label, value]) => `<span><b>${value}</b>${humanize(label)}</span>`)
           .join("")}
       </div>
+      ${renderScoreMath(item)}
       <div class="detail-grid">
         ${detailBlock("Wedge", item.wedge)}
         ${detailBlock("Differentiator", item.differentiator)}
@@ -318,6 +319,32 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
         ${listBlock("Risks", item.risks)}
       </div>
     </article>
+  `;
+}
+
+function renderScoreMath(item: Opportunity): string {
+  const rows = Object.entries(scoreWeights)
+    .map(([key, weight]) => {
+      const value = item.scores[key as keyof Opportunity["scores"]];
+      return `
+        <span>
+          <b>${humanize(key)}</b>
+          <em>${value} x ${Math.round(weight * 100)}%</em>
+        </span>
+      `;
+    })
+    .join("");
+
+  return `
+    <section class="score-math" aria-label="Score explanation">
+      <div>
+        <h3>Score math</h3>
+        <p>Weighted total rounds to ${item.score}/10.</p>
+      </div>
+      <div class="score-math-grid">
+        ${rows}
+      </div>
+    </section>
   `;
 }
 

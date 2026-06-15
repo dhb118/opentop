@@ -33,6 +33,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 - Ollama-compatible endpoint support through `/v1/chat/completions`.
 - Editable opportunity assumptions: pain, urgency, and distribution.
 - Score matrix for pain, urgency, distribution, buildability, and star potential.
+- Transparent weighted scoring explanation for every selected opportunity.
 - Copyable Markdown brief for GitHub issues, README sections, and launch drafts.
 - Export actions for README briefs, Show HN posts, and JSON opportunity records.
 - Downloadable SVG share cards for selected opportunities.

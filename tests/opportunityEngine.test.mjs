@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 import { defaultInput } from "../src/domain.ts";
-import { analyzeLocally } from "../src/opportunityEngine.ts";
+import { analyzeLocally, scoreWeights } from "../src/opportunityEngine.ts";
 import { buildShareCardSvg } from "../src/shareCard.ts";
 import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
 import { buildGalleryJson, buildGalleryMarkdown } from "../scripts/generate-gallery.mjs";
@@ -32,6 +32,18 @@ describe("analyzeLocally", () => {
         assert.ok(value >= 1 && value <= 10);
       }
     }
+  });
+
+  it("uses normalized public weights for the total opportunity score", () => {
+    const totalWeight = Object.values(scoreWeights).reduce((total, weight) => total + weight, 0);
+    assert.equal(totalWeight, 1);
+
+    const opportunity = analyzeLocally(defaultInput).opportunities[0];
+    const expected = Math.round(
+      Object.entries(scoreWeights).reduce((total, [key, weight]) => total + opportunity.scores[key] * weight, 0)
+    );
+
+    assert.equal(opportunity.score, expected);
   });
 
   it("produces export-ready launch artifacts for each opportunity", () => {

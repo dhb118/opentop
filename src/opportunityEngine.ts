@@ -35,6 +35,14 @@ const releaseItems = [
   "Exportable Markdown brief for GitHub issues and Product Hunt drafts"
 ];
 
+export const scoreWeights = {
+  pain: 0.24,
+  urgency: 0.18,
+  distribution: 0.24,
+  buildability: 0.16,
+  starPotential: 0.18
+} as const satisfies Record<keyof Opportunity["scores"], number>;
+
 function clampScore(value: number): number {
   return Math.max(1, Math.min(10, Math.round(value)));
 }
@@ -66,13 +74,7 @@ function scoreOpportunity(input: OpportunityInput, index: number): Opportunity["
 }
 
 function totalScore(scores: Opportunity["scores"]): number {
-  return Math.round(
-    scores.pain * 0.24 +
-      scores.urgency * 0.18 +
-      scores.distribution * 0.24 +
-      scores.buildability * 0.16 +
-      scores.starPotential * 0.18
-  );
+  return Math.round(Object.entries(scoreWeights).reduce((total, [key, weight]) => total + scores[key as keyof Opportunity["scores"]] * weight, 0));
 }
 
 export function analyzeLocally(input: OpportunityInput): AnalysisResult {

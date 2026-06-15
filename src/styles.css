@@ -508,6 +508,51 @@ canvas {
   font: 800 28px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
 }
 
+.score-math {
+  display: grid;
+  grid-template-columns: minmax(160px, 220px) 1fr;
+  gap: 14px;
+  margin-bottom: 22px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(216, 255, 79, 0.065);
+}
+
+.score-math p {
+  margin-bottom: 0;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.score-math-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.score-math-grid span {
+  display: grid;
+  gap: 5px;
+  min-height: 58px;
+  padding: 10px;
+  border: 1px solid rgba(245, 241, 230, 0.12);
+  border-radius: 6px;
+  background: rgba(16, 19, 15, 0.42);
+}
+
+.score-math-grid b {
+  color: var(--ink);
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.score-math-grid em {
+  color: var(--acid);
+  font: 700 13px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-style: normal;
+}
+
 .detail-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -597,6 +642,11 @@ li + li {
 
   .score-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .score-math,
+  .score-math-grid {
+    grid-template-columns: 1fr;
   }
 }
 
