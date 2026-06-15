@@ -1219,15 +1219,15 @@ describe("launch documentation", () => {
     );
     assert.match(zhReadme, /billing lock/);
     assert.match(zhReadme, /90 秒试用路径/);
-    assert.match(zhReadme, /加载一个内置 AI 开发者简报/);
+    assert.match(zhReadme, /选择一个内置 AI 开发者简报/);
     assert.match(zhReadme, /复制 README 简报、Launch Kit、demo 脚本或 starter repo ZIP/);
     assert.match(zhReadme, /docs\/assets\/opentop-demo-flow\.svg/);
     assert.match(zhReadme, /仓库 Profile 包/);
     assert.match(zhReadme, /Copy Launch Brief/);
     assert.match(zhReadme, /Copy Demo Script/);
     assert.match(zhReadme, /pnpm smoke:launch-exports/);
-    assert.match(zhReadme, /OpenTop 是面向 AI 开源项目的选题雷达/);
-    assert.match(zhReadme, /输入一段市场或用户信号，OpenTop 会直接产出/);
+    assert.match(zhReadme, /OpenTop 帮 AI 开发者在写代码前判断/);
+    assert.match(zhReadme, /你会得到/);
     assert.match(zhReadme, /MVP 边界/);
     assert.match(launchBrief, /# OpenTop Public Launch Brief/);
     assert.match(launchBrief, /## Current Launch Gate/);

@@ -8,24 +8,26 @@
 
 ![OpenTop 界面截图：AI Opportunity Radar、示例简报和机会图库](docs/assets/opentop-app-screenshot.png)
 
-OpenTop 是面向 AI 开源项目的选题雷达。它把趋势、GitHub issue、竞品链接和调研笔记，整理成可比较的项目机会，帮你判断一个想法是否值得做、先做多大、怎么发布。
+OpenTop 帮 AI 开发者在写代码前判断：哪个开源 AI 应用值得做。
 
-输入一段市场或用户信号，OpenTop 会直接产出：
+粘贴趋势、GitHub issue、竞品链接或调研笔记，OpenTop 会把零散信号整理成可比较的项目机会、首版范围和发布素材。
 
-- 机会排序：按痛点、紧迫性、分发路径、可构建性和 Star 潜力打分。
-- 首版范围：给出目标用户、MVP 边界、验证步骤和主要风险。
-- 发布素材：生成 README 简报、Launch Kit、90 秒 demo 脚本、增长计划、Product Hunt/newsletter 草稿和 starter repo ZIP。
+你会得到：
 
-OpenTop 默认本地运行，不需要 API Key；需要更强生成能力时，可接入 OpenAI 兼容接口、Anthropic、Bedrock、Vertex AI 或 Ollama。
+- 做什么：按痛点、紧迫性、分发、可构建性和 Star 潜力排序。
+- 怎么做：给出目标用户、MVP 边界、验证步骤和主要风险。
+- 怎么发布：生成 README 简报、Launch Kit、90 秒 demo 脚本、增长计划和 starter repo ZIP。
 
-在线演示：[已验证的 rawcdn 备用 demo](https://rawcdn.githack.com/dhb118/opentop/8af0b223db437d2c8235232e32e85ed9b8e6ca8c/)。当前 GitHub Actions 因账号 billing lock 无法启动，GitHub Pages 仍不可用；在 Pages 恢复前，这个固定的 `gh-pages` 构建作为公开 demo。
+OpenTop 默认本地运行，不需要 API Key；需要真实模型时，可接入 OpenAI 兼容接口、Anthropic、Bedrock、Vertex AI 或 Ollama。
+
+在线演示：[已验证的 rawcdn 备用 demo](https://rawcdn.githack.com/dhb118/opentop/8af0b223db437d2c8235232e32e85ed9b8e6ca8c/)。GitHub Pages 因账号 billing lock 暂不可用，恢复前使用这个固定的 `gh-pages` 构建。
 
 90 秒试用路径：
 
-1. 打开 demo，加载一个内置 AI 开发者简报。
-2. 查看机会排序和评分解释。
+1. 打开 demo，选择一个内置 AI 开发者简报。
+2. 查看机会排序和评分理由。
 3. 复制 README 简报、Launch Kit、demo 脚本或 starter repo ZIP。
-4. 把结果用作 GitHub issue、README 片段、Product Hunt 草稿或贡献任务。
+4. 把结果发到 GitHub issue、README、Product Hunt 或贡献任务。
 
 ![OpenTop 90 秒 demo flow：输入信号、机会排序、评分证明和发布导出](docs/assets/opentop-demo-flow.svg)
 
