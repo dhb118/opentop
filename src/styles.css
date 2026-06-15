@@ -161,6 +161,19 @@ form {
   margin-top: 14px;
 }
 
+.import-actions {
+  display: grid;
+  grid-template-columns: minmax(132px, max-content) 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.import-actions span {
+  min-height: 18px;
+  color: var(--muted);
+  font: 700 12px/1.3 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
 .sample-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -656,7 +669,8 @@ li + li {
   }
 
   .score-math,
-  .score-math-grid {
+  .score-math-grid,
+  .import-actions {
     grid-template-columns: 1fr;
   }
 }

@@ -41,7 +41,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 - Shareable brief links that preserve the full input signal in the URL.
 - One-click sample briefs for local models, agents, prompt regression, and README positioning.
 - In-app opportunity gallery with scored examples and share links.
-- CSV trend import for turning research rows into signal briefs.
+- CSV, Markdown, and notes import for turning research snippets into signal briefs.
 - Responsive single-page interface built with Vite and TypeScript.
 
 ## Quick Start

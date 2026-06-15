@@ -2,6 +2,17 @@ export interface TrendSignalImport {
   signal: string;
   channels: string;
   rowCount: number;
+  ignoredCount: number;
+  format: "csv" | "notes";
+}
+
+interface TrendItem {
+  source: string;
+  signal: string;
+}
+
+export function parseTrendSignals(input: string): TrendSignalImport | null {
+  return looksLikeCsv(input) ? parseTrendCsv(input) : parseTrendNotes(input);
 }
 
 export function parseTrendCsv(csv: string): TrendSignalImport | null {
@@ -19,27 +30,87 @@ export function parseTrendCsv(csv: string): TrendSignalImport | null {
   const sourceIndex = findIndex(header, ["source", "channel", "platform"]);
   const signalIndex = findIndex(header, ["signal", "note", "trend", "summary"]);
 
-  const items = body
-    .map((row) => {
-      const source = cleanCell(row[hasHeader && sourceIndex >= 0 ? sourceIndex : 0]);
-      const signal = cleanCell(row[hasHeader && signalIndex >= 0 ? signalIndex : row.length > 1 ? 1 : 0]);
-      return signal ? { source, signal } : null;
-    })
-    .filter((item): item is { source: string; signal: string } => Boolean(item))
-    .slice(0, 12);
+  const parsed = body.map((row) => {
+    const source = cleanCell(row[hasHeader && sourceIndex >= 0 ? sourceIndex : 0]);
+    const signal = cleanCell(row[hasHeader && signalIndex >= 0 ? signalIndex : row.length > 1 ? 1 : 0]);
+    return signal ? { source, signal } : null;
+  });
+  const items = parsed.filter((item): item is TrendItem => Boolean(item)).slice(0, 12);
 
   if (items.length === 0) {
     return null;
   }
 
+  return {
+    ...buildImport(items),
+    ignoredCount: parsed.length - items.length,
+    format: "csv"
+  };
+}
+
+export function parseTrendNotes(notes: string): TrendSignalImport | null {
+  const parsed = notes
+    .split(/\r?\n/)
+    .map(cleanNoteLine)
+    .filter((line) => line.length > 0)
+    .map(parseNoteLine);
+  const items = parsed.filter((item): item is TrendItem => Boolean(item)).slice(0, 12);
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  return {
+    ...buildImport(items),
+    ignoredCount: parsed.length - items.length,
+    format: "notes"
+  };
+}
+
+function buildImport(items: TrendItem[]): Pick<TrendSignalImport, "signal" | "channels" | "rowCount"> {
   const channels = Array.from(new Set(items.map((item) => item.source).filter(Boolean))).join(", ");
   const signal = items.map((item) => `${item.source ? `${item.source}: ` : ""}${item.signal}`).join("\n");
 
   return {
-    signal,
     channels,
-    rowCount: items.length
+    rowCount: items.length,
+    signal
   };
+}
+
+function looksLikeCsv(input: string): boolean {
+  const lines = input
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (lines.length === 0) {
+    return false;
+  }
+
+  const first = lines[0].toLowerCase();
+  return first.includes(",") && (first.includes("source") || first.includes("signal") || first.includes("channel"));
+}
+
+function cleanNoteLine(line: string): string {
+  return line
+    .replace(/^\s{0,3}[-*+]\s+/, "")
+    .replace(/^\s{0,3}\d+[.)]\s+/, "")
+    .replace(/^>\s?/, "")
+    .trim();
+}
+
+function parseNoteLine(line: string): TrendItem | null {
+  const withoutLinks = line.replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1 $2");
+  const match = withoutLinks.match(/^([^:|-]{2,32})\s*[:|-]\s*(.+)$/);
+  const source = cleanCell(match?.[1]);
+  const signal = cleanCell(match?.[2] ?? withoutLinks);
+
+  if (signal.length < 12) {
+    return null;
+  }
+
+  return { source, signal };
 }
 
 function parseCsvRows(csv: string): string[][] {

@@ -6,7 +6,7 @@ import { buildGitHubIssueBody, buildReadmeBrief, buildRepoScaffoldPlan, buildSho
 import { parseModelAnalysis } from "../src/modelResponse.ts";
 import { analyzeLocally, scoreWeights } from "../src/opportunityEngine.ts";
 import { buildShareCardSvg } from "../src/shareCard.ts";
-import { parseTrendCsv } from "../src/trendImport.ts";
+import { parseTrendCsv, parseTrendNotes, parseTrendSignals } from "../src/trendImport.ts";
 import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
 import { buildGalleryJson, buildGalleryMarkdown } from "../scripts/generate-gallery.mjs";
 import { extractAssetUrls, resolveSmokeOptions } from "../scripts/smoke-pages.mjs";
@@ -173,6 +173,40 @@ Issues,Maintainers need better README positioning`);
 
   it("returns null when no usable signal exists", () => {
     assert.equal(parseTrendCsv("source,signal\n,"), null);
+  });
+});
+
+describe("trend notes import", () => {
+  it("turns Markdown bullets into a signal brief", () => {
+    const parsed = parseTrendNotes(`- HN: Developers want local-first AI debugging
+- GitHub: Prompt regression tools are getting starred
+- Reddit: Local model setup is still painful`);
+
+    assert.equal(parsed?.format, "notes");
+    assert.equal(parsed?.rowCount, 3);
+    assert.equal(parsed?.ignoredCount, 0);
+    assert.equal(parsed?.channels, "HN, GitHub, Reddit");
+    assert.match(parsed?.signal ?? "", /HN: Developers want local-first AI debugging/);
+  });
+
+  it("keeps Markdown link text and URL when importing notes", () => {
+    const parsed = parseTrendNotes(`* GitHub: [Maintainers want release notes](https://github.com/example/repo/issues/1)`);
+
+    assert.equal(parsed?.rowCount, 1);
+    assert.match(parsed?.signal ?? "", /Maintainers want release notes https:\/\/github.com\/example\/repo\/issues\/1/);
+  });
+
+  it("auto-detects CSV while accepting notes by default", () => {
+    assert.equal(parseTrendSignals("source,signal\nHN,Builders want smaller AI tools")?.format, "csv");
+    assert.equal(parseTrendSignals("- HN: Builders want smaller AI tools")?.format, "notes");
+  });
+
+  it("counts short noise lines as ignored notes", () => {
+    const parsed = parseTrendNotes(`todo
+- GitHub: Maintainers need prompt regression examples`);
+
+    assert.equal(parsed?.rowCount, 1);
+    assert.equal(parsed?.ignoredCount, 1);
   });
 });
 

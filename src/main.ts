@@ -6,7 +6,7 @@ import { analyzeLocally, scoreWeights } from "./opportunityEngine";
 import { sampleBriefs } from "./sampleBriefs";
 import { buildShareCardSvg } from "./shareCard";
 import { loadInput, loadSettings, saveInput, saveSettings } from "./storage";
-import { parseTrendCsv } from "./trendImport";
+import { parseTrendSignals } from "./trendImport";
 import { createShareUrl, readBriefFromSearch } from "./urlState";
 
 const appRoot = requireAppRoot();
@@ -53,12 +53,15 @@ function render(): void {
             </section>
 
             <details class="import-panel">
-              <summary>Import Trend CSV</summary>
+              <summary>Import Trend Signals</summary>
               <label>
-                Trend rows
-                <textarea name="trendCsv" rows="5" placeholder="source,signal&#10;HN,Developers want local-first AI debugging&#10;GitHub,Prompt regression tools are getting starred"></textarea>
+                Paste CSV, bullets, or notes
+                <textarea name="trendSignals" rows="5" placeholder="HN: Developers want local-first AI debugging&#10;- GitHub: Prompt regression tools are getting starred&#10;- Reddit: Local model setup is still painful"></textarea>
               </label>
-              <button class="secondary-action" data-import-csv type="button">Use CSV Signals</button>
+              <div class="import-actions">
+                <button class="secondary-action" data-import-trends type="button">Use Signals</button>
+                <span data-import-feedback aria-live="polite"></span>
+              </div>
             </details>
 
             <form id="briefForm">
@@ -199,18 +202,20 @@ function bindEvents(): void {
     });
   });
 
-  document.querySelector<HTMLButtonElement>("[data-import-csv]")?.addEventListener("click", () => {
-    const input = document.querySelector<HTMLTextAreaElement>("[name='trendCsv']");
-    const parsed = parseTrendCsv(input?.value ?? "");
+  document.querySelector<HTMLButtonElement>("[data-import-trends]")?.addEventListener("click", () => {
+    const input = document.querySelector<HTMLTextAreaElement>("[name='trendSignals']");
+    const feedback = document.querySelector<HTMLSpanElement>("[data-import-feedback]");
+    const parsed = parseTrendSignals(input?.value ?? "");
     if (!parsed) {
-      const button = document.querySelector<HTMLButtonElement>("[data-import-csv]");
-      if (button) {
-        button.textContent = "No valid rows";
-        window.setTimeout(() => {
-          button.textContent = "Use CSV Signals";
-        }, 1400);
+      if (feedback) {
+        feedback.textContent = "No usable signals found";
       }
       return;
+    }
+    if (feedback) {
+      feedback.textContent = `Imported ${parsed.rowCount} ${parsed.format === "csv" ? "CSV rows" : "notes"}${
+        parsed.ignoredCount > 0 ? `, skipped ${parsed.ignoredCount}` : ""
+      }`;
     }
     currentInput = {
       ...currentInput,
