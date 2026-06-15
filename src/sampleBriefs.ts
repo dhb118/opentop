@@ -202,5 +202,33 @@ export const sampleBriefs: SampleBrief[] = [
       urgency: 7,
       distribution: 9
     }
+  },
+  {
+    id: "mcp-server-contract-tester",
+    title: "MCP server contract tester",
+    input: {
+      audience: "developers exposing internal tools, data sources, and automation APIs through MCP servers",
+      signal:
+        "MCP servers are easy to prototype but hard to trust because schema drift, auth assumptions, tool side effects, and model-facing descriptions often break after small changes.",
+      constraints: "TypeScript, local test harness, records tool schemas, mocks dangerous calls, exports GitHub-ready regression reports",
+      channels: "GitHub, MCP communities, AI agent newsletters, DevTools blogs, Hacker News",
+      pain: 9,
+      urgency: 8,
+      distribution: 8
+    }
+  },
+  {
+    id: "ai-coding-agent-pr-triage",
+    title: "AI coding agent PR triage",
+    input: {
+      audience: "open-source maintainers receiving AI-generated pull requests, issue fixes, and automated refactors",
+      signal:
+        "Maintainers need a fast way to separate useful AI-generated contributions from risky churn, missing tests, broad rewrites, and changes that ignore project conventions.",
+      constraints: "TypeScript, GitHub issue and diff import, local scoring, no repository write access, exports review checklists",
+      channels: "GitHub, maintainer communities, AI coding newsletters, DevTools forums, Hacker News",
+      pain: 8,
+      urgency: 8,
+      distribution: 9
+    }
   }
 ];

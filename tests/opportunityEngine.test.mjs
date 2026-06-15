@@ -268,12 +268,14 @@ describe("model provider requests", () => {
 
 describe("generated opportunity gallery", () => {
   it("includes enough concrete sample briefs for a public launch", () => {
-    assert.ok(sampleBriefs.length >= 14);
+    assert.ok(sampleBriefs.length >= 16);
     assert.ok(sampleBriefs.some((brief) => brief.id === "agent-memory-inspector"));
     assert.ok(sampleBriefs.some((brief) => brief.id === "local-vector-index-doctor"));
     assert.ok(sampleBriefs.some((brief) => brief.id === "model-routing-playground"));
     assert.ok(sampleBriefs.some((brief) => brief.id === "ai-release-risk-reviewer"));
     assert.ok(sampleBriefs.some((brief) => brief.id === "support-thread-signal-miner"));
+    assert.ok(sampleBriefs.some((brief) => brief.id === "mcp-server-contract-tester"));
+    assert.ok(sampleBriefs.some((brief) => brief.id === "ai-coding-agent-pr-triage"));
 
     const localOrAgentBriefs = sampleBriefs.filter((brief) =>
       /local|agent/i.test(`${brief.title} ${brief.input.audience} ${brief.input.signal} ${brief.input.constraints}`)
@@ -992,7 +994,7 @@ describe("Pages smoke check helpers", () => {
 
     assert.equal(
       packageJson.homepage,
-      "https://rawcdn.githack.com/dhb118/opentop/5bb91b3f4d97f6502db365a7b3b17d908460e50d/"
+      "https://rawcdn.githack.com/dhb118/opentop/8af0b223db437d2c8235232e32e85ed9b8e6ca8c/"
     );
     assert.equal(packageJson.scripts["package:demo"], "node scripts/package-demo.mjs");
     assert.equal(packageJson.scripts["deploy:pages:branch"], "node scripts/deploy-gh-pages.mjs");
@@ -1010,7 +1012,7 @@ describe("Pages smoke check helpers", () => {
     assert.match(fallbackDoc, /pnpm package:demo/);
     assert.match(
       fallbackDoc,
-      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/5bb91b3f4d97f6502db365a7b3b17d908460e50d\//
+      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/8af0b223db437d2c8235232e32e85ed9b8e6ca8c\//
     );
     assert.match(fallbackDoc, /billing issue/);
     assert.match(fallbackDoc, /text\/plain/);
@@ -1186,11 +1188,12 @@ describe("launch documentation", () => {
     assert.match(readme, /Launch Media Kit/);
     assert.match(readme, /Cloudflare Pages Direct Upload/);
     assert.match(readme, /## Launch Evidence/);
-    assert.match(readme, /14 built-in AI builder briefs/);
+    assert.match(readme, /16 built-in AI builder briefs/);
+    assert.match(readme, /MCP servers/);
     assert.match(readme, /https:\/\/github\.com\/dhb118\/opentop\/issues\/12/);
     assert.match(
       readme,
-      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/5bb91b3f4d97f6502db365a7b3b17d908460e50d\//
+      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/8af0b223db437d2c8235232e32e85ed9b8e6ca8c\//
     );
     assert.match(readme, /billing lock/);
     assert.match(readme, /Try it in 90 seconds/);
@@ -1204,11 +1207,12 @@ describe("launch documentation", () => {
     assert.match(zhReadme, /发布素材包/);
     assert.match(zhReadme, /Cloudflare Pages 直传/);
     assert.match(zhReadme, /## 发布证据/);
-    assert.match(zhReadme, /14 个内置 AI 开发者简报/);
+    assert.match(zhReadme, /16 个内置 AI 开发者简报/);
+    assert.match(zhReadme, /MCP server/);
     assert.match(zhReadme, /https:\/\/github\.com\/dhb118\/opentop\/issues\/12/);
     assert.match(
       zhReadme,
-      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/5bb91b3f4d97f6502db365a7b3b17d908460e50d\//
+      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/8af0b223db437d2c8235232e32e85ed9b8e6ca8c\//
     );
     assert.match(zhReadme, /billing lock/);
     assert.match(zhReadme, /90 秒试用路径/);
@@ -1230,7 +1234,7 @@ describe("launch documentation", () => {
     assert.match(launchBrief, /newsletter drafts/);
     assert.match(
       launchBrief,
-      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/5bb91b3f4d97f6502db365a7b3b17d908460e50d\//
+      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/8af0b223db437d2c8235232e32e85ed9b8e6ca8c\//
     );
     assert.match(starterIssues, /Enable the working GitHub Pages branch demo/);
     assert.match(starterIssues, /#11 Fix GitHub Pages custom domain redirect/);
@@ -1267,7 +1271,7 @@ describe("launch documentation", () => {
     assert.match(repoProfileDoc, /# OpenTop GitHub Repo Profile Pack/);
     assert.match(
       repoProfileDoc,
-      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/5bb91b3f4d97f6502db365a7b3b17d908460e50d\//
+      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/8af0b223db437d2c8235232e32e85ed9b8e6ca8c\//
     );
     assert.match(repoProfileDoc, /--add-topic github-readme/);
     assert.match(contributing, /## Find Work/);

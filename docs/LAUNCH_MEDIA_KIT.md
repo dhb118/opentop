@@ -5,7 +5,7 @@ Use this kit before posting OpenTop to GitHub, Product Hunt, Hacker News, Reddit
 ## Core Assets
 
 - Primary screenshot: [OpenTop app screenshot](assets/opentop-app-screenshot.png).
-- Hosted demo: [verified rawcdn fallback](https://rawcdn.githack.com/dhb118/opentop/5bb91b3f4d97f6502db365a7b3b17d908460e50d/).
+- Hosted demo: [verified rawcdn fallback](https://rawcdn.githack.com/dhb118/opentop/8af0b223db437d2c8235232e32e85ed9b8e6ca8c/).
 - Repo profile alt text: OpenTop interface showing AI opportunity scoring, sample briefs, and launch exports for open-source builders.
 
 ## 90-Second Demo Recording

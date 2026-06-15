@@ -64,7 +64,7 @@ Keep the gallery full of recognizable AI developer workflows that make OpenTop e
 
 Acceptance:
 
-- At least 14 briefs are available in the built-in library.
+- At least 16 briefs are available in the built-in library.
 - Each brief has a specific audience, signal, constraints, channels, and score inputs.
 - At least seven briefs focus on local-first AI or agent debugging.
 - `pnpm generate:gallery` updates the public gallery JSON and docs.

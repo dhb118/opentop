@@ -169,3 +169,27 @@ Constraints: TypeScript, paste-only import, local clustering, no customer data u
 Channels: GitHub, founder communities, support engineering blogs, Product Hunt, developer newsletters.
 
 Scores: pain 8/10, urgency 7/10, distribution 9/10.
+
+## MCP server contract tester
+
+Audience: developers exposing internal tools, data sources, and automation APIs through MCP servers.
+
+Signal: MCP servers are easy to prototype but hard to trust because schema drift, auth assumptions, tool side effects, and model-facing descriptions often break after small changes.
+
+Constraints: TypeScript, local test harness, records tool schemas, mocks dangerous calls, exports GitHub-ready regression reports.
+
+Channels: GitHub, MCP communities, AI agent newsletters, DevTools blogs, Hacker News.
+
+Scores: pain 9/10, urgency 8/10, distribution 8/10.
+
+## AI coding agent PR triage
+
+Audience: open-source maintainers receiving AI-generated pull requests, issue fixes, and automated refactors.
+
+Signal: Maintainers need a fast way to separate useful AI-generated contributions from risky churn, missing tests, broad rewrites, and changes that ignore project conventions.
+
+Constraints: TypeScript, GitHub issue and diff import, local scoring, no repository write access, exports review checklists.
+
+Channels: GitHub, maintainer communities, AI coding newsletters, DevTools forums, Hacker News.
+
+Scores: pain 8/10, urgency 8/10, distribution 9/10.

@@ -12,7 +12,7 @@ OpenTop is an AI opportunity radar for builders who want to choose, shape, and l
 
 The app is TypeScript-first, runs locally without an API key, and can optionally call OpenAI-compatible chat completion APIs, direct Anthropic Messages APIs, Anthropic on Amazon Bedrock, Anthropic on Vertex AI, or Ollama.
 
-Live demo: [verified rawcdn fallback](https://rawcdn.githack.com/dhb118/opentop/5bb91b3f4d97f6502db365a7b3b17d908460e50d/). GitHub Pages is still blocked because GitHub Actions cannot start while the account has a billing lock, so this fixed `gh-pages` build is the public demo until Pages recovers.
+Live demo: [verified rawcdn fallback](https://rawcdn.githack.com/dhb118/opentop/8af0b223db437d2c8235232e32e85ed9b8e6ca8c/). GitHub Pages is still blocked because GitHub Actions cannot start while the account has a billing lock, so this fixed `gh-pages` build is the public demo until Pages recovers.
 
 Try it in 90 seconds:
 
@@ -29,7 +29,7 @@ Launch assets: [GitHub Publish Guide](docs/GITHUB_PUBLISH.md), [Repo Profile Pac
 
 - Demo status: the verified fallback demo serves a fixed `gh-pages` build through rawcdn while GitHub Actions and GitHub Pages are blocked by an account billing lock.
 - Local proof: `pnpm test`, `pnpm build`, `pnpm smoke:launch-exports`, and `pnpm package:demo` verify the production app and its launch exports before any public demo link is shared.
-- Example proof: the gallery includes 14 built-in AI builder briefs covering local models, agents, RAG, evals, provider migration, release risk, and README positioning.
+- Example proof: the gallery includes 16 built-in AI builder briefs covering local models, agents, MCP servers, RAG, evals, provider migration, release risk, and README positioning.
 - Export proof: the production bundle smoke check verifies `Copy Launch Brief`, `Copy Launch Kit`, `Copy Product Hunt`, `Copy Demo Script`, `Copy Newsletter`, `Copy Star Plan`, and `Download Repo ZIP`.
 - Launch proof: the public launch brief, starter issues, launch playbook, and open issues [#11](https://github.com/dhb118/opentop/issues/11) / [#12](https://github.com/dhb118/opentop/issues/12) keep demo status, contributor paths, and distribution copy aligned.
 - Repo profile proof: the [Repo Profile Pack](docs/REPO_PROFILE.md) gives the exact About description, Website, topics, pinned issue, and audit command needed before broad launch traffic.
