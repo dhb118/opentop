@@ -29,6 +29,45 @@ export interface GitHubReadmeFetchResult {
   readme: string;
 }
 
+export interface GitHubRepoStats {
+  description: string;
+  homepage: string;
+  topics: string[];
+  stars: number;
+  forks: number;
+  openIssues: number;
+  license: string;
+  hasIssues: boolean;
+  archived: boolean;
+}
+
+export interface RepoProfileItem {
+  id: string;
+  label: string;
+  passed: boolean;
+  weight: number;
+  evidence: string;
+  fix: string;
+}
+
+export interface GitHubRepoStarProfile {
+  score: number;
+  grade: "growth-ready" | "promising" | "needs-foundation";
+  summary: string;
+  stats: GitHubRepoStats;
+  items: RepoProfileItem[];
+  topFixes: RepoProfileItem[];
+}
+
+interface RepoProfileRule {
+  id: string;
+  label: string;
+  weight: number;
+  test: (stats: GitHubRepoStats) => boolean;
+  evidence: (stats: GitHubRepoStats) => string;
+  fix: string;
+}
+
 interface AuditRule {
   id: string;
   label: string;
@@ -115,6 +154,73 @@ const auditRules: AuditRule[] = [
   }
 ];
 
+const repoProfileRules: RepoProfileRule[] = [
+  {
+    id: "description",
+    label: "Searchable description",
+    weight: 16,
+    test: (stats) => stats.description.length >= 30,
+    evidence: (stats) => `Description is ${stats.description.length} characters.`,
+    fix: "Add a specific GitHub About description that names the user and outcome."
+  },
+  {
+    id: "homepage",
+    label: "Homepage or demo link",
+    weight: 14,
+    test: (stats) => /^https?:\/\//i.test(stats.homepage),
+    evidence: (stats) => `Homepage points to ${stats.homepage}.`,
+    fix: "Add a working homepage, hosted demo, or docs URL in the repository About panel."
+  },
+  {
+    id: "topics",
+    label: "Discovery topics",
+    weight: 14,
+    test: (stats) => stats.topics.length >= 3,
+    evidence: (stats) => `Repository has ${stats.topics.length} topics: ${stats.topics.slice(0, 5).join(", ")}.`,
+    fix: "Add at least three GitHub topics that match the audience and AI workflow."
+  },
+  {
+    id: "license",
+    label: "Clear license",
+    weight: 12,
+    test: (stats) => stats.license.length > 0,
+    evidence: (stats) => `License is ${stats.license}.`,
+    fix: "Add a standard open-source license so visitors know they can use and fork the project."
+  },
+  {
+    id: "issues",
+    label: "Contributor entry points",
+    weight: 10,
+    test: (stats) => stats.hasIssues && stats.openIssues > 0,
+    evidence: (stats) => `${stats.openIssues} open issue${stats.openIssues === 1 ? "" : "s"} are visible.`,
+    fix: "Enable issues and open a few starter tasks for docs, examples, providers, or integrations."
+  },
+  {
+    id: "forkability",
+    label: "Forkability signal",
+    weight: 10,
+    test: (stats) => stats.forks > 0,
+    evidence: (stats) => `${stats.forks} fork${stats.forks === 1 ? "" : "s"} show reuse interest.`,
+    fix: "Add starter templates, example outputs, or contribution tasks that make forking obvious."
+  },
+  {
+    id: "traction",
+    label: "Initial traction",
+    weight: 12,
+    test: (stats) => stats.stars > 0,
+    evidence: (stats) => `${stats.stars} star${stats.stars === 1 ? "" : "s"} are visible.`,
+    fix: "Share the repository with a small trusted audience to get the first stars and feedback."
+  },
+  {
+    id: "active",
+    label: "Active repository",
+    weight: 12,
+    test: (stats) => !stats.archived,
+    evidence: () => "Repository is not archived.",
+    fix: "Unarchive the repository before asking visitors to try, star, or contribute."
+  }
+];
+
 export function parseGitHubRepoUrl(input: string): GitHubReadmeReference | null {
   const trimmed = input.trim();
   const shorthand = trimmed.match(/^([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)$/);
@@ -177,6 +283,28 @@ export async function fetchGitHubReadme(
   };
 }
 
+export async function fetchGitHubRepoProfile(
+  repoUrl: string,
+  fetchImpl: typeof fetch = fetch
+): Promise<GitHubRepoStarProfile> {
+  const reference = parseGitHubRepoUrl(repoUrl);
+  if (!reference) {
+    throw new Error("Paste a GitHub repository URL like https://github.com/owner/repo or owner/repo.");
+  }
+
+  const response = await fetchImpl(`https://api.github.com/repos/${reference.owner}/${reference.repo}`, {
+    headers: {
+      Accept: "application/vnd.github+json"
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Could not fetch repository profile for ${reference.owner}/${reference.repo}: ${response.status}`);
+  }
+
+  return buildGitHubRepoStarProfile(readGitHubRepoStats(await response.json()));
+}
+
 export function auditReadmeForStars(readme: string): ReadmeStarAudit {
   const normalized = readme.trim();
   const items = auditRules.map((rule) => {
@@ -212,6 +340,36 @@ export function auditReadmeForStars(readme: string): ReadmeStarAudit {
   };
 }
 
+export function buildGitHubRepoStarProfile(stats: GitHubRepoStats): GitHubRepoStarProfile {
+  const items = repoProfileRules.map((rule) => {
+    const passed = rule.test(stats);
+    return {
+      id: rule.id,
+      label: rule.label,
+      passed,
+      weight: rule.weight,
+      evidence: passed ? rule.evidence(stats) : "Missing or too weak for a first-pass GitHub visitor.",
+      fix: rule.fix
+    };
+  });
+  const totalWeight = items.reduce((total, item) => total + item.weight, 0);
+  const earnedWeight = items.reduce((total, item) => total + (item.passed ? item.weight : 0), 0);
+  const score = Math.round((earnedWeight / totalWeight) * 100);
+  const topFixes = items
+    .filter((item) => !item.passed)
+    .sort((a, b) => b.weight - a.weight)
+    .slice(0, 3);
+
+  return {
+    score,
+    grade: repoProfileGradeForScore(score),
+    summary: repoProfileSummary(score, topFixes),
+    stats,
+    items,
+    topFixes
+  };
+}
+
 export function formatReadmeStarAudit(audit: ReadmeStarAudit): string {
   const statusRows = audit.items
     .map((item) => `- ${item.passed ? "[x]" : "[ ]"} ${item.label}: ${item.passed ? item.evidence : item.fix}`)
@@ -227,6 +385,41 @@ Score: ${audit.score}/100
 Grade: ${audit.grade}
 
 ${audit.summary}
+
+## Top Fixes
+
+${topFixes}
+
+## Checklist
+
+${statusRows}
+`;
+}
+
+export function formatGitHubRepoStarProfile(profile: GitHubRepoStarProfile): string {
+  const statusRows = profile.items
+    .map((item) => `- ${item.passed ? "[x]" : "[ ]"} ${item.label}: ${item.passed ? item.evidence : item.fix}`)
+    .join("\n");
+  const topFixes =
+    profile.topFixes.length > 0
+      ? profile.topFixes.map((item, index) => `${index + 1}. ${item.fix}`).join("\n")
+      : "No critical repository profile gaps found. Keep the demo URL, topics, and starter issues current.";
+
+  return `# GitHub Star Profile
+
+Score: ${profile.score}/100
+Grade: ${profile.grade}
+
+${profile.summary}
+
+## Repository Snapshot
+
+- Stars: ${profile.stats.stars}
+- Forks: ${profile.stats.forks}
+- Open issues: ${profile.stats.openIssues}
+- Topics: ${profile.stats.topics.length > 0 ? profile.stats.topics.join(", ") : "none"}
+- License: ${profile.stats.license || "none"}
+- Homepage: ${profile.stats.homepage || "none"}
 
 ## Top Fixes
 
@@ -258,6 +451,30 @@ function summaryForScore(score: number, topFixes: ReadmeAuditItem[]): string {
   return `The README has a usable foundation. The fastest lift is: ${topFixes.map((item) => item.label).join(", ")}.`;
 }
 
+function repoProfileGradeForScore(score: number): GitHubRepoStarProfile["grade"] {
+  if (score >= 82) {
+    return "growth-ready";
+  }
+  if (score >= 58) {
+    return "promising";
+  }
+  return "needs-foundation";
+}
+
+function repoProfileSummary(score: number, topFixes: RepoProfileItem[]): string {
+  if (topFixes.length === 0) {
+    return "The repository profile has the public metadata, trust, and contributor signals needed for a stronger launch.";
+  }
+  if (score < 40) {
+    return `The repository profile needs foundation work before a serious star push. Start with: ${topFixes
+      .map((item) => item.label)
+      .join(", ")}.`;
+  }
+  return `The repository profile has some launch signal. The fastest public lift is: ${topFixes
+    .map((item) => item.label)
+    .join(", ")}.`;
+}
+
 function buildGitHubReadmeReference(owner: string, repo: string): GitHubReadmeReference {
   return {
     owner,
@@ -281,6 +498,31 @@ function decodeGitHubReadmePayload(payload: unknown): string {
   }
 
   return decodeBase64Utf8(content.replace(/\s+/g, ""));
+}
+
+function readGitHubRepoStats(payload: unknown): GitHubRepoStats {
+  const record = payload && typeof payload === "object" ? (payload as Record<string, unknown>) : {};
+  const license = record.license && typeof record.license === "object" ? (record.license as Record<string, unknown>) : {};
+
+  return {
+    description: readText(record.description),
+    homepage: readText(record.homepage),
+    topics: Array.isArray(record.topics) ? record.topics.filter((topic): topic is string => typeof topic === "string") : [],
+    stars: readNumber(record.stargazers_count),
+    forks: readNumber(record.forks_count),
+    openIssues: readNumber(record.open_issues_count),
+    license: readText(license.spdx_id) || readText(license.name),
+    hasIssues: record.has_issues === true,
+    archived: record.archived === true
+  };
+}
+
+function readText(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function readNumber(value: unknown): number {
+  return typeof value === "number" && Number.isFinite(value) ? Math.max(0, Math.round(value)) : 0;
 }
 
 function decodeBase64Utf8(value: string): string {

@@ -224,6 +224,59 @@ form {
   background: rgba(16, 19, 15, 0.42);
 }
 
+.repo-profile-result {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(50, 220, 192, 0.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(50, 220, 192, 0.09), transparent 42%),
+    rgba(16, 19, 15, 0.42);
+}
+
+.repo-profile-heading {
+  display: grid;
+  gap: 8px;
+}
+
+.repo-profile-heading h3 {
+  margin-bottom: 0;
+}
+
+.repo-profile-heading p,
+.repo-profile-result li {
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.repo-profile-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.repo-profile-stats span {
+  min-height: 54px;
+  padding: 8px;
+  border: 1px solid rgba(50, 220, 192, 0.2);
+  border-radius: 8px;
+  background: rgba(50, 220, 192, 0.055);
+  color: var(--muted);
+  font: 700 11px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.repo-profile-stats b {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--ink);
+  font: 800 14px/1.15 ui-monospace, SFMono-Regular, Consolas, monospace;
+  text-transform: none;
+  overflow-wrap: anywhere;
+}
+
 .readme-audit-score {
   display: grid;
   grid-template-columns: minmax(76px, max-content) 1fr;
@@ -986,7 +1039,8 @@ li + li {
   .template-grid,
   .import-actions,
   .readme-audit-actions,
-  .readme-audit-checks {
+  .readme-audit-checks,
+  .repo-profile-stats {
     grid-template-columns: 1fr;
   }
 }

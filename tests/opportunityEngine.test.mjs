@@ -18,7 +18,10 @@ import { analyzeLocally, scoreWeights, totalScore } from "../src/opportunityEngi
 import { buildOpportunityJsonExport } from "../src/opportunityJsonExport.ts";
 import {
   auditReadmeForStars,
+  buildGitHubRepoStarProfile,
+  fetchGitHubRepoProfile,
   fetchGitHubReadme,
+  formatGitHubRepoStarProfile,
   formatReadmeStarAudit,
   parseGitHubRepoUrl
 } from "../src/readmeAudit.ts";
@@ -493,6 +496,53 @@ TODO`);
       })),
       /Could not fetch README/
     );
+  });
+
+  it("scores GitHub repository profile signals", () => {
+    const profile = buildGitHubRepoStarProfile({
+      description: "A local-first TypeScript workbench for debugging AI agent runs.",
+      homepage: "https://example.com/local-agent",
+      topics: ["ai", "typescript", "agents"],
+      stars: 42,
+      forks: 5,
+      openIssues: 8,
+      license: "MIT",
+      hasIssues: true,
+      archived: false
+    });
+    const markdown = formatGitHubRepoStarProfile(profile);
+
+    assert.equal(profile.grade, "growth-ready");
+    assert.equal(profile.topFixes.length, 0);
+    assert.match(markdown, /# GitHub Star Profile/);
+    assert.match(markdown, /Stars: 42/);
+    assert.match(markdown, /Topics: ai, typescript, agents/);
+  });
+
+  it("fetches and normalizes public GitHub repository metadata", async () => {
+    const profile = await fetchGitHubRepoProfile("acme/local-agent", async (url) => {
+      assert.equal(url, "https://api.github.com/repos/acme/local-agent");
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          description: "Short",
+          homepage: "",
+          topics: ["ai"],
+          stargazers_count: 0,
+          forks_count: 0,
+          open_issues_count: 0,
+          license: null,
+          has_issues: true,
+          archived: false
+        })
+      };
+    });
+
+    assert.equal(profile.grade, "needs-foundation");
+    assert.equal(profile.stats.stars, 0);
+    assert.equal(profile.stats.topics.length, 1);
+    assert.match(profile.topFixes[0].fix, /description|homepage|topics/i);
   });
 });
 

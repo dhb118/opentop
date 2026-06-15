@@ -17,8 +17,11 @@ import { analyzeLocally, totalScore } from "./opportunityEngine";
 import { buildOpportunityJsonExport } from "./opportunityJsonExport";
 import {
   auditReadmeForStars,
+  fetchGitHubRepoProfile,
   fetchGitHubReadme,
+  formatGitHubRepoStarProfile,
   formatReadmeStarAudit,
+  type GitHubRepoStarProfile,
   type ReadmeStarAudit
 } from "./readmeAudit";
 import { buildRepoScaffoldZipBlob, repoScaffoldRootName } from "./repoScaffold";
@@ -61,6 +64,7 @@ let importFeedback = "";
 let readmeAuditRepoUrl = "";
 let readmeAuditText = "";
 let readmeAuditResult: ReadmeStarAudit | null = null;
+let repoStarProfileResult: GitHubRepoStarProfile | null = null;
 let readmeAuditFeedback = "";
 let benchmarks: BenchmarkRepo[] = [];
 let benchmarkStatus: "loading" | "ready" | "failed" = "loading";
@@ -233,9 +237,15 @@ function renderReadmeAuditPanel(): string {
             ? `<button class="secondary-action" data-copy-readme-audit type="button">Copy Audit</button>`
             : ""
         }
+        ${
+          repoStarProfileResult
+            ? `<button class="secondary-action" data-copy-repo-profile type="button">Copy Profile</button>`
+            : ""
+        }
         <span data-readme-audit-feedback aria-live="polite">${escapeHtml(readmeAuditFeedback)}</span>
       </div>
       ${result ? renderReadmeAuditResult(result) : ""}
+      ${repoStarProfileResult ? renderRepoStarProfile(repoStarProfileResult) : ""}
     </details>
   `;
 }
@@ -270,6 +280,38 @@ function renderReadmeAuditResult(result: ReadmeStarAudit): string {
       </div>
       <div class="readme-audit-checks">
         ${checks}
+      </div>
+    </section>
+  `;
+}
+
+function renderRepoStarProfile(profile: GitHubRepoStarProfile): string {
+  const topFixes =
+    profile.topFixes.length > 0
+      ? profile.topFixes.map((item) => `<li>${escapeHtml(item.fix)}</li>`).join("")
+      : "<li>No critical profile gaps found. Keep the demo URL, topics, and starter issues current.</li>";
+  const stats = [
+    ["Stars", String(profile.stats.stars)],
+    ["Forks", String(profile.stats.forks)],
+    ["Issues", String(profile.stats.openIssues)],
+    ["Topics", profile.stats.topics.length > 0 ? profile.stats.topics.slice(0, 4).join(", ") : "none"]
+  ];
+
+  return `
+    <section class="repo-profile-result" aria-label="GitHub star profile result">
+      <div class="repo-profile-heading">
+        <div>
+          <p class="eyebrow">GitHub profile</p>
+          <h3>${profile.score}/100 ${escapeHtml(profile.grade)}</h3>
+        </div>
+        <p>${escapeHtml(profile.summary)}</p>
+      </div>
+      <div class="repo-profile-stats">
+        ${stats.map(([label, value]) => `<span><b>${escapeHtml(value)}</b>${escapeHtml(label)}</span>`).join("")}
+      </div>
+      <div>
+        <h3>Profile fixes</h3>
+        <ol>${topFixes}</ol>
       </div>
     </section>
   `;
@@ -457,6 +499,7 @@ function bindEvents(): void {
     readmeAuditRepoUrl = repoUrlInput?.value ?? "";
     readmeAuditText = input?.value ?? "";
     readmeAuditResult = auditReadmeForStars(readmeAuditText);
+    repoStarProfileResult = null;
     readmeAuditFeedback = `${readmeAuditResult.score}/100 ${readmeAuditResult.grade}`;
     render();
   });
@@ -471,11 +514,12 @@ function bindEvents(): void {
     updateReadmeAuditFeedback(readmeAuditFeedback);
 
     try {
-      const fetched = await fetchGitHubReadme(repoUrl);
+      const [fetched, profile] = await Promise.all([fetchGitHubReadme(repoUrl), fetchGitHubRepoProfile(repoUrl)]);
       readmeAuditRepoUrl = fetched.reference.displayUrl;
       readmeAuditText = fetched.readme;
       readmeAuditResult = auditReadmeForStars(fetched.readme);
-      readmeAuditFeedback = `${fetched.reference.owner}/${fetched.reference.repo}: ${readmeAuditResult.score}/100 ${readmeAuditResult.grade}`;
+      repoStarProfileResult = profile;
+      readmeAuditFeedback = `${fetched.reference.owner}/${fetched.reference.repo}: README ${readmeAuditResult.score}/100, profile ${profile.score}/100`;
       render();
     } catch (error) {
       readmeAuditRepoUrl = repoUrl;
@@ -496,6 +540,19 @@ function bindEvents(): void {
     button.textContent = "Copied";
     window.setTimeout(() => {
       button.textContent = "Copy Audit";
+    }, 1400);
+  });
+
+  document.querySelector<HTMLButtonElement>("[data-copy-repo-profile]")?.addEventListener("click", async (event) => {
+    if (!repoStarProfileResult) {
+      return;
+    }
+
+    const button = event.currentTarget as HTMLButtonElement;
+    await navigator.clipboard.writeText(formatGitHubRepoStarProfile(repoStarProfileResult));
+    button.textContent = "Copied";
+    window.setTimeout(() => {
+      button.textContent = "Copy Profile";
     }, 1400);
   });
 
