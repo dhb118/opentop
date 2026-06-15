@@ -8,8 +8,9 @@ This playbook turns the repository into a real GitHub launch asset.
 2. Enable GitHub Pages, Vercel, Netlify, or Cloudflare Pages for the hosted demo.
 3. Record a 90-second demo using the sample briefs.
 4. Add three screenshots to the README.
-5. Create labels from `.github/labels.yml`.
-6. Open starter issues from `docs/STARTER_ISSUES.md` so new visitors can contribute immediately.
+5. Run `pnpm smoke:pages` against the hosted demo.
+6. Create labels from `.github/labels.yml`.
+7. Open starter issues from `docs/STARTER_ISSUES.md` so new visitors can contribute immediately.
 
 ## Launch Copy
 

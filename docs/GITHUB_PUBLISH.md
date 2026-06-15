@@ -37,11 +37,17 @@ gh repo create opentop --public --source . --remote origin --push
 
 1. Confirm GitHub Actions passes.
 2. Enable GitHub Pages with **Source: GitHub Actions**.
-3. Add the hosted demo URL to the repository About section.
-4. Add screenshots or a GIF to `README.md`.
-5. Create labels from `.github/labels.yml`.
-6. Create the first public issues from `docs/STARTER_ISSUES.md`.
-7. Use `docs/LAUNCH_PLAYBOOK.md` for the first distribution posts.
+3. Run the Pages smoke check:
+
+```bash
+pnpm smoke:pages
+```
+
+4. Add the hosted demo URL to the repository About section.
+5. Add screenshots or a GIF to `README.md`.
+6. Create labels from `.github/labels.yml`.
+7. Create the first public issues from `docs/STARTER_ISSUES.md`.
+8. Use `docs/LAUNCH_PLAYBOOK.md` for the first distribution posts.
 
 ## Publish Check
 
@@ -52,3 +58,25 @@ pnpm check:publish
 ```
 
 The check verifies the local branch, `origin` remote, clean working tree, current commit, and whether `dhb118/opentop` is reachable through the GitHub API.
+
+## Pages Smoke Check
+
+After the Pages workflow finishes, run:
+
+```bash
+pnpm smoke:pages
+```
+
+By default the script checks the `homepage` URL from `package.json`. To test a fork or preview URL:
+
+```bash
+pnpm smoke:pages -- --url https://<owner>.github.io/opentop/
+```
+
+The smoke check verifies:
+
+- The hosted page returns HTTP 200.
+- The HTML includes the OpenTop app marker.
+- Built CSS and JavaScript assets referenced by the page also return HTTP 200.
+
+If the page loads but asset checks fail, confirm the Pages workflow deployed the latest `dist` output and keep `base: "./"` in `vite.config.ts` so asset paths stay relative under `/opentop/`.

@@ -9,6 +9,7 @@ import { buildShareCardSvg } from "../src/shareCard.ts";
 import { parseTrendCsv } from "../src/trendImport.ts";
 import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
 import { buildGalleryJson, buildGalleryMarkdown } from "../scripts/generate-gallery.mjs";
+import { extractAssetUrls, resolveSmokeOptions } from "../scripts/smoke-pages.mjs";
 
 describe("analyzeLocally", () => {
   it("returns ranked launchable opportunities", () => {
@@ -199,5 +200,32 @@ Thanks.`);
 
   it("rejects model output without valid opportunities", () => {
     assert.throws(() => parseModelAnalysis(`{"summary":"empty","opportunities":[]}`), /valid opportunities/);
+  });
+});
+
+describe("Pages smoke check helpers", () => {
+  it("extracts unique deploy asset URLs relative to the Pages URL", () => {
+    const assets = extractAssetUrls(
+      `<link rel="stylesheet" href="./assets/index.css">
+<script type="module" src="./assets/index.js"></script>
+<script type="module" src="./assets/index.js"></script>`,
+      "https://dhb118.github.io/opentop/"
+    );
+
+    assert.deepEqual(assets, [
+      "https://dhb118.github.io/opentop/assets/index.css",
+      "https://dhb118.github.io/opentop/assets/index.js"
+    ]);
+  });
+
+  it("resolves smoke check defaults from package metadata and environment overrides", () => {
+    const options = resolveSmokeOptions(
+      ["--expect", "OpenTop"],
+      { OPENTOP_PAGES_URL: "https://example.com/demo/" },
+      JSON.stringify({ homepage: "https://fallback.example.com/" })
+    );
+
+    assert.equal(options.url, "https://example.com/demo/");
+    assert.equal(options.expectedText, "OpenTop");
   });
 });

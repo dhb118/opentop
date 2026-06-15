@@ -18,6 +18,7 @@
     "check:publish": "node scripts/prepublish-check.mjs",
     "generate:gallery": "node scripts/generate-gallery.mjs",
     "preview": "vite preview --host 0.0.0.0",
+    "smoke:pages": "node scripts/smoke-pages.mjs",
     "test": "node --test tests/*.test.mjs",
     "typecheck": "tsc --noEmit"
   },

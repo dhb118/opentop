@@ -66,6 +66,12 @@ pnpm build
 pnpm check:publish
 ```
 
+After GitHub Pages deploys:
+
+```bash
+pnpm smoke:pages
+```
+
 ## Model Setup
 
 OpenTop works in demo mode by default. To use a model, open **Model Settings** in the app.
