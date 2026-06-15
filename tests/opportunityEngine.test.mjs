@@ -1193,6 +1193,9 @@ describe("launch documentation", () => {
       /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/5bb91b3f4d97f6502db365a7b3b17d908460e50d\//
     );
     assert.match(readme, /billing lock/);
+    assert.match(readme, /Try it in 90 seconds/);
+    assert.match(readme, /Open the demo and load a built-in AI builder brief/);
+    assert.match(readme, /Copy a README brief, launch kit, demo script, or starter repo ZIP/);
     assert.match(readme, /Repo Profile Pack/);
     assert.match(readme, /Copy Launch Brief/);
     assert.match(readme, /Copy Demo Script/);
@@ -1208,6 +1211,9 @@ describe("launch documentation", () => {
       /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/5bb91b3f4d97f6502db365a7b3b17d908460e50d\//
     );
     assert.match(zhReadme, /billing lock/);
+    assert.match(zhReadme, /90 秒试用路径/);
+    assert.match(zhReadme, /加载一个内置 AI 开发者简报/);
+    assert.match(zhReadme, /复制 README 简报、Launch Kit、demo 脚本或 starter repo ZIP/);
     assert.match(zhReadme, /仓库 Profile 包/);
     assert.match(zhReadme, /Copy Launch Brief/);
     assert.match(zhReadme, /Copy Demo Script/);

@@ -14,6 +14,13 @@ The app is TypeScript-first, runs locally without an API key, and can optionally
 
 Live demo: [verified rawcdn fallback](https://rawcdn.githack.com/dhb118/opentop/5bb91b3f4d97f6502db365a7b3b17d908460e50d/). GitHub Pages is still blocked because GitHub Actions cannot start while the account has a billing lock, so this fixed `gh-pages` build is the public demo until Pages recovers.
 
+Try it in 90 seconds:
+
+1. Open the demo and load a built-in AI builder brief.
+2. Compare the ranked opportunities and score explanation.
+3. Copy a README brief, launch kit, demo script, or starter repo ZIP.
+4. Use the output as a GitHub issue, README section, Product Hunt draft, or contributor task.
+
 Example outputs: [Opportunity Gallery](docs/GALLERY.md), [AI Repo Benchmarks](docs/BENCHMARKS.md)
 
 Launch assets: [GitHub Publish Guide](docs/GITHUB_PUBLISH.md), [Repo Profile Pack](docs/REPO_PROFILE.md), [Demo Fallbacks](docs/DEMO_FALLBACKS.md), [Cloudflare Pages Direct Upload](docs/CLOUDFLARE_PAGES.md), [Public Launch Brief](docs/PUBLIC_LAUNCH_BRIEF.md), [Launch Media Kit](docs/LAUNCH_MEDIA_KIT.md), [Starter Issues](docs/STARTER_ISSUES.md), [Launch Playbook](docs/LAUNCH_PLAYBOOK.md)
