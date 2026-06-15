@@ -17,6 +17,7 @@ import { buildShareCardSvg, buildShareCardSvgDataUrl, shareCardDimensions } from
 import { parseTrendCsv, parseTrendNotes, parseTrendSignals } from "../src/trendImport.ts";
 import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
 import { benchmarkRepos } from "../src/benchmarkRepos.ts";
+import { sampleBriefs } from "../src/sampleBriefs.ts";
 import { buildBenchmarksJson, buildBenchmarksMarkdown } from "../scripts/generate-benchmarks.mjs";
 import { buildGalleryJson, buildGalleryMarkdown } from "../scripts/generate-gallery.mjs";
 import { extractAssetUrls, resolveSmokeOptions } from "../scripts/smoke-pages.mjs";
@@ -148,6 +149,22 @@ describe("model provider requests", () => {
 });
 
 describe("generated opportunity gallery", () => {
+  it("includes enough concrete sample briefs for a public launch", () => {
+    assert.ok(sampleBriefs.length >= 9);
+
+    for (const brief of sampleBriefs) {
+      assert.match(brief.id, /^[a-z0-9-]+$/);
+      assert.ok(brief.title.length >= 8);
+      assert.ok(brief.input.audience.length >= 30);
+      assert.ok(brief.input.signal.length >= 90);
+      assert.ok(brief.input.constraints.length >= 30);
+      assert.ok(brief.input.channels.includes("GitHub"));
+      assert.ok(brief.input.pain >= 1 && brief.input.pain <= 10);
+      assert.ok(brief.input.urgency >= 1 && brief.input.urgency <= 10);
+      assert.ok(brief.input.distribution >= 1 && brief.input.distribution <= 10);
+    }
+  });
+
   it("keeps committed gallery files synchronized with sample briefs", async () => {
     const [markdown, json] = await Promise.all([
       readFile("docs/GALLERY.md", "utf8"),

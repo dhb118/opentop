@@ -106,3 +106,133 @@ Found 5 launchable AI app directions from 12 extracted signal terms. The top ide
 - Open-source Scout: 7/10 - compares model, API, and local-first implementation paths before code is written
 - Open-source Foundry: 7/10 - generates a public README, demo script, and launch checklist from one product brief
 
+## RAG fixture builder
+
+[Open this brief in OpenTop](https://dhb118.github.io/opentop/?brief=eyJhdWRpZW5jZSI6ImVuZ2luZWVycyBidWlsZGluZyByZXRyaWV2YWwtYXVnbWVudGVkIGdlbmVyYXRpb24gZmVhdHVyZXMgZm9yIHN1cHBvcnQsIGRvY3MsIGFuZCBpbnRlcm5hbCBrbm93bGVkZ2UgYmFzZXMiLCJzaWduYWwiOiJUZWFtcyBzaGlwIFJBRyBwcm90b3R5cGVzIHF1aWNrbHkgYnV0IHN0cnVnZ2xlIHRvIGNyZWF0ZSByZXBlYXRhYmxlIGZpeHR1cmVzIHRoYXQgY2F0Y2ggcmV0cmlldmFsIGRyaWZ0LCBjaXRhdGlvbiBtaXN0YWtlcywgc3RhbGUgY2h1bmtzLCBhbmQgcHJvbXB0IGNoYW5nZXMgYmVmb3JlIGN1c3RvbWVycyBub3RpY2UuIiwiY29uc3RyYWludHMiOiJUeXBlU2NyaXB0LCBsb2NhbCBkb2N1bWVudCBmaXh0dXJlcywgd29ya3Mgd2l0aCBhbnkgdmVjdG9yIGRhdGFiYXNlLCBleHBvcnRzIEpTT05MIHRlc3QgY2FzZXMiLCJjaGFubmVscyI6IkdpdEh1YiwgTGFuZ0NoYWluIGFuZCBMbGFtYUluZGV4IGNvbW11bml0aWVzLCBBSSBlbmdpbmVlcmluZyBuZXdzbGV0dGVycywgRGV2VG9vbHMgU2xhY2sgZ3JvdXBzIiwicGFpbiI6OSwidXJnZW5jeSI6OCwiZGlzdHJpYnV0aW9uIjo4fQ)
+
+Found 5 launchable AI app directions from 12 extracted signal terms. The top idea balances visible pain, fast distribution loops, and a small TypeScript-first build surface.
+
+### Top Opportunity
+
+- Name: Engineers Workbench
+- Score: 9/10
+- Hook: Engineers Workbench: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.
+- Wedge: converts a messy launch idea into an issue-by-issue open-source roadmap
+- Differentiator: opinionated GitHub-readiness scoring instead of generic brainstorm output
+
+### First Release
+
+- Opportunity scoring matrix with editable assumptions
+- README hook and launch-plan generator
+- Provider switcher for demo, OpenAI-compatible APIs, and Ollama
+
+### Alternatives
+
+- Engineers Radar: 8/10 - turns scattered trend notes into ranked product bets
+- Engineers Scout: 8/10 - compares model, API, and local-first implementation paths before code is written
+- Engineers Foundry: 8/10 - generates a public README, demo script, and launch checklist from one product brief
+
+## LLM cost watch
+
+[Open this brief in OpenTop](https://dhb118.github.io/opentop/?brief=eyJhdWRpZW5jZSI6InN0YXJ0dXAgZW5naW5lZXJzIGFuZCBtYWludGFpbmVycyBydW5uaW5nIE9wZW5BSS1jb21wYXRpYmxlLCBBbnRocm9waWMsIGFuZCBsb2NhbCBtb2RlbCB3b3JrbG9hZHMiLCJzaWduYWwiOiJTbWFsbCB0ZWFtcyBsb3NlIHRyYWNrIG9mIHRva2VuIHNwZW5kLCBsYXRlbmN5LCBmYWxsYmFjayBiZWhhdmlvciwgYW5kIHByb3ZpZGVyIG1peCBhY3Jvc3MgQUkgZmVhdHVyZXMgYmVjYXVzZSBsb2dzIGFyZSBmcmFnbWVudGVkIGFuZCBkYXNoYm9hcmRzIGFyZSB0b28gaGVhdnl3ZWlnaHQuIiwiY29uc3RyYWludHMiOiJUeXBlU2NyaXB0LCBicm93c2VyIGRhc2hib2FyZCwgQ1NWIGltcG9ydCwgbm8gaG9zdGVkIGJhY2tlbmQsIHJlZGFjdHMgcHJvbXB0cyBieSBkZWZhdWx0IiwiY2hhbm5lbHMiOiJHaXRIdWIsIFNhYVMgZW5naW5lZXJpbmcgYmxvZ3MsIEhhY2tlciBOZXdzLCBGaW5PcHMgY29tbXVuaXRpZXMsIFgvVHdpdHRlciBkZW1vcyIsInBhaW4iOjgsInVyZ2VuY3kiOjksImRpc3RyaWJ1dGlvbiI6OH0)
+
+Found 5 launchable AI app directions from 12 extracted signal terms. The top idea balances visible pain, fast distribution loops, and a small TypeScript-first build surface.
+
+### Top Opportunity
+
+- Name: Startup Radar
+- Score: 8/10
+- Hook: Startup Radar: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.
+- Wedge: turns scattered trend notes into ranked product bets
+- Differentiator: local-first demo mode plus optional OpenAI-compatible and Ollama adapters
+
+### First Release
+
+- Signal intake with audience, trend, constraints, and channel context
+- Opportunity scoring matrix with editable assumptions
+- README hook and launch-plan generator
+
+### Alternatives
+
+- Startup Workbench: 8/10 - converts a messy launch idea into an issue-by-issue open-source roadmap
+- Startup Scout: 8/10 - compares model, API, and local-first implementation paths before code is written
+- Startup Foundry: 8/10 - generates a public README, demo script, and launch checklist from one product brief
+
+## Provider migration copilot
+
+[Open this brief in OpenTop](https://dhb118.github.io/opentop/?brief=eyJhdWRpZW5jZSI6ImRldmVsb3BlcnMgbW92aW5nIEFJIGFwcHMgYmV0d2VlbiBPcGVuQUktY29tcGF0aWJsZSBBUElzLCBBbnRocm9waWMsIE9sbGFtYSwgT3BlblJvdXRlciwgYW5kIGNsb3VkIGdhdGV3YXlzIiwic2lnbmFsIjoiQUkgdGVhbXMgbmVlZCB0byBzd2l0Y2ggcHJvdmlkZXJzIGZvciBjb3N0LCBsYXRlbmN5LCBjb21wbGlhbmNlLCBvciBtb2RlbCBxdWFsaXR5LCBidXQgZWFjaCBtaWdyYXRpb24gYnJlYWtzIHJlcXVlc3Qgc2hhcGVzLCBzdHJlYW1pbmcgYmVoYXZpb3IsIEpTT04gbW9kZSwgdG9vbCBjYWxscywgYW5kIGV2YWwgYmFzZWxpbmVzLiIsImNvbnN0cmFpbnRzIjoiVHlwZVNjcmlwdCwgYWRhcHRlciBjaGVja2xpc3QsIHJlcXVlc3QgZGlmZiB2aWV3ZXIsIG5vIHNlY3JldHMgc3RvcmVkLCBnZW5lcmF0ZXMgbWlncmF0aW9uIGlzc3VlcyIsImNoYW5uZWxzIjoiR2l0SHViLCBwcm92aWRlciBEaXNjb3JkcywgQUkgU0RLIGNvbW11bml0aWVzLCBSZWRkaXQgci9Mb2NhbExMYU1BLCBkZXZlbG9wZXIgbmV3c2xldHRlcnMiLCJwYWluIjo4LCJ1cmdlbmN5Ijo4LCJkaXN0cmlidXRpb24iOjl9)
+
+Found 5 launchable AI app directions from 12 extracted signal terms. The top idea balances visible pain, fast distribution loops, and a small TypeScript-first build surface.
+
+### Top Opportunity
+
+- Name: Developers Radar
+- Score: 8/10
+- Hook: Developers Radar: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.
+- Wedge: turns scattered trend notes into ranked product bets
+- Differentiator: local-first demo mode plus optional OpenAI-compatible and Ollama adapters
+
+### First Release
+
+- Signal intake with audience, trend, constraints, and channel context
+- Opportunity scoring matrix with editable assumptions
+- README hook and launch-plan generator
+
+### Alternatives
+
+- Developers Workbench: 8/10 - converts a messy launch idea into an issue-by-issue open-source roadmap
+- Developers Scout: 8/10 - compares model, API, and local-first implementation paths before code is written
+- Developers Foundry: 8/10 - generates a public README, demo script, and launch checklist from one product brief
+
+## Agent permission simulator
+
+[Open this brief in OpenTop](https://dhb118.github.io/opentop/?brief=eyJhdWRpZW5jZSI6ImRldmVsb3BlcnMgYWRkaW5nIHRvb2wtdXNpbmcgYWdlbnRzIHRvIGludGVybmFsIGFwcHMsIENMSXMsIGFuZCBkZXZlbG9wZXIgd29ya2Zsb3dzIiwic2lnbmFsIjoiQWdlbnQgcHJvZHVjdHMgbmVlZCBjbGVhciBwZXJtaXNzaW9uIGJvdW5kYXJpZXMsIGJ1dCB0ZWFtcyBvZnRlbiBkaXNjb3ZlciByaXNreSBmaWxlLCBzaGVsbCwgYnJvd3Nlciwgb3IgQVBJIGFjdGlvbnMgb25seSBhZnRlciBhIGJhZCB0b29sIGNhbGwgcmVhY2hlcyBwcm9kdWN0aW9uLiIsImNvbnN0cmFpbnRzIjoiVHlwZVNjcmlwdCwgbG9jYWwtb25seSBwb2xpY3kgc2ltdWxhdG9yLCBzY2VuYXJpbyBmaXh0dXJlcywgTWFya2Rvd24gcmVwb3J0cywgbm8gbGl2ZSBkZXN0cnVjdGl2ZSBhY3Rpb25zIiwiY2hhbm5lbHMiOiJHaXRIdWIsIHNlY3VyaXR5IGVuZ2luZWVyaW5nIGNvbW11bml0aWVzLCBBSSBhZ2VudCBuZXdzbGV0dGVycywgSGFja2VyIE5ld3MsIGZyYW1ld29yayBEaXNjb3JkcyIsInBhaW4iOjksInVyZ2VuY3kiOjgsImRpc3RyaWJ1dGlvbiI6N30)
+
+Found 5 launchable AI app directions from 12 extracted signal terms. The top idea balances visible pain, fast distribution loops, and a small TypeScript-first build surface.
+
+### Top Opportunity
+
+- Name: Developers Radar
+- Score: 8/10
+- Hook: Developers Radar: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.
+- Wedge: turns scattered trend notes into ranked product bets
+- Differentiator: local-first demo mode plus optional OpenAI-compatible and Ollama adapters
+
+### First Release
+
+- Signal intake with audience, trend, constraints, and channel context
+- Opportunity scoring matrix with editable assumptions
+- README hook and launch-plan generator
+
+### Alternatives
+
+- Developers Workbench: 8/10 - converts a messy launch idea into an issue-by-issue open-source roadmap
+- Developers Scout: 8/10 - compares model, API, and local-first implementation paths before code is written
+- Developers Foundry: 8/10 - generates a public README, demo script, and launch checklist from one product brief
+
+## Eval report publisher
+
+[Open this brief in OpenTop](https://dhb118.github.io/opentop/?brief=eyJhdWRpZW5jZSI6IkFJIHByb2R1Y3QgdGVhbXMgdGhhdCBydW4gcHJvbXB0LCBtb2RlbCwgb3IgYWdlbnQgZXZhbHVhdGlvbnMgYnV0IHN0cnVnZ2xlIHRvIGNvbW11bmljYXRlIHJlc3VsdHMiLCJzaWduYWwiOiJFdmFsdWF0aW9uIHJ1bnMgb2Z0ZW4gc3RheSB0cmFwcGVkIGluIG5vdGVib29rcyBvciB2ZW5kb3IgZGFzaGJvYXJkcy4gVGVhbXMgbmVlZCBhIGxpZ2h0d2VpZ2h0IHdheSB0byB0dXJuIGV2YWwgb3V0cHV0cyBpbnRvIHJlYWRhYmxlIGNoYW5nZWxvZ3MsIHNjb3JlY2FyZHMsIGFuZCBHaXRIdWItcmVhZHkgcmVsZWFzZSBub3Rlcy4iLCJjb25zdHJhaW50cyI6IlR5cGVTY3JpcHQsIGltcG9ydHMgSlNPTi9DU1YgZXZhbCBydW5zLCBzdGF0aWMgSFRNTCBleHBvcnQsIHNoYXJlIGNhcmRzLCB3b3JrcyB3aXRob3V0IGEgbW9kZWwgQVBJIiwiY2hhbm5lbHMiOiJHaXRIdWIsIFByb2R1Y3QgSHVudCwgQUkgZW5naW5lZXJpbmcgYmxvZ3MsIERldlRvb2xzIGNvbW11bml0aWVzLCBtYWludGFpbmVyIG5ld3NsZXR0ZXJzIiwicGFpbiI6NywidXJnZW5jeSI6OCwiZGlzdHJpYnV0aW9uIjo5fQ)
+
+Found 5 launchable AI app directions from 12 extracted signal terms. The top idea balances visible pain, fast distribution loops, and a small TypeScript-first build surface.
+
+### Top Opportunity
+
+- Name: Product Workbench
+- Score: 8/10
+- Hook: Product Workbench: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.
+- Wedge: converts a messy launch idea into an issue-by-issue open-source roadmap
+- Differentiator: opinionated GitHub-readiness scoring instead of generic brainstorm output
+
+### First Release
+
+- Opportunity scoring matrix with editable assumptions
+- README hook and launch-plan generator
+- Provider switcher for demo, OpenAI-compatible APIs, and Ollama
+
+### Alternatives
+
+- Product Scout: 8/10 - compares model, API, and local-first implementation paths before code is written
+- Product Foundry: 8/10 - generates a public README, demo script, and launch checklist from one product brief
+- Product Radar: 7/10 - turns scattered trend notes into ranked product bets
+
