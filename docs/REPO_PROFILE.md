@@ -28,6 +28,14 @@ gh repo edit dhb118/opentop --add-topic ai --add-topic typescript --add-topic st
 - [ ] Pin the fallback demo issue so visitors see the current hosted path and remaining Pages blocker.
 - [ ] Confirm the public repository page shows the description, Website, topics, license, issues, and README screenshot above the fold.
 
+## Apply Command
+
+```bash
+GITHUB_TOKEN=github_pat_... pnpm repo:profile:apply
+```
+
+The apply command uses the GitHub REST API to set the repository description, Website, issues setting, and discovery topics from this pack. The token must have permission to administer repository metadata.
+
 ## Audit Command
 
 ```bash

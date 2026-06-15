@@ -75,10 +75,11 @@ Before broad launch, print the exact GitHub About metadata and compare it with t
 
 ```bash
 pnpm repo:profile
+GITHUB_TOKEN=github_pat_... pnpm repo:profile:apply
 pnpm repo:profile:audit
 ```
 
-The audit is read-only. It reports whether the public repository has the expected description, verified demo homepage, topics, and issue visibility.
+The apply command mutates the repository About metadata through the GitHub REST API, so run it only with a token that is allowed to administer repository metadata. The audit is read-only. It reports whether the public repository has the expected description, verified demo homepage, topics, and issue visibility.
 
 ## Pages Smoke Check
 

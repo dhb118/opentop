@@ -22,6 +22,7 @@
     "package:demo": "node scripts/package-demo.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "repo:profile": "node scripts/repo-profile.mjs",
+    "repo:profile:apply": "node scripts/repo-profile.mjs --apply",
     "repo:profile:audit": "node scripts/repo-profile.mjs --audit",
     "sync:labels": "node scripts/sync-labels.mjs --dry-run",
     "smoke:launch-exports": "node scripts/smoke-launch-exports.mjs",

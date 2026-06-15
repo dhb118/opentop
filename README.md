@@ -26,6 +26,7 @@ Launch assets: [GitHub Publish Guide](docs/GITHUB_PUBLISH.md), [Repo Profile Pac
 - Export proof: the production bundle smoke check verifies `Copy Launch Brief`, `Copy Launch Kit`, `Copy Product Hunt`, `Copy Newsletter`, `Copy Star Plan`, and `Download Repo ZIP`.
 - Launch proof: the public launch brief, starter issues, launch playbook, and open issues [#11](https://github.com/dhb118/opentop/issues/11) / [#12](https://github.com/dhb118/opentop/issues/12) keep demo status, contributor paths, and distribution copy aligned.
 - Repo profile proof: the [Repo Profile Pack](docs/REPO_PROFILE.md) gives the exact About description, Website, topics, pinned issue, and audit command needed before broad launch traffic.
+- Repo metadata apply: `GITHUB_TOKEN=github_pat_... pnpm repo:profile:apply` can sync the About description, homepage, issues setting, and topics before launch.
 
 ## Languages
 

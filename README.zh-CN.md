@@ -32,6 +32,7 @@ OpenTop 是一款 AI 应用选题和发布准备工具。它把趋势、GitHub i
 - 导出验证：生产 bundle smoke check 会确认 `Copy Launch Brief`、`Copy Launch Kit`、`Copy Product Hunt`、`Copy Newsletter`、`Copy Star Plan` 和 `Download Repo ZIP` 可渲染。
 - 发布验证：公开发布简报、新手任务、发布手册和 open issues [#11](https://github.com/dhb118/opentop/issues/11) / [#12](https://github.com/dhb118/opentop/issues/12) 会同步 demo 状态、贡献入口和分发文案。
 - 仓库 Profile 验证：[仓库 Profile 包](docs/REPO_PROFILE.md) 提供发布前需要填写的 About 描述、Website、topics、pinned issue 和审计命令。
+- 仓库 metadata 应用：`GITHUB_TOKEN=github_pat_... pnpm repo:profile:apply` 可在发布前同步 About 描述、homepage、issues 开关和 topics。
 
 ## 适合谁
 

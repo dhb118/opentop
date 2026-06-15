@@ -64,7 +64,7 @@ import { buildGalleryJson, buildGalleryMarkdown, buildSampleBriefsMarkdown } fro
 import { buildDemoManifest, buildDemoZipBytes } from "../scripts/package-demo.mjs";
 import { runLaunchExportSmoke } from "../scripts/smoke-launch-exports.mjs";
 import { extractAssetUrls, isHtmlContentType, resolveSmokeOptions } from "../scripts/smoke-pages.mjs";
-import { auditRepoProfile, buildRepoProfile, buildRepoProfileMarkdown } from "../scripts/repo-profile.mjs";
+import { applyRepoProfile, auditRepoProfile, buildRepoProfile, buildRepoProfileMarkdown } from "../scripts/repo-profile.mjs";
 import { parseLabelsYaml } from "../scripts/sync-labels.mjs";
 
 describe("analyzeLocally", () => {
@@ -991,6 +991,7 @@ describe("Pages smoke check helpers", () => {
     assert.equal(packageJson.scripts["deploy:pages:branch"], "node scripts/deploy-gh-pages.mjs");
     assert.equal(packageJson.scripts["smoke:launch-exports"], "node scripts/smoke-launch-exports.mjs");
     assert.equal(packageJson.scripts["repo:profile"], "node scripts/repo-profile.mjs");
+    assert.equal(packageJson.scripts["repo:profile:apply"], "node scripts/repo-profile.mjs --apply");
     assert.equal(packageJson.scripts["repo:profile:audit"], "node scripts/repo-profile.mjs --audit");
     assert.equal(vercel.framework, "vite");
     assert.equal(vercel.buildCommand, "pnpm build");
@@ -1044,7 +1045,43 @@ describe("repo profile pack", () => {
     assert.match(markdown, /# OpenTop GitHub Repo Profile Pack/);
     assert.match(markdown, /## GitHub CLI/);
     assert.match(markdown, /gh repo edit dhb118\/opentop --description/);
+    assert.match(markdown, /pnpm repo:profile:apply/);
     assert.match(markdown, /pnpm repo:profile:audit/);
+  });
+
+  it("applies GitHub profile metadata only with an explicit token", async () => {
+    const profile = buildRepoProfile(
+      JSON.stringify({
+        description: "Expected description",
+        homepage: "https://example.com/demo/",
+        keywords: ["ai", "typescript"]
+      })
+    );
+    const requests = [];
+    const fetchImpl = async (url, options) => {
+      requests.push({ options, url: String(url) });
+      return { ok: true, status: 200, statusText: "OK" };
+    };
+
+    const missingTokenResult = await applyRepoProfile({ fetchImpl, profile, token: "" });
+    assert.equal(missingTokenResult.checks[0]?.[1], false);
+    assert.equal(requests.length, 0);
+
+    const result = await applyRepoProfile({ fetchImpl, profile, token: "token-123" });
+
+    assert.equal(result.checks.every(([, ok]) => ok), true);
+    assert.equal(requests.length, 2);
+    assert.equal(requests[0]?.url, "https://api.github.com/repos/dhb118/opentop");
+    assert.equal(requests[0]?.options.method, "PATCH");
+    assert.match(String(requests[0]?.options.headers.Authorization), /^Bearer token-123$/);
+    assert.deepEqual(JSON.parse(requests[0]?.options.body), {
+      description: "Expected description",
+      has_issues: true,
+      homepage: "https://example.com/demo/"
+    });
+    assert.equal(requests[1]?.url, "https://api.github.com/repos/dhb118/opentop/topics");
+    assert.equal(requests[1]?.options.method, "PUT");
+    assert.ok(JSON.parse(requests[1]?.options.body).names.includes("typescript"));
   });
 
   it("audits public GitHub profile metadata without mutating it", async () => {
@@ -1189,6 +1226,7 @@ describe("launch documentation", () => {
     assert.match(publishDoc, /Copy Product Hunt/);
     assert.match(publishDoc, /Copy Newsletter/);
     assert.match(publishDoc, /Repo Profile Check/);
+    assert.match(publishDoc, /pnpm repo:profile:apply/);
     assert.match(publishDoc, /pnpm repo:profile:audit/);
     assert.match(repoProfileDoc, /# OpenTop GitHub Repo Profile Pack/);
     assert.match(

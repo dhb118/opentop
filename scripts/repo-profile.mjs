@@ -47,6 +47,14 @@ ${buildGhCommands(profile).join("\n")}
 - [ ] Pin the fallback demo issue so visitors see the current hosted path and remaining Pages blocker.
 - [ ] Confirm the public repository page shows the description, Website, topics, license, issues, and README screenshot above the fold.
 
+## Apply Command
+
+\`\`\`bash
+GITHUB_TOKEN=github_pat_... pnpm repo:profile:apply
+\`\`\`
+
+The apply command uses the GitHub REST API to set the repository description, Website, issues setting, and discovery topics from this pack. The token must have permission to administer repository metadata.
+
 ## Audit Command
 
 \`\`\`bash
@@ -124,8 +132,72 @@ export async function auditRepoProfile({ fetchImpl = fetch, profile = buildRepoP
   };
 }
 
+export async function applyRepoProfile({ fetchImpl = fetch, profile = buildRepoProfile(), token = readToken() } = {}) {
+  if (!token) {
+    return {
+      checks: [["GitHub token is configured", false, "set GITHUB_TOKEN before running --apply"]],
+      profile
+    };
+  }
+
+  const headers = {
+    Accept: "application/vnd.github+json",
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+    "User-Agent": "opentop-repo-profile-apply",
+    "X-GitHub-Api-Version": "2022-11-28"
+  };
+
+  let repoResponse;
+  let topicsResponse;
+
+  try {
+    repoResponse = await fetchImpl(`https://api.github.com/repos/${profile.repo}`, {
+      body: JSON.stringify({
+        description: profile.description,
+        has_issues: true,
+        homepage: profile.homepage
+      }),
+      headers,
+      method: "PATCH"
+    });
+
+    topicsResponse = await fetchImpl(`https://api.github.com/repos/${profile.repo}/topics`, {
+      body: JSON.stringify({ names: profile.topics }),
+      headers,
+      method: "PUT"
+    });
+  } catch (error) {
+    return {
+      checks: [["GitHub profile update request completes", false, formatError(error)]],
+      profile
+    };
+  }
+
+  return {
+    checks: [
+      ["GitHub token is configured", true, "GITHUB_TOKEN"],
+      [
+        "About description, homepage, and issues are updated",
+        repoResponse.ok,
+        repoResponse.ok ? profile.repo : `${repoResponse.status} ${repoResponse.statusText}`
+      ],
+      [
+        "Discovery topics are updated",
+        topicsResponse.ok,
+        topicsResponse.ok ? profile.topics.join(", ") : `${topicsResponse.status} ${topicsResponse.statusText}`
+      ]
+    ],
+    profile
+  };
+}
+
 function readPackageJson() {
   return readFileSync(new URL("../package.json", import.meta.url), "utf8");
+}
+
+function readToken() {
+  return process.env.GITHUB_TOKEN ?? "";
 }
 
 function readString(value) {
@@ -158,6 +230,17 @@ function formatError(error) {
 
 async function main() {
   const profile = buildRepoProfile();
+  if (process.argv.includes("--apply")) {
+    const result = await applyRepoProfile({ profile });
+    for (const [label, ok, detail] of result.checks) {
+      console.log(`${ok ? "PASS" : "FAIL"} ${label}: ${detail}`);
+    }
+    if (result.checks.some(([, ok]) => !ok)) {
+      process.exitCode = 1;
+    }
+    return;
+  }
+
   if (process.argv.includes("--audit")) {
     const result = await auditRepoProfile({ profile });
     for (const [label, ok, detail] of result.checks) {
