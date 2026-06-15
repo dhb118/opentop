@@ -62,6 +62,7 @@ import { buildGalleryJson, buildGalleryMarkdown, buildSampleBriefsMarkdown } fro
 import { buildDemoManifest, buildDemoZipBytes } from "../scripts/package-demo.mjs";
 import { runLaunchExportSmoke } from "../scripts/smoke-launch-exports.mjs";
 import { extractAssetUrls, isHtmlContentType, resolveSmokeOptions } from "../scripts/smoke-pages.mjs";
+import { auditRepoProfile, buildRepoProfile, buildRepoProfileMarkdown } from "../scripts/repo-profile.mjs";
 import { parseLabelsYaml } from "../scripts/sync-labels.mjs";
 
 describe("analyzeLocally", () => {
@@ -977,6 +978,8 @@ describe("Pages smoke check helpers", () => {
     assert.equal(packageJson.scripts["package:demo"], "node scripts/package-demo.mjs");
     assert.equal(packageJson.scripts["deploy:pages:branch"], "node scripts/deploy-gh-pages.mjs");
     assert.equal(packageJson.scripts["smoke:launch-exports"], "node scripts/smoke-launch-exports.mjs");
+    assert.equal(packageJson.scripts["repo:profile"], "node scripts/repo-profile.mjs");
+    assert.equal(packageJson.scripts["repo:profile:audit"], "node scripts/repo-profile.mjs --audit");
     assert.equal(vercel.framework, "vite");
     assert.equal(vercel.buildCommand, "pnpm build");
     assert.equal(vercel.outputDirectory, "dist");
@@ -1005,6 +1008,60 @@ describe("Pages smoke check helpers", () => {
     assert.match(publishDoc, /text\/html/);
     assert.match(publishDoc, /CLOUDFLARE_PAGES\.md/);
     assert.match(fallbackDoc, /pnpm smoke:pages -- --url/);
+  });
+});
+
+describe("repo profile pack", () => {
+  it("builds copyable GitHub About metadata from package defaults", async () => {
+    const [packageText, repoProfileDoc] = await Promise.all([
+      readFile("package.json", "utf8"),
+      readFile("docs/REPO_PROFILE.md", "utf8")
+    ]);
+    const packageJson = JSON.parse(packageText);
+    const profile = buildRepoProfile(packageText);
+    const markdown = buildRepoProfileMarkdown(profile);
+
+    assert.equal(repoProfileDoc, markdown);
+    assert.equal(profile.repo, "dhb118/opentop");
+    assert.equal(profile.description, packageJson.description);
+    assert.equal(profile.homepage, packageJson.homepage);
+    assert.ok(profile.topics.includes("ai"));
+    assert.ok(profile.topics.includes("typescript"));
+    assert.ok(profile.topics.includes("github-readme"));
+    assert.match(profile.pinnedIssue, /github\.com\/dhb118\/opentop\/issues\/12/);
+    assert.match(markdown, /# OpenTop GitHub Repo Profile Pack/);
+    assert.match(markdown, /## GitHub CLI/);
+    assert.match(markdown, /gh repo edit dhb118\/opentop --description/);
+    assert.match(markdown, /pnpm repo:profile:audit/);
+  });
+
+  it("audits public GitHub profile metadata without mutating it", async () => {
+    const profile = buildRepoProfile(
+      JSON.stringify({
+        description: "Expected description",
+        homepage: "https://example.com/demo/",
+        keywords: ["ai", "typescript"]
+      })
+    );
+    const fetchImpl = async (url) => ({
+      ok: true,
+      json: async () =>
+        String(url).endsWith("/topics")
+          ? { names: ["ai"] }
+          : { description: "Current description", homepage: "", has_issues: true }
+    });
+
+    const result = await auditRepoProfile({ fetchImpl, profile });
+    const descriptionCheck = result.checks.find(([label]) => label === "About description matches");
+    const homepageCheck = result.checks.find(([label]) => label === "Homepage points to verified demo");
+    const topicsCheck = result.checks.find(([label]) => label === "Discovery topics are present");
+    const issuesCheck = result.checks.find(([label]) => label === "Issues are enabled");
+
+    assert.equal(descriptionCheck?.[1], false);
+    assert.equal(homepageCheck?.[1], false);
+    assert.equal(topicsCheck?.[1], false);
+    assert.match(String(topicsCheck?.[2]), /typescript/);
+    assert.equal(issuesCheck?.[1], true);
   });
 });
 
@@ -1040,7 +1097,17 @@ describe("launch export smoke harness", () => {
 
 describe("launch documentation", () => {
   it("keeps public launch docs linked and current", async () => {
-    const [readme, zhReadme, launchBrief, starterIssues, launchPlaybook, cloudflareDoc, publishDoc, contributing] = await Promise.all([
+    const [
+      readme,
+      zhReadme,
+      launchBrief,
+      starterIssues,
+      launchPlaybook,
+      cloudflareDoc,
+      publishDoc,
+      repoProfileDoc,
+      contributing
+    ] = await Promise.all([
       readFile("README.md", "utf8"),
       readFile("README.zh-CN.md", "utf8"),
       readFile("docs/PUBLIC_LAUNCH_BRIEF.md", "utf8"),
@@ -1048,6 +1115,7 @@ describe("launch documentation", () => {
       readFile("docs/LAUNCH_PLAYBOOK.md", "utf8"),
       readFile("docs/CLOUDFLARE_PAGES.md", "utf8"),
       readFile("docs/GITHUB_PUBLISH.md", "utf8"),
+      readFile("docs/REPO_PROFILE.md", "utf8"),
       readFile("CONTRIBUTING.md", "utf8")
     ]);
 
@@ -1061,6 +1129,7 @@ describe("launch documentation", () => {
       /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/e9206889ac867c0b807c44116642f9fe852f1c12\//
     );
     assert.match(readme, /billing lock/);
+    assert.match(readme, /Repo Profile Pack/);
     assert.match(readme, /Copy Launch Brief/);
     assert.match(readme, /pnpm smoke:launch-exports/);
     assert.match(zhReadme, /公开发布简报/);
@@ -1073,6 +1142,7 @@ describe("launch documentation", () => {
       /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/e9206889ac867c0b807c44116642f9fe852f1c12\//
     );
     assert.match(zhReadme, /billing lock/);
+    assert.match(zhReadme, /仓库 Profile 包/);
     assert.match(zhReadme, /Copy Launch Brief/);
     assert.match(zhReadme, /pnpm smoke:launch-exports/);
     assert.match(zhReadme, /OpenTop 帮 AI 开发者从杂乱线索里选出值得做的开源应用/);
@@ -1089,6 +1159,7 @@ describe("launch documentation", () => {
     assert.match(starterIssues, /Enable the working GitHub Pages branch demo/);
     assert.match(starterIssues, /#11 Fix GitHub Pages custom domain redirect/);
     assert.match(starterIssues, /#12 Publish a working fallback demo URL and wire launch links/);
+    assert.match(starterIssues, /#13 Apply GitHub About metadata and discovery topics/);
     assert.match(starterIssues, /Refine the public launch brief with real feedback/);
     assert.match(starterIssues, /Keep Cloudflare Pages direct-upload instructions current/);
     assert.match(starterIssues, /Keep end-to-end smoke coverage for launch exports current/);
@@ -1097,6 +1168,14 @@ describe("launch documentation", () => {
     assert.match(cloudflareDoc, /Cloudflare Pages Direct Upload/);
     assert.match(publishDoc, /Launch Export Smoke Check/);
     assert.match(publishDoc, /Copy Launch Brief/);
+    assert.match(publishDoc, /Repo Profile Check/);
+    assert.match(publishDoc, /pnpm repo:profile:audit/);
+    assert.match(repoProfileDoc, /# OpenTop GitHub Repo Profile Pack/);
+    assert.match(
+      repoProfileDoc,
+      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/e9206889ac867c0b807c44116642f9fe852f1c12\//
+    );
+    assert.match(repoProfileDoc, /--add-topic github-readme/);
     assert.match(contributing, /## Find Work/);
     assert.match(contributing, /https:\/\/github\.com\/dhb118\/opentop\/issues\/11/);
     assert.match(contributing, /https:\/\/github\.com\/dhb118\/opentop\/issues\/12/);

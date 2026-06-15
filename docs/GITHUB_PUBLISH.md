@@ -44,11 +44,20 @@ gh repo create opentop --public --source . --remote origin --push
 pnpm smoke:pages -- --url https://YOUR-DEMO-URL/
 ```
 
-5. Add the hosted demo URL to the repository About section.
-6. Add screenshots or a GIF to `README.md`.
-7. Run the **Sync Labels** workflow or validate labels locally with `pnpm sync:labels`.
-8. Create the first public issues from `docs/STARTER_ISSUES.md`.
-9. Use `docs/LAUNCH_PLAYBOOK.md` for the first distribution posts.
+5. Print and apply the repo profile pack:
+
+```bash
+pnpm repo:profile
+pnpm repo:profile:audit
+```
+
+6. Add the hosted demo URL to the repository About section.
+7. Add the topics from [Repo Profile Pack](REPO_PROFILE.md).
+8. Pin the fallback demo issue from the profile pack until GitHub Pages works.
+9. Add screenshots or a GIF to `README.md`.
+10. Run the **Sync Labels** workflow or validate labels locally with `pnpm sync:labels`.
+11. Create the first public issues from `docs/STARTER_ISSUES.md`.
+12. Use `docs/LAUNCH_PLAYBOOK.md` for the first distribution posts.
 
 ## Publish Check
 
@@ -59,6 +68,17 @@ pnpm check:publish
 ```
 
 The check verifies the local branch, `origin` remote, clean working tree, current commit, and whether `dhb118/opentop` is reachable through the GitHub API.
+
+## Repo Profile Check
+
+Before broad launch, print the exact GitHub About metadata and compare it with the public repository state:
+
+```bash
+pnpm repo:profile
+pnpm repo:profile:audit
+```
+
+The audit is read-only. It reports whether the public repository has the expected description, verified demo homepage, topics, and issue visibility.
 
 ## Pages Smoke Check
 

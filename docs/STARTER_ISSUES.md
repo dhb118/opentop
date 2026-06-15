@@ -12,6 +12,7 @@ These public issues are already open and should be used as the current contribut
 
 - [#11 Fix GitHub Pages custom domain redirect](https://github.com/dhb118/opentop/issues/11): restore a reliable public demo URL.
 - [#12 Publish a working fallback demo URL and wire launch links](https://github.com/dhb118/opentop/issues/12): publish a fallback demo and update launch links.
+- [#13 Apply GitHub About metadata and discovery topics](https://github.com/dhb118/opentop/issues/13): apply the repo profile pack so GitHub visitors see the correct description, Website, topics, and pinned issue.
 
 ## 1. Enable the working GitHub Pages branch demo
 
