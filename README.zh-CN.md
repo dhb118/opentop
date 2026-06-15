@@ -34,6 +34,7 @@ OpenTop 是面向 AI 开发者的选题雷达：把零散趋势、issue、链接
 
 - 导入 CSV、Markdown、笔记、书签、链接列表和公开 GitHub issue。
 - 生成多个 AI 应用方向，并用透明评分解释为什么值得做或不值得做。
+- 使用内置示例快速测试本地模型、Agent、RAG、eval、Provider 迁移、发布风险和 README 定位等场景。
 - 使用评分模板切换策略，例如本地优先工具、Provider SDK、Agent 调试和发布生成器。
 - 导出 README 简报、公开发布简报、Launch Kit、Star 增长计划、仓库展示包、贡献者 issue 队列和社媒发布草稿。
 - 下载 PNG/SVG 分享卡片和可运行的 TypeScript starter repo ZIP。
@@ -90,7 +91,7 @@ API Key 只保存在浏览器本地设置里，不会提交到仓库。使用 Ve
 ## Star 增长计划
 
 1. 恢复可访问的在线 demo 或备用 demo，并录制 90 秒演示视频。
-2. 补充来自真实 AI 开发痛点的高质量示例简报。
+2. 持续维护来自真实 AI 开发痛点的高质量示例简报。
 3. 持续开放适合新贡献者的 issue：评分器、导出格式、Provider、示例和文档。
 4. 导出 GitHub 仓库展示包，提前准备 About 描述、topics、homepage、社交预览和 pinned issue。
 5. 运行 README Star Audit，并在大范围发布前复制 7 天修复冲刺计划。

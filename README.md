@@ -50,7 +50,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 - Export actions for README briefs, public launch briefs, launch kits, star growth plans, GitHub repo listing packs, contributor issue queues, GitHub issue bodies, repo scaffold plans, downloadable starter ZIPs, Show HN posts, X threads, Reddit posts, and JSON opportunity records.
 - Downloadable PNG and SVG share cards for selected opportunities.
 - Shareable brief links that preserve the full input signal in the URL.
-- One-click sample briefs for local models, agents, prompt regression, and README positioning.
+- One-click sample briefs for local models, agents, RAG, evals, provider migration, release risk, and README positioning.
 - In-app opportunity gallery with scored examples and share links.
 - In-app benchmark lessons mapped to OpenTop score dimensions from public AI repos.
 - Local README Star Audit that can paste or fetch a public GitHub README, then score first-screen hooks, screenshots, quick starts, demo paths, examples, contributor paths, trust signals, and repository profile metadata, with a copyable 7-day fix sprint.
@@ -135,7 +135,7 @@ For Ollama:
 ## Star Growth Plan
 
 1. Publish a polished hosted demo or fallback demo and a 90-second screen recording.
-2. Add five high-quality sample briefs based on recognizable AI developer pains.
+2. Keep the sample brief library fresh with recognizable AI developer pains.
 3. Open starter issues for new scorers, export formats, and providers.
 4. Export a GitHub Repo Listing Pack so the About description, topics, homepage, social preview, and pinned issue are ready.
 5. Run README Star Audit and copy the 7-day fix sprint before broad launch.

@@ -67,8 +67,34 @@ ${entries}
 `;
 }
 
+export function buildSampleBriefsMarkdown() {
+  const entries = sampleBriefs
+    .map(
+      (brief) => `## ${brief.title}
+
+Audience: ${brief.input.audience}.
+
+Signal: ${brief.input.signal}
+
+Constraints: ${brief.input.constraints}.
+
+Channels: ${brief.input.channels}.
+
+Scores: pain ${brief.input.pain}/10, urgency ${brief.input.urgency}/10, distribution ${brief.input.distribution}/10.
+`
+    )
+    .join("\n");
+
+  return `# Sample Opportunity Briefs
+
+Use these examples to test OpenTop and to show visitors what the app produces. Each brief is a concrete AI builder pain with enough context to generate ranked opportunities, launch artifacts, and starter repo ideas.
+
+${entries}`;
+}
+
 async function main() {
   await writeFile(join(projectRoot, "docs", "GALLERY.md"), buildGalleryMarkdown());
+  await writeFile(join(projectRoot, "docs", "SAMPLE_BRIEFS.md"), buildSampleBriefsMarkdown());
   await writeFile(join(projectRoot, "public", "gallery.json"), buildGalleryJson());
 }
 

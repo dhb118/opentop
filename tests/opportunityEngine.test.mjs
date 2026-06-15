@@ -58,7 +58,7 @@ import { benchmarkRepos } from "../src/benchmarkRepos.ts";
 import { sampleBriefs } from "../src/sampleBriefs.ts";
 import { parseDeployArgs } from "../scripts/deploy-gh-pages.mjs";
 import { buildBenchmarksJson, buildBenchmarksMarkdown } from "../scripts/generate-benchmarks.mjs";
-import { buildGalleryJson, buildGalleryMarkdown } from "../scripts/generate-gallery.mjs";
+import { buildGalleryJson, buildGalleryMarkdown, buildSampleBriefsMarkdown } from "../scripts/generate-gallery.mjs";
 import { buildDemoManifest, buildDemoZipBytes } from "../scripts/package-demo.mjs";
 import { runLaunchExportSmoke } from "../scripts/smoke-launch-exports.mjs";
 import { extractAssetUrls, resolveSmokeOptions } from "../scripts/smoke-pages.mjs";
@@ -264,7 +264,17 @@ describe("model provider requests", () => {
 
 describe("generated opportunity gallery", () => {
   it("includes enough concrete sample briefs for a public launch", () => {
-    assert.ok(sampleBriefs.length >= 9);
+    assert.ok(sampleBriefs.length >= 14);
+    assert.ok(sampleBriefs.some((brief) => brief.id === "agent-memory-inspector"));
+    assert.ok(sampleBriefs.some((brief) => brief.id === "local-vector-index-doctor"));
+    assert.ok(sampleBriefs.some((brief) => brief.id === "model-routing-playground"));
+    assert.ok(sampleBriefs.some((brief) => brief.id === "ai-release-risk-reviewer"));
+    assert.ok(sampleBriefs.some((brief) => brief.id === "support-thread-signal-miner"));
+
+    const localOrAgentBriefs = sampleBriefs.filter((brief) =>
+      /local|agent/i.test(`${brief.title} ${brief.input.audience} ${brief.input.signal} ${brief.input.constraints}`)
+    );
+    assert.ok(localOrAgentBriefs.length >= 7);
 
     for (const brief of sampleBriefs) {
       assert.match(brief.id, /^[a-z0-9-]+$/);
@@ -280,12 +290,14 @@ describe("generated opportunity gallery", () => {
   });
 
   it("keeps committed gallery files synchronized with sample briefs", async () => {
-    const [markdown, json] = await Promise.all([
+    const [markdown, sampleDocs, json] = await Promise.all([
       readFile("docs/GALLERY.md", "utf8"),
+      readFile("docs/SAMPLE_BRIEFS.md", "utf8"),
       readFile("public/gallery.json", "utf8")
     ]);
 
     assert.equal(markdown, buildGalleryMarkdown());
+    assert.equal(sampleDocs, buildSampleBriefsMarkdown());
     assert.equal(json, buildGalleryJson());
   });
 });

@@ -1294,5 +1294,725 @@
         ]
       }
     ]
+  },
+  {
+    "id": "agent-memory-inspector",
+    "title": "Agent memory inspector",
+    "shareUrl": "https://dhb118.github.io/opentop/?brief=eyJhdWRpZW5jZSI6ImRldmVsb3BlcnMgc2hpcHBpbmcgbG9uZy1ydW5uaW5nIGFnZW50cyB3aXRoIHZlY3RvciBtZW1vcnksIHN1bW1hcmllcywgYW5kIHVzZXItc3BlY2lmaWMgY29udGV4dCIsInNpZ25hbCI6IkFnZW50IG1lbW9yeSBmYWlsdXJlcyBhcmUgc3VidGxlOiBzdGFsZSBmYWN0cywgb3Zlci1yZXRhaW5lZCBwcml2YXRlIGRhdGEsIGR1cGxpY2F0ZSBtZW1vcmllcywgYW5kIG1pc3NpbmcgY2l0YXRpb25zIG9mdGVuIHN1cmZhY2Ugb25seSBhZnRlciB1c2VycyBjb21wbGFpbi4iLCJjb25zdHJhaW50cyI6IlR5cGVTY3JpcHQsIGxvY2FsLWZpcnN0IGluc3BlY3Rpb24gVUksIGltcG9ydHMgSlNPTiBsb2dzLCByZWRhY3RzIHNlbnNpdGl2ZSB2YWx1ZXMsIGV4cG9ydHMgcmVwcm9kdWNpYmxlIG1lbW9yeSBidWcgcmVwb3J0cyIsImNoYW5uZWxzIjoiR2l0SHViLCBBSSBhZ2VudCBjb21tdW5pdGllcywgc2VjdXJpdHkgZW5naW5lZXJpbmcgbmV3c2xldHRlcnMsIEhhY2tlciBOZXdzLCBmcmFtZXdvcmsgRGlzY29yZHMiLCJwYWluIjo5LCJ1cmdlbmN5Ijo4LCJkaXN0cmlidXRpb24iOjh9",
+    "summary": "Found 5 launchable AI app directions from 12 extracted signal terms. The top idea balances visible pain, fast distribution loops, and a small TypeScript-first build surface.",
+    "topOpportunity": {
+      "id": "developers-workbench",
+      "name": "Developers Workbench",
+      "tagline": "Developers Workbench helps developers shipping long-running agents with vector memory, summaries, and user-specific context choose a sharper AI product wedge before they start building.",
+      "targetUser": "developers shipping long-running agents with vector memory, summaries, and user-specific context",
+      "wedge": "converts a messy launch idea into an issue-by-issue open-source roadmap",
+      "differentiator": "opinionated GitHub-readiness scoring instead of generic brainstorm output",
+      "moat": "The workflow connects market signal, implementation scope, and launch assets in one place.",
+      "score": 9,
+      "scores": {
+        "pain": 9,
+        "urgency": 8,
+        "distribution": 9,
+        "buildability": 8,
+        "starPotential": 9
+      },
+      "firstRelease": [
+        "Opportunity scoring matrix with editable assumptions",
+        "README hook and launch-plan generator",
+        "Provider switcher for demo, OpenAI-compatible APIs, and Ollama"
+      ],
+      "launchPlan": [
+        "Ship a polished 90-second screen recording and a no-login hosted demo.",
+        "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+        "Publish a transparent build log explaining why this idea scored well.",
+        "Post before/after examples that turn vague AI trends into concrete repos."
+      ],
+      "repoHook": "Developers Workbench: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+      "risks": [
+        "Generic output if the input signal is too broad.",
+        "Users may expect business validation beyond a launch-readiness score.",
+        "Real model calls need clear privacy expectations for pasted research notes."
+      ]
+    },
+    "alternatives": [
+      {
+        "id": "developers-radar",
+        "name": "Developers Radar",
+        "tagline": "Developers Radar helps developers shipping long-running agents with vector memory, summaries, and user-specific context choose a sharper AI product wedge before they start building.",
+        "targetUser": "developers shipping long-running agents with vector memory, summaries, and user-specific context",
+        "wedge": "turns scattered trend notes into ranked product bets",
+        "differentiator": "local-first demo mode plus optional OpenAI-compatible and Ollama adapters",
+        "moat": "A growing public library of scored launch briefs compounds into a reusable benchmark.",
+        "score": 8,
+        "scores": {
+          "pain": 8,
+          "urgency": 7,
+          "distribution": 8,
+          "buildability": 9,
+          "starPotential": 8
+        },
+        "firstRelease": [
+          "Signal intake with audience, trend, constraints, and channel context",
+          "Opportunity scoring matrix with editable assumptions",
+          "README hook and launch-plan generator"
+        ],
+        "launchPlan": [
+          "Ship a polished 90-second screen recording and a no-login hosted demo.",
+          "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+          "Publish a transparent build log explaining why this idea scored well.",
+          "Post before/after examples that turn vague AI trends into concrete repos."
+        ],
+        "repoHook": "Developers Radar: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+        "risks": [
+          "Generic output if the input signal is too broad.",
+          "Users may expect business validation beyond a launch-readiness score.",
+          "Real model calls need clear privacy expectations for pasted research notes."
+        ]
+      },
+      {
+        "id": "developers-scout",
+        "name": "Developers Scout",
+        "tagline": "Developers Scout helps developers shipping long-running agents with vector memory, summaries, and user-specific context choose a sharper AI product wedge before they start building.",
+        "targetUser": "developers shipping long-running agents with vector memory, summaries, and user-specific context",
+        "wedge": "compares model, API, and local-first implementation paths before code is written",
+        "differentiator": "launch artifacts that are immediately copyable into issues, README sections, and demos",
+        "moat": "A growing public library of scored launch briefs compounds into a reusable benchmark.",
+        "score": 8,
+        "scores": {
+          "pain": 8,
+          "urgency": 9,
+          "distribution": 8,
+          "buildability": 8,
+          "starPotential": 8
+        },
+        "firstRelease": [
+          "README hook and launch-plan generator",
+          "Provider switcher for demo, OpenAI-compatible APIs, and Ollama",
+          "Exportable Markdown brief for GitHub issues and Product Hunt drafts"
+        ],
+        "launchPlan": [
+          "Ship a polished 90-second screen recording and a no-login hosted demo.",
+          "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+          "Publish a transparent build log explaining why this idea scored well.",
+          "Post before/after examples that turn vague AI trends into concrete repos."
+        ],
+        "repoHook": "Developers Scout: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+        "risks": [
+          "Generic output if the input signal is too broad.",
+          "Users may expect business validation beyond a launch-readiness score.",
+          "Real model calls need clear privacy expectations for pasted research notes."
+        ]
+      },
+      {
+        "id": "developers-foundry",
+        "name": "Developers Foundry",
+        "tagline": "Developers Foundry helps developers shipping long-running agents with vector memory, summaries, and user-specific context choose a sharper AI product wedge before they start building.",
+        "targetUser": "developers shipping long-running agents with vector memory, summaries, and user-specific context",
+        "wedge": "generates a public README, demo script, and launch checklist from one product brief",
+        "differentiator": "transparent scoring so users can challenge the ranking instead of trusting a black box",
+        "moat": "The workflow connects market signal, implementation scope, and launch assets in one place.",
+        "score": 8,
+        "scores": {
+          "pain": 9,
+          "urgency": 7,
+          "distribution": 9,
+          "buildability": 7,
+          "starPotential": 8
+        },
+        "firstRelease": [
+          "Provider switcher for demo, OpenAI-compatible APIs, and Ollama",
+          "Exportable Markdown brief for GitHub issues and Product Hunt drafts",
+          "Signal intake with audience, trend, constraints, and channel context"
+        ],
+        "launchPlan": [
+          "Ship a polished 90-second screen recording and a no-login hosted demo.",
+          "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+          "Publish a transparent build log explaining why this idea scored well.",
+          "Post before/after examples that turn vague AI trends into concrete repos."
+        ],
+        "repoHook": "Developers Foundry: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+        "risks": [
+          "Generic output if the input signal is too broad.",
+          "Users may expect business validation beyond a launch-readiness score.",
+          "Real model calls need clear privacy expectations for pasted research notes."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "local-vector-index-doctor",
+    "title": "Local vector index doctor",
+    "shareUrl": "https://dhb118.github.io/opentop/?brief=eyJhdWRpZW5jZSI6ImVuZ2luZWVycyBydW5uaW5nIGxvY2FsIFJBRyBwcm90b3R5cGVzIHdpdGggU1FMaXRlLCBMYW5jZURCLCBDaHJvbWEsIG9yIGZpbGUtYmFja2VkIHZlY3RvciBpbmRleGVzIiwic2lnbmFsIjoiTG9jYWwgcmV0cmlldmFsIGRlbW9zIG9mdGVuIGRlY2F5IHdoZW4gY2h1bmtzIGNoYW5nZSwgZW1iZWRkaW5ncyBhcmUgcmVnZW5lcmF0ZWQsIGZpbHRlcnMgYnJlYWssIG9yIGluZGV4IGZpbGVzIGRyaWZ0IGZyb20gdGhlIHNvdXJjZSBkb2N1bWVudHMuIiwiY29uc3RyYWludHMiOiJUeXBlU2NyaXB0LCBubyBob3N0ZWQgYmFja2VuZCwgc2NhbnMgbG9jYWwgaW5kZXggbWV0YWRhdGEsIGNvbXBhcmVzIHNvdXJjZSBmaWxlcywgd3JpdGVzIHJlcGFpciBjaGVja2xpc3RzIiwiY2hhbm5lbHMiOiJHaXRIdWIsIFJlZGRpdCByL0xvY2FsTExhTUEsIExhbmdDaGFpbiBjb21tdW5pdGllcywgZG9jcyBlbmdpbmVlcmluZyBmb3J1bXMsIERldlRvb2xzIG5ld3NsZXR0ZXJzIiwicGFpbiI6OCwidXJnZW5jeSI6OCwiZGlzdHJpYnV0aW9uIjo4fQ",
+    "summary": "Found 5 launchable AI app directions from 12 extracted signal terms. The top idea balances visible pain, fast distribution loops, and a small TypeScript-first build surface.",
+    "topOpportunity": {
+      "id": "engineers-radar",
+      "name": "Engineers Radar",
+      "tagline": "Engineers Radar helps engineers running local RAG prototypes with SQLite, LanceDB, Chroma, or file-backed vector indexes choose a sharper AI product wedge before they start building.",
+      "targetUser": "engineers running local RAG prototypes with SQLite, LanceDB, Chroma, or file-backed vector indexes",
+      "wedge": "turns scattered trend notes into ranked product bets",
+      "differentiator": "local-first demo mode plus optional OpenAI-compatible and Ollama adapters",
+      "moat": "A growing public library of scored launch briefs compounds into a reusable benchmark.",
+      "score": 8,
+      "scores": {
+        "pain": 7,
+        "urgency": 7,
+        "distribution": 8,
+        "buildability": 9,
+        "starPotential": 8
+      },
+      "firstRelease": [
+        "Signal intake with audience, trend, constraints, and channel context",
+        "Opportunity scoring matrix with editable assumptions",
+        "README hook and launch-plan generator"
+      ],
+      "launchPlan": [
+        "Ship a polished 90-second screen recording and a no-login hosted demo.",
+        "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+        "Publish a transparent build log explaining why this idea scored well.",
+        "Post before/after examples that turn vague AI trends into concrete repos."
+      ],
+      "repoHook": "Engineers Radar: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+      "risks": [
+        "Generic output if the input signal is too broad.",
+        "Users may expect business validation beyond a launch-readiness score.",
+        "Real model calls need clear privacy expectations for pasted research notes."
+      ]
+    },
+    "alternatives": [
+      {
+        "id": "engineers-workbench",
+        "name": "Engineers Workbench",
+        "tagline": "Engineers Workbench helps engineers running local RAG prototypes with SQLite, LanceDB, Chroma, or file-backed vector indexes choose a sharper AI product wedge before they start building.",
+        "targetUser": "engineers running local RAG prototypes with SQLite, LanceDB, Chroma, or file-backed vector indexes",
+        "wedge": "converts a messy launch idea into an issue-by-issue open-source roadmap",
+        "differentiator": "opinionated GitHub-readiness scoring instead of generic brainstorm output",
+        "moat": "The workflow connects market signal, implementation scope, and launch assets in one place.",
+        "score": 8,
+        "scores": {
+          "pain": 8,
+          "urgency": 8,
+          "distribution": 9,
+          "buildability": 8,
+          "starPotential": 9
+        },
+        "firstRelease": [
+          "Opportunity scoring matrix with editable assumptions",
+          "README hook and launch-plan generator",
+          "Provider switcher for demo, OpenAI-compatible APIs, and Ollama"
+        ],
+        "launchPlan": [
+          "Ship a polished 90-second screen recording and a no-login hosted demo.",
+          "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+          "Publish a transparent build log explaining why this idea scored well.",
+          "Post before/after examples that turn vague AI trends into concrete repos."
+        ],
+        "repoHook": "Engineers Workbench: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+        "risks": [
+          "Generic output if the input signal is too broad.",
+          "Users may expect business validation beyond a launch-readiness score.",
+          "Real model calls need clear privacy expectations for pasted research notes."
+        ]
+      },
+      {
+        "id": "engineers-scout",
+        "name": "Engineers Scout",
+        "tagline": "Engineers Scout helps engineers running local RAG prototypes with SQLite, LanceDB, Chroma, or file-backed vector indexes choose a sharper AI product wedge before they start building.",
+        "targetUser": "engineers running local RAG prototypes with SQLite, LanceDB, Chroma, or file-backed vector indexes",
+        "wedge": "compares model, API, and local-first implementation paths before code is written",
+        "differentiator": "launch artifacts that are immediately copyable into issues, README sections, and demos",
+        "moat": "A growing public library of scored launch briefs compounds into a reusable benchmark.",
+        "score": 8,
+        "scores": {
+          "pain": 7,
+          "urgency": 9,
+          "distribution": 8,
+          "buildability": 8,
+          "starPotential": 8
+        },
+        "firstRelease": [
+          "README hook and launch-plan generator",
+          "Provider switcher for demo, OpenAI-compatible APIs, and Ollama",
+          "Exportable Markdown brief for GitHub issues and Product Hunt drafts"
+        ],
+        "launchPlan": [
+          "Ship a polished 90-second screen recording and a no-login hosted demo.",
+          "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+          "Publish a transparent build log explaining why this idea scored well.",
+          "Post before/after examples that turn vague AI trends into concrete repos."
+        ],
+        "repoHook": "Engineers Scout: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+        "risks": [
+          "Generic output if the input signal is too broad.",
+          "Users may expect business validation beyond a launch-readiness score.",
+          "Real model calls need clear privacy expectations for pasted research notes."
+        ]
+      },
+      {
+        "id": "engineers-foundry",
+        "name": "Engineers Foundry",
+        "tagline": "Engineers Foundry helps engineers running local RAG prototypes with SQLite, LanceDB, Chroma, or file-backed vector indexes choose a sharper AI product wedge before they start building.",
+        "targetUser": "engineers running local RAG prototypes with SQLite, LanceDB, Chroma, or file-backed vector indexes",
+        "wedge": "generates a public README, demo script, and launch checklist from one product brief",
+        "differentiator": "transparent scoring so users can challenge the ranking instead of trusting a black box",
+        "moat": "The workflow connects market signal, implementation scope, and launch assets in one place.",
+        "score": 8,
+        "scores": {
+          "pain": 8,
+          "urgency": 7,
+          "distribution": 9,
+          "buildability": 7,
+          "starPotential": 8
+        },
+        "firstRelease": [
+          "Provider switcher for demo, OpenAI-compatible APIs, and Ollama",
+          "Exportable Markdown brief for GitHub issues and Product Hunt drafts",
+          "Signal intake with audience, trend, constraints, and channel context"
+        ],
+        "launchPlan": [
+          "Ship a polished 90-second screen recording and a no-login hosted demo.",
+          "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+          "Publish a transparent build log explaining why this idea scored well.",
+          "Post before/after examples that turn vague AI trends into concrete repos."
+        ],
+        "repoHook": "Engineers Foundry: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+        "risks": [
+          "Generic output if the input signal is too broad.",
+          "Users may expect business validation beyond a launch-readiness score.",
+          "Real model calls need clear privacy expectations for pasted research notes."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "model-routing-playground",
+    "title": "Model routing playground",
+    "shareUrl": "https://dhb118.github.io/opentop/?brief=eyJhdWRpZW5jZSI6ImRldmVsb3BlcnMgZGVjaWRpbmcgd2hlbiB0byByb3V0ZSByZXF1ZXN0cyBiZXR3ZWVuIGNoZWFwLCBmYXN0LCBsb2NhbCwgYW5kIGhpZ2gtcXVhbGl0eSBtb2RlbHMiLCJzaWduYWwiOiJUZWFtcyB3YW50IHNtYWxsZXIgbW9kZWwgYmlsbHMgd2l0aG91dCBkZWdyYWRpbmcgdXNlci12aXNpYmxlIGFuc3dlcnMsIGJ1dCByb3V0aW5nIGV4cGVyaW1lbnRzIGFyZSBzY2F0dGVyZWQgYWNyb3NzIHNwcmVhZHNoZWV0cywgbG9ncywgYW5kIHByb3ZpZGVyIGRhc2hib2FyZHMuIiwiY29uc3RyYWludHMiOiJUeXBlU2NyaXB0LCBsb2NhbCBkZW1vIG1vZGUsIGltcG9ydHMgcmVxdWVzdCBzYW1wbGVzLCBjb21wYXJlcyBsYXRlbmN5L2Nvc3QvcXVhbGl0eSBub3Rlcywgbm8gc2VjcmV0cyBpbiBleHBvcnRzIiwiY2hhbm5lbHMiOiJHaXRIdWIsIFNhYVMgZW5naW5lZXJpbmcgYmxvZ3MsIEFJIGluZnJhc3RydWN0dXJlIG5ld3NsZXR0ZXJzLCBGaW5PcHMgY29tbXVuaXRpZXMsIFgvVHdpdHRlciBkZW1vcyIsInBhaW4iOjgsInVyZ2VuY3kiOjksImRpc3RyaWJ1dGlvbiI6OH0",
+    "summary": "Found 5 launchable AI app directions from 12 extracted signal terms. The top idea balances visible pain, fast distribution loops, and a small TypeScript-first build surface.",
+    "topOpportunity": {
+      "id": "developers-workbench",
+      "name": "Developers Workbench",
+      "tagline": "Developers Workbench helps developers deciding when to route requests between cheap, fast, local, and high-quality models choose a sharper AI product wedge before they start building.",
+      "targetUser": "developers deciding when to route requests between cheap, fast, local, and high-quality models",
+      "wedge": "converts a messy launch idea into an issue-by-issue open-source roadmap",
+      "differentiator": "opinionated GitHub-readiness scoring instead of generic brainstorm output",
+      "moat": "The workflow connects market signal, implementation scope, and launch assets in one place.",
+      "score": 9,
+      "scores": {
+        "pain": 8,
+        "urgency": 9,
+        "distribution": 9,
+        "buildability": 8,
+        "starPotential": 9
+      },
+      "firstRelease": [
+        "Opportunity scoring matrix with editable assumptions",
+        "README hook and launch-plan generator",
+        "Provider switcher for demo, OpenAI-compatible APIs, and Ollama"
+      ],
+      "launchPlan": [
+        "Ship a polished 90-second screen recording and a no-login hosted demo.",
+        "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+        "Publish a transparent build log explaining why this idea scored well.",
+        "Post before/after examples that turn vague AI trends into concrete repos."
+      ],
+      "repoHook": "Developers Workbench: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+      "risks": [
+        "Generic output if the input signal is too broad.",
+        "Users may expect business validation beyond a launch-readiness score.",
+        "Real model calls need clear privacy expectations for pasted research notes."
+      ]
+    },
+    "alternatives": [
+      {
+        "id": "developers-radar",
+        "name": "Developers Radar",
+        "tagline": "Developers Radar helps developers deciding when to route requests between cheap, fast, local, and high-quality models choose a sharper AI product wedge before they start building.",
+        "targetUser": "developers deciding when to route requests between cheap, fast, local, and high-quality models",
+        "wedge": "turns scattered trend notes into ranked product bets",
+        "differentiator": "local-first demo mode plus optional OpenAI-compatible and Ollama adapters",
+        "moat": "A growing public library of scored launch briefs compounds into a reusable benchmark.",
+        "score": 8,
+        "scores": {
+          "pain": 7,
+          "urgency": 8,
+          "distribution": 8,
+          "buildability": 9,
+          "starPotential": 8
+        },
+        "firstRelease": [
+          "Signal intake with audience, trend, constraints, and channel context",
+          "Opportunity scoring matrix with editable assumptions",
+          "README hook and launch-plan generator"
+        ],
+        "launchPlan": [
+          "Ship a polished 90-second screen recording and a no-login hosted demo.",
+          "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+          "Publish a transparent build log explaining why this idea scored well.",
+          "Post before/after examples that turn vague AI trends into concrete repos."
+        ],
+        "repoHook": "Developers Radar: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+        "risks": [
+          "Generic output if the input signal is too broad.",
+          "Users may expect business validation beyond a launch-readiness score.",
+          "Real model calls need clear privacy expectations for pasted research notes."
+        ]
+      },
+      {
+        "id": "developers-scout",
+        "name": "Developers Scout",
+        "tagline": "Developers Scout helps developers deciding when to route requests between cheap, fast, local, and high-quality models choose a sharper AI product wedge before they start building.",
+        "targetUser": "developers deciding when to route requests between cheap, fast, local, and high-quality models",
+        "wedge": "compares model, API, and local-first implementation paths before code is written",
+        "differentiator": "launch artifacts that are immediately copyable into issues, README sections, and demos",
+        "moat": "A growing public library of scored launch briefs compounds into a reusable benchmark.",
+        "score": 8,
+        "scores": {
+          "pain": 7,
+          "urgency": 10,
+          "distribution": 8,
+          "buildability": 8,
+          "starPotential": 8
+        },
+        "firstRelease": [
+          "README hook and launch-plan generator",
+          "Provider switcher for demo, OpenAI-compatible APIs, and Ollama",
+          "Exportable Markdown brief for GitHub issues and Product Hunt drafts"
+        ],
+        "launchPlan": [
+          "Ship a polished 90-second screen recording and a no-login hosted demo.",
+          "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+          "Publish a transparent build log explaining why this idea scored well.",
+          "Post before/after examples that turn vague AI trends into concrete repos."
+        ],
+        "repoHook": "Developers Scout: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+        "risks": [
+          "Generic output if the input signal is too broad.",
+          "Users may expect business validation beyond a launch-readiness score.",
+          "Real model calls need clear privacy expectations for pasted research notes."
+        ]
+      },
+      {
+        "id": "developers-foundry",
+        "name": "Developers Foundry",
+        "tagline": "Developers Foundry helps developers deciding when to route requests between cheap, fast, local, and high-quality models choose a sharper AI product wedge before they start building.",
+        "targetUser": "developers deciding when to route requests between cheap, fast, local, and high-quality models",
+        "wedge": "generates a public README, demo script, and launch checklist from one product brief",
+        "differentiator": "transparent scoring so users can challenge the ranking instead of trusting a black box",
+        "moat": "The workflow connects market signal, implementation scope, and launch assets in one place.",
+        "score": 8,
+        "scores": {
+          "pain": 8,
+          "urgency": 8,
+          "distribution": 9,
+          "buildability": 7,
+          "starPotential": 8
+        },
+        "firstRelease": [
+          "Provider switcher for demo, OpenAI-compatible APIs, and Ollama",
+          "Exportable Markdown brief for GitHub issues and Product Hunt drafts",
+          "Signal intake with audience, trend, constraints, and channel context"
+        ],
+        "launchPlan": [
+          "Ship a polished 90-second screen recording and a no-login hosted demo.",
+          "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+          "Publish a transparent build log explaining why this idea scored well.",
+          "Post before/after examples that turn vague AI trends into concrete repos."
+        ],
+        "repoHook": "Developers Foundry: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+        "risks": [
+          "Generic output if the input signal is too broad.",
+          "Users may expect business validation beyond a launch-readiness score.",
+          "Real model calls need clear privacy expectations for pasted research notes."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ai-release-risk-reviewer",
+    "title": "AI release risk reviewer",
+    "shareUrl": "https://dhb118.github.io/opentop/?brief=eyJhdWRpZW5jZSI6ImVuZ2luZWVyaW5nIHRlYW1zIHByZXBhcmluZyByZWxlYXNlcyB0aGF0IGNoYW5nZSBwcm9tcHRzLCBtb2RlbHMsIHJldHJpZXZhbCBkYXRhLCBvciBhZ2VudCB0b29scyIsInNpZ25hbCI6IkFJIHJlbGVhc2VzIGZhaWwgaW4gd2F5cyBub3JtYWwgY2hhbmdlbG9ncyBtaXNzOiBwcm9tcHQgcmVncmVzc2lvbnMsIGNoYW5nZWQgcmVmdXNhbCBiZWhhdmlvciwgYnJva2VuIEpTT04gY29udHJhY3RzLCBhbmQgbmV3IHRvb2wgcGVybWlzc2lvbnMuIiwiY29uc3RyYWludHMiOiJUeXBlU2NyaXB0LCBpbXBvcnRzIHJlbGVhc2Ugbm90ZXMgYW5kIGV2YWwgc3VtbWFyaWVzLCBwcm9kdWNlcyBHaXRIdWIgY2hlY2tsaXN0LCB3b3JrcyB3aXRob3V0IG1vZGVsIEFQSSIsImNoYW5uZWxzIjoiR2l0SHViLCBEZXZPcHMgY29tbXVuaXRpZXMsIEFJIGVuZ2luZWVyaW5nIG5ld3NsZXR0ZXJzLCBpbnRlcm5hbCBwbGF0Zm9ybSB0ZWFtcywgSGFja2VyIE5ld3MiLCJwYWluIjo4LCJ1cmdlbmN5Ijo4LCJkaXN0cmlidXRpb24iOjd9",
+    "summary": "Found 5 launchable AI app directions from 12 extracted signal terms. The top idea balances visible pain, fast distribution loops, and a small TypeScript-first build surface.",
+    "topOpportunity": {
+      "id": "engineering-workbench",
+      "name": "Engineering Workbench",
+      "tagline": "Engineering Workbench helps engineering teams preparing releases that change prompts, models, retrieval data, or agent tools choose a sharper AI product wedge before they start building.",
+      "targetUser": "engineering teams preparing releases that change prompts, models, retrieval data, or agent tools",
+      "wedge": "converts a messy launch idea into an issue-by-issue open-source roadmap",
+      "differentiator": "opinionated GitHub-readiness scoring instead of generic brainstorm output",
+      "moat": "The workflow connects market signal, implementation scope, and launch assets in one place.",
+      "score": 8,
+      "scores": {
+        "pain": 8,
+        "urgency": 8,
+        "distribution": 8,
+        "buildability": 6,
+        "starPotential": 9
+      },
+      "firstRelease": [
+        "Opportunity scoring matrix with editable assumptions",
+        "README hook and launch-plan generator",
+        "Provider switcher for demo, OpenAI-compatible APIs, and Ollama"
+      ],
+      "launchPlan": [
+        "Ship a polished 90-second screen recording and a no-login hosted demo.",
+        "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+        "Publish a transparent build log explaining why this idea scored well.",
+        "Post before/after examples that turn vague AI trends into concrete repos."
+      ],
+      "repoHook": "Engineering Workbench: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+      "risks": [
+        "Generic output if the input signal is too broad.",
+        "Users may expect business validation beyond a launch-readiness score.",
+        "Real model calls need clear privacy expectations for pasted research notes."
+      ]
+    },
+    "alternatives": [
+      {
+        "id": "engineering-radar",
+        "name": "Engineering Radar",
+        "tagline": "Engineering Radar helps engineering teams preparing releases that change prompts, models, retrieval data, or agent tools choose a sharper AI product wedge before they start building.",
+        "targetUser": "engineering teams preparing releases that change prompts, models, retrieval data, or agent tools",
+        "wedge": "turns scattered trend notes into ranked product bets",
+        "differentiator": "local-first demo mode plus optional OpenAI-compatible and Ollama adapters",
+        "moat": "A growing public library of scored launch briefs compounds into a reusable benchmark.",
+        "score": 7,
+        "scores": {
+          "pain": 7,
+          "urgency": 7,
+          "distribution": 7,
+          "buildability": 7,
+          "starPotential": 8
+        },
+        "firstRelease": [
+          "Signal intake with audience, trend, constraints, and channel context",
+          "Opportunity scoring matrix with editable assumptions",
+          "README hook and launch-plan generator"
+        ],
+        "launchPlan": [
+          "Ship a polished 90-second screen recording and a no-login hosted demo.",
+          "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+          "Publish a transparent build log explaining why this idea scored well.",
+          "Post before/after examples that turn vague AI trends into concrete repos."
+        ],
+        "repoHook": "Engineering Radar: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+        "risks": [
+          "Generic output if the input signal is too broad.",
+          "Users may expect business validation beyond a launch-readiness score.",
+          "Real model calls need clear privacy expectations for pasted research notes."
+        ]
+      },
+      {
+        "id": "engineering-scout",
+        "name": "Engineering Scout",
+        "tagline": "Engineering Scout helps engineering teams preparing releases that change prompts, models, retrieval data, or agent tools choose a sharper AI product wedge before they start building.",
+        "targetUser": "engineering teams preparing releases that change prompts, models, retrieval data, or agent tools",
+        "wedge": "compares model, API, and local-first implementation paths before code is written",
+        "differentiator": "launch artifacts that are immediately copyable into issues, README sections, and demos",
+        "moat": "A growing public library of scored launch briefs compounds into a reusable benchmark.",
+        "score": 7,
+        "scores": {
+          "pain": 7,
+          "urgency": 9,
+          "distribution": 7,
+          "buildability": 6,
+          "starPotential": 8
+        },
+        "firstRelease": [
+          "README hook and launch-plan generator",
+          "Provider switcher for demo, OpenAI-compatible APIs, and Ollama",
+          "Exportable Markdown brief for GitHub issues and Product Hunt drafts"
+        ],
+        "launchPlan": [
+          "Ship a polished 90-second screen recording and a no-login hosted demo.",
+          "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+          "Publish a transparent build log explaining why this idea scored well.",
+          "Post before/after examples that turn vague AI trends into concrete repos."
+        ],
+        "repoHook": "Engineering Scout: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+        "risks": [
+          "Generic output if the input signal is too broad.",
+          "Users may expect business validation beyond a launch-readiness score.",
+          "Real model calls need clear privacy expectations for pasted research notes."
+        ]
+      },
+      {
+        "id": "engineering-foundry",
+        "name": "Engineering Foundry",
+        "tagline": "Engineering Foundry helps engineering teams preparing releases that change prompts, models, retrieval data, or agent tools choose a sharper AI product wedge before they start building.",
+        "targetUser": "engineering teams preparing releases that change prompts, models, retrieval data, or agent tools",
+        "wedge": "generates a public README, demo script, and launch checklist from one product brief",
+        "differentiator": "transparent scoring so users can challenge the ranking instead of trusting a black box",
+        "moat": "The workflow connects market signal, implementation scope, and launch assets in one place.",
+        "score": 7,
+        "scores": {
+          "pain": 8,
+          "urgency": 7,
+          "distribution": 8,
+          "buildability": 5,
+          "starPotential": 8
+        },
+        "firstRelease": [
+          "Provider switcher for demo, OpenAI-compatible APIs, and Ollama",
+          "Exportable Markdown brief for GitHub issues and Product Hunt drafts",
+          "Signal intake with audience, trend, constraints, and channel context"
+        ],
+        "launchPlan": [
+          "Ship a polished 90-second screen recording and a no-login hosted demo.",
+          "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+          "Publish a transparent build log explaining why this idea scored well.",
+          "Post before/after examples that turn vague AI trends into concrete repos."
+        ],
+        "repoHook": "Engineering Foundry: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+        "risks": [
+          "Generic output if the input signal is too broad.",
+          "Users may expect business validation beyond a launch-readiness score.",
+          "Real model calls need clear privacy expectations for pasted research notes."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "support-thread-signal-miner",
+    "title": "Support thread signal miner",
+    "shareUrl": "https://dhb118.github.io/opentop/?brief=eyJhdWRpZW5jZSI6ImZvdW5kZXJzIGFuZCBtYWludGFpbmVycyB0dXJuaW5nIHN1cHBvcnQgdGlja2V0cywgRGlzY29yZCB0aHJlYWRzLCBhbmQgR2l0SHViIGRpc2N1c3Npb25zIGludG8gQUkgcHJvZHVjdCBpZGVhcyIsInNpZ25hbCI6IlVzZWZ1bCBwcm9kdWN0IHNpZ25hbHMgYXJlIGJ1cmllZCBpbiByZXBlYXRlZCBzZXR1cCBxdWVzdGlvbnMsIGNvbmZ1c2luZyBlcnJvcnMsIGludGVncmF0aW9uIHJlcXVlc3RzLCBhbmQgd29ya2Fyb3VuZCB0aHJlYWRzIGFjcm9zcyBzdXBwb3J0IGNoYW5uZWxzLiIsImNvbnN0cmFpbnRzIjoiVHlwZVNjcmlwdCwgcGFzdGUtb25seSBpbXBvcnQsIGxvY2FsIGNsdXN0ZXJpbmcsIG5vIGN1c3RvbWVyIGRhdGEgdXBsb2FkLCBleHBvcnRzIG9wcG9ydHVuaXR5IGJyaWVmcyBhbmQgc3RhcnRlciBpc3N1ZXMiLCJjaGFubmVscyI6IkdpdEh1YiwgZm91bmRlciBjb21tdW5pdGllcywgc3VwcG9ydCBlbmdpbmVlcmluZyBibG9ncywgUHJvZHVjdCBIdW50LCBkZXZlbG9wZXIgbmV3c2xldHRlcnMiLCJwYWluIjo4LCJ1cmdlbmN5Ijo3LCJkaXN0cmlidXRpb24iOjl9",
+    "summary": "Found 5 launchable AI app directions from 12 extracted signal terms. The top idea balances visible pain, fast distribution loops, and a small TypeScript-first build surface.",
+    "topOpportunity": {
+      "id": "founders-radar",
+      "name": "Founders Radar",
+      "tagline": "Founders Radar helps founders and maintainers turning support tickets, Discord threads, and GitHub discussions into AI product ideas choose a sharper AI product wedge before they start building.",
+      "targetUser": "founders and maintainers turning support tickets, Discord threads, and GitHub discussions into AI product ideas",
+      "wedge": "turns scattered trend notes into ranked product bets",
+      "differentiator": "local-first demo mode plus optional OpenAI-compatible and Ollama adapters",
+      "moat": "A growing public library of scored launch briefs compounds into a reusable benchmark.",
+      "score": 8,
+      "scores": {
+        "pain": 7,
+        "urgency": 6,
+        "distribution": 9,
+        "buildability": 9,
+        "starPotential": 8
+      },
+      "firstRelease": [
+        "Signal intake with audience, trend, constraints, and channel context",
+        "Opportunity scoring matrix with editable assumptions",
+        "README hook and launch-plan generator"
+      ],
+      "launchPlan": [
+        "Ship a polished 90-second screen recording and a no-login hosted demo.",
+        "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+        "Publish a transparent build log explaining why this idea scored well.",
+        "Post before/after examples that turn vague AI trends into concrete repos."
+      ],
+      "repoHook": "Founders Radar: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+      "risks": [
+        "Generic output if the input signal is too broad.",
+        "Users may expect business validation beyond a launch-readiness score.",
+        "Real model calls need clear privacy expectations for pasted research notes."
+      ]
+    },
+    "alternatives": [
+      {
+        "id": "founders-workbench",
+        "name": "Founders Workbench",
+        "tagline": "Founders Workbench helps founders and maintainers turning support tickets, Discord threads, and GitHub discussions into AI product ideas choose a sharper AI product wedge before they start building.",
+        "targetUser": "founders and maintainers turning support tickets, Discord threads, and GitHub discussions into AI product ideas",
+        "wedge": "converts a messy launch idea into an issue-by-issue open-source roadmap",
+        "differentiator": "opinionated GitHub-readiness scoring instead of generic brainstorm output",
+        "moat": "The workflow connects market signal, implementation scope, and launch assets in one place.",
+        "score": 8,
+        "scores": {
+          "pain": 8,
+          "urgency": 7,
+          "distribution": 10,
+          "buildability": 8,
+          "starPotential": 9
+        },
+        "firstRelease": [
+          "Opportunity scoring matrix with editable assumptions",
+          "README hook and launch-plan generator",
+          "Provider switcher for demo, OpenAI-compatible APIs, and Ollama"
+        ],
+        "launchPlan": [
+          "Ship a polished 90-second screen recording and a no-login hosted demo.",
+          "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+          "Publish a transparent build log explaining why this idea scored well.",
+          "Post before/after examples that turn vague AI trends into concrete repos."
+        ],
+        "repoHook": "Founders Workbench: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+        "risks": [
+          "Generic output if the input signal is too broad.",
+          "Users may expect business validation beyond a launch-readiness score.",
+          "Real model calls need clear privacy expectations for pasted research notes."
+        ]
+      },
+      {
+        "id": "founders-scout",
+        "name": "Founders Scout",
+        "tagline": "Founders Scout helps founders and maintainers turning support tickets, Discord threads, and GitHub discussions into AI product ideas choose a sharper AI product wedge before they start building.",
+        "targetUser": "founders and maintainers turning support tickets, Discord threads, and GitHub discussions into AI product ideas",
+        "wedge": "compares model, API, and local-first implementation paths before code is written",
+        "differentiator": "launch artifacts that are immediately copyable into issues, README sections, and demos",
+        "moat": "A growing public library of scored launch briefs compounds into a reusable benchmark.",
+        "score": 8,
+        "scores": {
+          "pain": 7,
+          "urgency": 8,
+          "distribution": 9,
+          "buildability": 8,
+          "starPotential": 8
+        },
+        "firstRelease": [
+          "README hook and launch-plan generator",
+          "Provider switcher for demo, OpenAI-compatible APIs, and Ollama",
+          "Exportable Markdown brief for GitHub issues and Product Hunt drafts"
+        ],
+        "launchPlan": [
+          "Ship a polished 90-second screen recording and a no-login hosted demo.",
+          "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+          "Publish a transparent build log explaining why this idea scored well.",
+          "Post before/after examples that turn vague AI trends into concrete repos."
+        ],
+        "repoHook": "Founders Scout: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+        "risks": [
+          "Generic output if the input signal is too broad.",
+          "Users may expect business validation beyond a launch-readiness score.",
+          "Real model calls need clear privacy expectations for pasted research notes."
+        ]
+      },
+      {
+        "id": "founders-foundry",
+        "name": "Founders Foundry",
+        "tagline": "Founders Foundry helps founders and maintainers turning support tickets, Discord threads, and GitHub discussions into AI product ideas choose a sharper AI product wedge before they start building.",
+        "targetUser": "founders and maintainers turning support tickets, Discord threads, and GitHub discussions into AI product ideas",
+        "wedge": "generates a public README, demo script, and launch checklist from one product brief",
+        "differentiator": "transparent scoring so users can challenge the ranking instead of trusting a black box",
+        "moat": "The workflow connects market signal, implementation scope, and launch assets in one place.",
+        "score": 8,
+        "scores": {
+          "pain": 8,
+          "urgency": 6,
+          "distribution": 10,
+          "buildability": 7,
+          "starPotential": 8
+        },
+        "firstRelease": [
+          "Provider switcher for demo, OpenAI-compatible APIs, and Ollama",
+          "Exportable Markdown brief for GitHub issues and Product Hunt drafts",
+          "Signal intake with audience, trend, constraints, and channel context"
+        ],
+        "launchPlan": [
+          "Ship a polished 90-second screen recording and a no-login hosted demo.",
+          "Open 5 starter issues labeled good-first-opportunity so contributors can extend templates.",
+          "Publish a transparent build log explaining why this idea scored well.",
+          "Post before/after examples that turn vague AI trends into concrete repos."
+        ],
+        "repoHook": "Founders Foundry: an AI opportunity radar that turns trend noise into ranked, GitHub-ready app ideas.",
+        "risks": [
+          "Generic output if the input signal is too broad.",
+          "Users may expect business validation beyond a launch-readiness score.",
+          "Real model calls need clear privacy expectations for pasted research notes."
+        ]
+      }
+    ]
   }
 ]

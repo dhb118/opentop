@@ -45,16 +45,17 @@ Acceptance:
 - The command is documented in the local quality gate.
 - Existing `pnpm test` and `pnpm build` still pass.
 
-## 4. Add five high-quality AI builder sample briefs
+## 4. Keep high-quality AI builder sample briefs current
 
 Labels: `sample-brief`, `growth`, `good-first-opportunity`
 
-Expand the gallery with recognizable AI developer workflows that make OpenTop easier to judge from examples.
+Keep the gallery full of recognizable AI developer workflows that make OpenTop easier to judge from examples.
 
 Acceptance:
 
+- At least 14 briefs are available in the built-in library.
 - Each brief has a specific audience, signal, constraints, channels, and score inputs.
-- At least two briefs focus on local-first AI or agent debugging.
+- At least seven briefs focus on local-first AI or agent debugging.
 - `pnpm generate:gallery` updates the public gallery JSON and docs.
 - Gallery synchronization tests pass.
 

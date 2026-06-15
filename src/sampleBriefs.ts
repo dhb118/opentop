@@ -132,5 +132,75 @@ export const sampleBriefs: SampleBrief[] = [
       urgency: 8,
       distribution: 9
     }
+  },
+  {
+    id: "agent-memory-inspector",
+    title: "Agent memory inspector",
+    input: {
+      audience: "developers shipping long-running agents with vector memory, summaries, and user-specific context",
+      signal:
+        "Agent memory failures are subtle: stale facts, over-retained private data, duplicate memories, and missing citations often surface only after users complain.",
+      constraints: "TypeScript, local-first inspection UI, imports JSON logs, redacts sensitive values, exports reproducible memory bug reports",
+      channels: "GitHub, AI agent communities, security engineering newsletters, Hacker News, framework Discords",
+      pain: 9,
+      urgency: 8,
+      distribution: 8
+    }
+  },
+  {
+    id: "local-vector-index-doctor",
+    title: "Local vector index doctor",
+    input: {
+      audience: "engineers running local RAG prototypes with SQLite, LanceDB, Chroma, or file-backed vector indexes",
+      signal:
+        "Local retrieval demos often decay when chunks change, embeddings are regenerated, filters break, or index files drift from the source documents.",
+      constraints: "TypeScript, no hosted backend, scans local index metadata, compares source files, writes repair checklists",
+      channels: "GitHub, Reddit r/LocalLLaMA, LangChain communities, docs engineering forums, DevTools newsletters",
+      pain: 8,
+      urgency: 8,
+      distribution: 8
+    }
+  },
+  {
+    id: "model-routing-playground",
+    title: "Model routing playground",
+    input: {
+      audience: "developers deciding when to route requests between cheap, fast, local, and high-quality models",
+      signal:
+        "Teams want smaller model bills without degrading user-visible answers, but routing experiments are scattered across spreadsheets, logs, and provider dashboards.",
+      constraints: "TypeScript, local demo mode, imports request samples, compares latency/cost/quality notes, no secrets in exports",
+      channels: "GitHub, SaaS engineering blogs, AI infrastructure newsletters, FinOps communities, X/Twitter demos",
+      pain: 8,
+      urgency: 9,
+      distribution: 8
+    }
+  },
+  {
+    id: "ai-release-risk-reviewer",
+    title: "AI release risk reviewer",
+    input: {
+      audience: "engineering teams preparing releases that change prompts, models, retrieval data, or agent tools",
+      signal:
+        "AI releases fail in ways normal changelogs miss: prompt regressions, changed refusal behavior, broken JSON contracts, and new tool permissions.",
+      constraints: "TypeScript, imports release notes and eval summaries, produces GitHub checklist, works without model API",
+      channels: "GitHub, DevOps communities, AI engineering newsletters, internal platform teams, Hacker News",
+      pain: 8,
+      urgency: 8,
+      distribution: 7
+    }
+  },
+  {
+    id: "support-thread-signal-miner",
+    title: "Support thread signal miner",
+    input: {
+      audience: "founders and maintainers turning support tickets, Discord threads, and GitHub discussions into AI product ideas",
+      signal:
+        "Useful product signals are buried in repeated setup questions, confusing errors, integration requests, and workaround threads across support channels.",
+      constraints: "TypeScript, paste-only import, local clustering, no customer data upload, exports opportunity briefs and starter issues",
+      channels: "GitHub, founder communities, support engineering blogs, Product Hunt, developer newsletters",
+      pain: 8,
+      urgency: 7,
+      distribution: 9
+    }
   }
 ];
