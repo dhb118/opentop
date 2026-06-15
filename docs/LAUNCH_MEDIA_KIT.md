@@ -8,7 +8,7 @@ Use this kit before posting OpenTop to GitHub, Product Hunt, Hacker News, Reddit
 - Live demo capture: [OpenTop live demo capture](assets/opentop-live-demo.png).
 - Demo flow visual: [OpenTop 90-second demo flow](assets/opentop-demo-flow.svg).
 - Demo frame sequence: run `pnpm build` and `pnpm capture:demo-frames` to refresh the three PNG frames under `docs/assets/opentop-demo-frames/`.
-- Hosted demo: [verified rawcdn fallback](https://rawcdn.githack.com/dhb118/opentop/8af0b223db437d2c8235232e32e85ed9b8e6ca8c/).
+- Hosted demo: [verified rawcdn fallback](https://rawcdn.githack.com/dhb118/opentop/c0cc556035b729caf53d44d9f0b4a1e5dc85adea/).
 - Repo profile alt text: OpenTop interface showing AI opportunity scoring, sample briefs, and launch exports for open-source builders.
 
 ## 90-Second Demo Recording

@@ -14,7 +14,7 @@ The app is TypeScript-first, runs locally without an API key, and can optionally
 
 Chinese-friendly localization is built in: OpenTop follows Chinese browser locales by default, keeps a persistent English / Simplified Chinese switch in the app, and asks local demo output or configured model providers to return Chinese opportunity text when Simplified Chinese is selected.
 
-Live demo: [verified rawcdn fallback](https://rawcdn.githack.com/dhb118/opentop/8af0b223db437d2c8235232e32e85ed9b8e6ca8c/). GitHub Pages is still blocked because GitHub Actions cannot start while the account has a billing lock, so this fixed `gh-pages` build is the public demo until Pages recovers.
+Live demo: [verified rawcdn fallback](https://rawcdn.githack.com/dhb118/opentop/c0cc556035b729caf53d44d9f0b4a1e5dc85adea/). This fixed `gh-pages` build is the current public demo while native GitHub Pages is being restored.
 
 Try it in 90 seconds:
 

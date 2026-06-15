@@ -43,4 +43,4 @@ What would make OpenTop more useful for deciding whether an AI app idea is worth
 
 ## Current Launch Gate
 
-OpenTop now has a verified fallback demo at https://rawcdn.githack.com/dhb118/opentop/8af0b223db437d2c8235232e32e85ed9b8e6ca8c/. GitHub Actions and GitHub Pages remain blocked by an account billing lock, so use the rawcdn fallback in launch copy until the native Pages URL passes the smoke check again. Keep Vercel, Netlify, Cloudflare Pages Direct Upload, and the static ZIP path ready as secondary fallbacks.
+OpenTop now has a verified fallback demo at https://rawcdn.githack.com/dhb118/opentop/c0cc556035b729caf53d44d9f0b4a1e5dc85adea/. GitHub Actions and GitHub Pages remain blocked by an account billing lock, so use the rawcdn fallback in launch copy until the native Pages URL passes the smoke check again. Keep Vercel, Netlify, Cloudflare Pages Direct Upload, and the static ZIP path ready as secondary fallbacks.
