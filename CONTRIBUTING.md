@@ -5,8 +5,9 @@ OpenTop is designed to be easy to fork, tune, and extend.
 ## Find Work
 
 - Start with the public starter issue list in `docs/STARTER_ISSUES.md`.
-- Current launch blockers are tracked in [#11](https://github.com/dhb118/opentop/issues/11) and [#12](https://github.com/dhb118/opentop/issues/12).
-- Pick tasks that improve the hosted demo, launch proof, sample briefs, exports, or README clarity.
+- Current launch blockers are tracked in [#11](https://github.com/dhb118/opentop/issues/11), [#12](https://github.com/dhb118/opentop/issues/12), and [#13](https://github.com/dhb118/opentop/issues/13).
+- Good first growth tasks are tracked in [#14](https://github.com/dhb118/opentop/issues/14), [#15](https://github.com/dhb118/opentop/issues/15), and [#16](https://github.com/dhb118/opentop/issues/16).
+- Pick tasks that improve the hosted demo, launch proof, sample briefs, exports, README clarity, or the weekly gallery workflow.
 
 ## Useful Contribution Areas
 

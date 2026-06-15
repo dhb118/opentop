@@ -57,7 +57,8 @@ pnpm repo:profile:audit
 9. Use the [Launch Media Kit](LAUNCH_MEDIA_KIT.md) to prepare screenshots, a 90-second recording, and channel visuals.
 10. Run the **Sync Labels** workflow or validate labels locally with `pnpm sync:labels`.
 11. Create the first public issues from `docs/STARTER_ISSUES.md`.
-12. Use `docs/LAUNCH_PLAYBOOK.md` for the first distribution posts.
+12. Use the [Weekly Gallery Update Workflow](WEEKLY_GALLERY_WORKFLOW.md) so examples stay current after launch.
+13. Use `docs/LAUNCH_PLAYBOOK.md` for the first distribution posts.
 
 ## Publish Check
 

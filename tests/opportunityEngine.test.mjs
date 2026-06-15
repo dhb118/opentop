@@ -1166,7 +1166,8 @@ describe("launch documentation", () => {
       cloudflareDoc,
       publishDoc,
       repoProfileDoc,
-      contributing
+      contributing,
+      weeklyGalleryWorkflow
     ] = await Promise.all([
       readFile("README.md", "utf8"),
       readFile("README.zh-CN.md", "utf8"),
@@ -1177,7 +1178,8 @@ describe("launch documentation", () => {
       readFile("docs/CLOUDFLARE_PAGES.md", "utf8"),
       readFile("docs/GITHUB_PUBLISH.md", "utf8"),
       readFile("docs/REPO_PROFILE.md", "utf8"),
-      readFile("CONTRIBUTING.md", "utf8")
+      readFile("CONTRIBUTING.md", "utf8"),
+      readFile("docs/WEEKLY_GALLERY_WORKFLOW.md", "utf8")
     ]);
 
     assert.match(readme, /Public Launch Brief/);
@@ -1231,6 +1233,7 @@ describe("launch documentation", () => {
     assert.match(starterIssues, /#14 Record a 90-second product demo GIF or video/);
     assert.match(starterIssues, /#15 Keep high-quality AI builder sample briefs current/);
     assert.match(starterIssues, /#16 Add a weekly gallery update workflow/);
+    assert.match(starterIssues, /WEEKLY_GALLERY_WORKFLOW\.md/);
     assert.match(starterIssues, /Launch Media Kit/);
     assert.match(starterIssues, /Refine the public launch brief with real feedback/);
     assert.match(starterIssues, /Keep Cloudflare Pages direct-upload instructions current/);
@@ -1238,6 +1241,7 @@ describe("launch documentation", () => {
     assert.doesNotMatch(starterIssues, /Add keyboard navigation for opportunity cards/);
     assert.match(launchPlaybook, /Review the Public Launch Brief/);
     assert.match(launchPlaybook, /Launch Media Kit/);
+    assert.match(launchPlaybook, /Weekly Gallery Update Workflow/);
     assert.match(launchMediaKit, /# OpenTop Launch Media Kit/);
     assert.match(launchMediaKit, /Copy Demo Script/);
     assert.match(launchMediaKit, /Product Hunt Gallery/);
@@ -1251,6 +1255,7 @@ describe("launch documentation", () => {
     assert.match(publishDoc, /Copy Demo Script/);
     assert.match(publishDoc, /Copy Newsletter/);
     assert.match(publishDoc, /Repo Profile Check/);
+    assert.match(publishDoc, /Weekly Gallery Update Workflow/);
     assert.match(publishDoc, /pnpm repo:profile:apply/);
     assert.match(publishDoc, /pnpm repo:profile:audit/);
     assert.match(repoProfileDoc, /# OpenTop GitHub Repo Profile Pack/);
@@ -1262,6 +1267,15 @@ describe("launch documentation", () => {
     assert.match(contributing, /## Find Work/);
     assert.match(contributing, /https:\/\/github\.com\/dhb118\/opentop\/issues\/11/);
     assert.match(contributing, /https:\/\/github\.com\/dhb118\/opentop\/issues\/12/);
+    assert.match(contributing, /https:\/\/github\.com\/dhb118\/opentop\/issues\/14/);
+    assert.match(contributing, /https:\/\/github\.com\/dhb118\/opentop\/issues\/16/);
+    assert.match(weeklyGalleryWorkflow, /# Weekly Gallery Update Workflow/);
+    assert.match(weeklyGalleryWorkflow, /## Signal Sources/);
+    assert.match(weeklyGalleryWorkflow, /## Sample Brief Quality Bar/);
+    assert.match(weeklyGalleryWorkflow, /pnpm generate:gallery/);
+    assert.match(weeklyGalleryWorkflow, /pnpm test/);
+    assert.match(weeklyGalleryWorkflow, /pnpm build/);
+    assert.match(weeklyGalleryWorkflow, /Launch docs were updated or intentionally left unchanged/);
   });
 });
 

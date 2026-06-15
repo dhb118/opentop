@@ -14,11 +14,12 @@ This playbook turns the repository into a real GitHub launch asset.
 8. Run `pnpm smoke:pages -- --url https://YOUR-DEMO-URL/` against the hosted demo.
 9. Create labels from `.github/labels.yml`.
 10. Open starter issues from `docs/STARTER_ISSUES.md` so new visitors can contribute immediately.
-11. Export the selected opportunity's Star Growth Plan and use it to stage the 1, 10, 100, 1k, and 10k star loops.
-12. Review the Public Launch Brief so every post has the same demo story, proof checklist, channel sequence, and follow-up loop.
-13. Export the GitHub Repo Listing Pack and apply the About description, topics, homepage, social preview, and pinned issue before posting.
-14. Copy the demo script, Product Hunt draft, and newsletter pitch from the launch export panel.
-15. Run README Star Audit and copy the 7-day sprint so top fixes have owners before broad launch.
+11. Use the [Weekly Gallery Update Workflow](WEEKLY_GALLERY_WORKFLOW.md) so launch examples stay current after the first post.
+12. Export the selected opportunity's Star Growth Plan and use it to stage the 1, 10, 100, 1k, and 10k star loops.
+13. Review the Public Launch Brief so every post has the same demo story, proof checklist, channel sequence, and follow-up loop.
+14. Export the GitHub Repo Listing Pack and apply the About description, topics, homepage, social preview, and pinned issue before posting.
+15. Copy the demo script, Product Hunt draft, and newsletter pitch from the launch export panel.
+16. Run README Star Audit and copy the 7-day sprint so top fixes have owners before broad launch.
 
 ## Launch Copy
 
@@ -45,6 +46,7 @@ Long:
 OpenTop cannot earn 10k stars from code alone. The repository needs compounding proof:
 
 - Weekly gallery updates with real generated ideas.
+- [Weekly Gallery Update Workflow](WEEKLY_GALLERY_WORKFLOW.md) checks that each new example has public signals, a clear quality bar, regeneration commands, and launch-doc review.
 - Public issues for every requested provider and exporter.
 - Exported Star Growth Plans that turn each selected wedge into staged proof, contribution, and distribution work.
 - Public Launch Briefs that keep demo story, proof, channel copy, and follow-up tasks aligned across launch surfaces.

@@ -15,7 +15,7 @@ These public issues are already open and should be used as the current contribut
 - [#13 Apply GitHub About metadata and discovery topics](https://github.com/dhb118/opentop/issues/13): run `pnpm repo:profile:apply` or apply the repo profile pack manually so GitHub visitors see the correct description, Website, topics, and pinned issue.
 - [#14 Record a 90-second product demo GIF or video](https://github.com/dhb118/opentop/issues/14): use [the media kit](LAUNCH_MEDIA_KIT.md) to create first-screen visual proof.
 - [#15 Keep high-quality AI builder sample briefs current](https://github.com/dhb118/opentop/issues/15): maintain examples that show real AI builder pain.
-- [#16 Add a weekly gallery update workflow](https://github.com/dhb118/opentop/issues/16): define a repeatable process for keeping launch examples fresh.
+- [#16 Add a weekly gallery update workflow](https://github.com/dhb118/opentop/issues/16): use the [weekly gallery workflow](WEEKLY_GALLERY_WORKFLOW.md) to keep launch examples fresh.
 
 ## 1. Enable the working GitHub Pages branch demo
 
@@ -120,4 +120,5 @@ Acceptance:
 - The workflow explains how to collect new AI builder signals.
 - It defines the minimum quality bar for a sample brief.
 - It includes commands for regenerating gallery assets and running tests.
+- It explains when to update launch docs because a new example is stronger than the current demo.
 - It avoids private metrics and unsupported star claims.
