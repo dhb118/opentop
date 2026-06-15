@@ -37,6 +37,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 - Export actions for README briefs, Show HN posts, and JSON opportunity records.
 - Shareable brief links that preserve the full input signal in the URL.
 - One-click sample briefs for local models, agents, prompt regression, and README positioning.
+- In-app opportunity gallery with scored examples and share links.
 - Responsive single-page interface built with Vite and TypeScript.
 
 ## Quick Start

@@ -115,6 +115,8 @@ function render(): void {
               </div>
             </div>
 
+            ${renderGalleryRail()}
+
             <div class="results-grid">
               ${result ? renderResults(result) : renderSkeletons()}
             </div>
@@ -241,6 +243,38 @@ function renderResults(analysis: AnalysisResult): string {
         .join("")}
     </div>
     ${selected ? renderOpportunityDetail(selected) : ""}
+  `;
+}
+
+function renderGalleryRail(): string {
+  return `
+    <section class="gallery-rail" aria-label="Opportunity gallery">
+      <div>
+        <p class="eyebrow">Opportunity gallery</p>
+        <h2>Proof before setup</h2>
+      </div>
+      <div class="gallery-cards">
+        ${sampleBriefs
+          .map((brief) => {
+            const top = analyzeLocally(brief.input).opportunities[0];
+            const shareUrl = createShareUrl(brief.input, window.location.href);
+            return `
+              <article class="gallery-card">
+                <div>
+                  <span>${top.score}/10</span>
+                  <strong>${escapeHtml(brief.title)}</strong>
+                </div>
+                <p>${escapeHtml(top.name)} - ${escapeHtml(top.wedge)}</p>
+                <div class="gallery-actions">
+                  <button class="secondary-action" data-sample="${brief.id}" type="button">Load</button>
+                  <a href="${escapeHtml(shareUrl)}">Open link</a>
+                </div>
+              </article>
+            `;
+          })
+          .join("")}
+      </div>
+    </section>
   `;
 }
 
