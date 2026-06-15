@@ -3,7 +3,8 @@ export interface TrendSignalImport {
   channels: string;
   rowCount: number;
   ignoredCount: number;
-  format: "csv" | "notes";
+  format: "csv" | "notes" | "github-issues";
+  failures?: string[];
 }
 
 interface TrendItem {
@@ -11,8 +12,91 @@ interface TrendItem {
   signal: string;
 }
 
+export interface GitHubIssueReference {
+  owner: string;
+  repo: string;
+  number: number;
+  url: string;
+}
+
+interface GitHubIssueApiResponse {
+  title?: string;
+  body?: string | null;
+  html_url?: string;
+  state?: string;
+  labels?: Array<string | { name?: string }>;
+  pull_request?: unknown;
+}
+
+interface MinimalFetchResponse {
+  ok: boolean;
+  status: number;
+  statusText: string;
+  json: () => Promise<unknown>;
+}
+
+type FetchLike = (url: string, init?: RequestInit) => Promise<MinimalFetchResponse>;
+
+const githubIssueUrlPattern =
+  /https?:\/\/github\.com\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)\/issues\/(\d+)(?:[/?#][^\s<)]*)?/gi;
+
 export function parseTrendSignals(input: string): TrendSignalImport | null {
   return looksLikeCsv(input) ? parseTrendCsv(input) : parseTrendNotes(input);
+}
+
+export function parseGitHubIssueUrls(input: string): GitHubIssueReference[] {
+  const seen = new Set<string>();
+  const references: GitHubIssueReference[] = [];
+
+  for (const match of input.matchAll(githubIssueUrlPattern)) {
+    const owner = match[1];
+    const repo = match[2];
+    const number = Number(match[3]);
+    const key = `${owner.toLowerCase()}/${repo.toLowerCase()}#${number}`;
+
+    if (seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    references.push({
+      owner,
+      repo,
+      number,
+      url: `https://github.com/${owner}/${repo}/issues/${number}`
+    });
+  }
+
+  return references;
+}
+
+export async function fetchGitHubIssueSignals(
+  input: string,
+  fetcher: FetchLike = globalThis.fetch
+): Promise<TrendSignalImport | null> {
+  const references = parseGitHubIssueUrls(input).slice(0, 12);
+
+  if (references.length === 0) {
+    return null;
+  }
+  if (!fetcher) {
+    throw new Error("This browser cannot fetch GitHub issues.");
+  }
+
+  const results = await Promise.all(references.map((reference) => fetchGitHubIssue(reference, fetcher)));
+  const items = results.flatMap((result) => (result.item ? [result.item] : []));
+  const failures = results.flatMap((result) => (result.failure ? [result.failure] : []));
+
+  if (items.length === 0) {
+    throw new Error(`Could not import GitHub issues: ${failures.join("; ")}`);
+  }
+
+  return {
+    ...buildImport(items),
+    ignoredCount: references.length - items.length,
+    format: "github-issues",
+    failures
+  };
 }
 
 export function parseTrendCsv(csv: string): TrendSignalImport | null {
@@ -76,6 +160,78 @@ function buildImport(items: TrendItem[]): Pick<TrendSignalImport, "signal" | "ch
     rowCount: items.length,
     signal
   };
+}
+
+async function fetchGitHubIssue(
+  reference: GitHubIssueReference,
+  fetcher: FetchLike
+): Promise<{ item: TrendItem | null; failure: string | null }> {
+  const label = `${reference.owner}/${reference.repo}#${reference.number}`;
+
+  try {
+    const response = await fetcher(
+      `https://api.github.com/repos/${reference.owner}/${reference.repo}/issues/${reference.number}`,
+      {
+        headers: {
+          Accept: "application/vnd.github+json"
+        }
+      }
+    );
+
+    if (!response.ok) {
+      return { item: null, failure: `${label}: ${response.status} ${response.statusText || "request failed"}` };
+    }
+
+    const issue = (await response.json()) as GitHubIssueApiResponse;
+    if (issue.pull_request) {
+      return { item: null, failure: `${label}: pull requests are skipped` };
+    }
+
+    const title = cleanCell(issue.title);
+    if (!title) {
+      return { item: null, failure: `${label}: missing issue title` };
+    }
+
+    const state = cleanCell(issue.state);
+    const labels = formatIssueLabels(issue.labels);
+    const summary = summarizeIssueBody(issue.body);
+    const url = issue.html_url?.startsWith("https://github.com/") ? issue.html_url : reference.url;
+    const parts = [title, summary, labels ? `labels: ${labels}` : "", state ? `state: ${state}` : "", url].filter(
+      Boolean
+    );
+
+    return {
+      item: {
+        source: `GitHub ${label}`,
+        signal: parts.join(" | ")
+      },
+      failure: null
+    };
+  } catch (error) {
+    return { item: null, failure: `${label}: ${error instanceof Error ? error.message : "request failed"}` };
+  }
+}
+
+function formatIssueLabels(labels: GitHubIssueApiResponse["labels"]): string {
+  return (labels ?? [])
+    .map((label) => (typeof label === "string" ? label : label.name ?? ""))
+    .map(cleanCell)
+    .filter(Boolean)
+    .slice(0, 5)
+    .join(", ");
+}
+
+function summarizeIssueBody(body: string | null | undefined): string {
+  return cleanCell(
+    (body ?? "")
+      .replace(/```[\s\S]*?```/g, " ")
+      .replace(/`([^`]+)`/g, "$1")
+      .replace(/!\[[^\]]*]\([^)]+\)/g, " ")
+      .replace(/\[([^\]]+)]\([^)]+\)/g, "$1")
+      .replace(/^#{1,6}\s+/gm, "")
+      .replace(/^\s{0,3}[-*+]\s+/gm, "")
+      .replace(/\s+/g, " ")
+  );
 }
 
 function looksLikeCsv(input: string): boolean {

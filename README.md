@@ -42,7 +42,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 - Shareable brief links that preserve the full input signal in the URL.
 - One-click sample briefs for local models, agents, prompt regression, and README positioning.
 - In-app opportunity gallery with scored examples and share links.
-- CSV, Markdown, and notes import for turning research snippets into signal briefs.
+- CSV, Markdown, notes, and public GitHub issue URL import for turning research snippets into signal briefs.
 - Responsive single-page interface built with Vite and TypeScript.
 
 ## Quick Start
@@ -102,7 +102,7 @@ For Ollama:
 
 ## Roadmap
 
-- Import trend signals from GitHub issues and browser bookmarks.
+- Import browser bookmarks or copied link lists as trend sources.
 - Export full repository scaffolds for selected ideas.
 - Add a scoring template marketplace.
 - Turn benchmark examples into optional in-app scoring presets.

@@ -15,7 +15,13 @@ import { parseModelAnalysis } from "../src/modelResponse.ts";
 import { analyzeLocally, scoreWeights } from "../src/opportunityEngine.ts";
 import { buildShareCardSvg, buildShareCardSvgDataUrl, shareCardDimensions } from "../src/shareCard.ts";
 import { isOpportunityNavigationKey, nextOpportunityIndex } from "../src/keyboardNavigation.ts";
-import { parseTrendCsv, parseTrendNotes, parseTrendSignals } from "../src/trendImport.ts";
+import {
+  fetchGitHubIssueSignals,
+  parseGitHubIssueUrls,
+  parseTrendCsv,
+  parseTrendNotes,
+  parseTrendSignals
+} from "../src/trendImport.ts";
 import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
 import { benchmarkRepos } from "../src/benchmarkRepos.ts";
 import { sampleBriefs } from "../src/sampleBriefs.ts";
@@ -338,6 +344,87 @@ describe("trend notes import", () => {
 
     assert.equal(parsed?.rowCount, 1);
     assert.equal(parsed?.ignoredCount, 1);
+  });
+});
+
+describe("GitHub issue trend import", () => {
+  it("parses and deduplicates public GitHub issue URLs", () => {
+    const refs = parseGitHubIssueUrls(`
+      https://github.com/openai/codex/issues/42
+      See also https://github.com/OpenAI/codex/issues/42?comment=1
+      https://github.com/example/repo.name/issues/7#issuecomment-1
+    `);
+
+    assert.deepEqual(refs, [
+      {
+        owner: "openai",
+        repo: "codex",
+        number: 42,
+        url: "https://github.com/openai/codex/issues/42"
+      },
+      {
+        owner: "example",
+        repo: "repo.name",
+        number: 7,
+        url: "https://github.com/example/repo.name/issues/7"
+      }
+    ]);
+  });
+
+  it("fetches public issues without credentials and keeps source links visible", async () => {
+    const requested = [];
+    const parsed = await fetchGitHubIssueSignals("https://github.com/example/opentop/issues/12", async (url, init) => {
+      requested.push({ url, init });
+      return {
+        ok: true,
+        status: 200,
+        statusText: "OK",
+        json: async () => ({
+          title: "Import feedback loops from issues",
+          body: "Developers ask for [trend import](https://example.com) and clearer launch signals.",
+          html_url: "https://github.com/example/opentop/issues/12",
+          state: "open",
+          labels: [{ name: "growth" }, { name: "scoring" }]
+        })
+      };
+    });
+
+    assert.equal(requested[0].url, "https://api.github.com/repos/example/opentop/issues/12");
+    assert.equal(requested[0].init.headers.Accept, "application/vnd.github+json");
+    assert.equal(parsed?.format, "github-issues");
+    assert.equal(parsed?.rowCount, 1);
+    assert.equal(parsed?.channels, "GitHub example/opentop#12");
+    assert.match(parsed?.signal ?? "", /Import feedback loops from issues/);
+    assert.match(parsed?.signal ?? "", /trend import/);
+    assert.match(parsed?.signal ?? "", /labels: growth, scoring/);
+    assert.match(parsed?.signal ?? "", /https:\/\/github.com\/example\/opentop\/issues\/12/);
+  });
+
+  it("reports partial GitHub issue import failures", async () => {
+    const parsed = await fetchGitHubIssueSignals(
+      "https://github.com/example/opentop/issues/12\nhttps://github.com/example/opentop/issues/99",
+      async (url) => {
+        if (url.endsWith("/99")) {
+          return { ok: false, status: 404, statusText: "Not Found", json: async () => ({}) };
+        }
+        return {
+          ok: true,
+          status: 200,
+          statusText: "OK",
+          json: async () => ({
+            title: "Maintainers want launchable issue briefs",
+            body: "Issue body becomes a signal.",
+            html_url: "https://github.com/example/opentop/issues/12",
+            state: "open",
+            labels: []
+          })
+        };
+      }
+    );
+
+    assert.equal(parsed?.rowCount, 1);
+    assert.equal(parsed?.ignoredCount, 1);
+    assert.deepEqual(parsed?.failures, ["example/opentop#99: 404 Not Found"]);
   });
 });
 

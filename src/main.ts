@@ -14,7 +14,7 @@ import { analyzeLocally, scoreWeights } from "./opportunityEngine";
 import { sampleBriefs } from "./sampleBriefs";
 import { buildShareCardSvg, renderShareCardPngBlob } from "./shareCard";
 import { loadInput, loadSettings, saveInput, saveSettings } from "./storage";
-import { parseTrendSignals } from "./trendImport";
+import { fetchGitHubIssueSignals, parseGitHubIssueUrls, parseTrendSignals } from "./trendImport";
 import { createShareUrl, readBriefFromSearch } from "./urlState";
 
 const appRoot = requireAppRoot();
@@ -25,6 +25,7 @@ let result: AnalysisResult | null = null;
 let selectedId = "";
 let isBusy = false;
 let pendingFocusId = "";
+let importFeedback = "";
 
 render();
 void runAnalysis();
@@ -64,12 +65,12 @@ function render(): void {
             <details class="import-panel">
               <summary>Import Trend Signals</summary>
               <label>
-                Paste CSV, bullets, or notes
-                <textarea name="trendSignals" rows="5" placeholder="HN: Developers want local-first AI debugging&#10;- GitHub: Prompt regression tools are getting starred&#10;- Reddit: Local model setup is still painful"></textarea>
+                Paste CSV, bullets, notes, or GitHub issue URLs
+                <textarea name="trendSignals" rows="5" placeholder="HN: Developers want local-first AI debugging&#10;https://github.com/example/repo/issues/42&#10;- Reddit: Local model setup is still painful"></textarea>
               </label>
               <div class="import-actions">
                 <button class="secondary-action" data-import-trends type="button">Use Signals</button>
-                <span data-import-feedback aria-live="polite"></span>
+                <span data-import-feedback aria-live="polite">${escapeHtml(importFeedback)}</span>
               </div>
             </details>
 
@@ -243,29 +244,48 @@ function bindEvents(): void {
     });
   });
 
-  document.querySelector<HTMLButtonElement>("[data-import-trends]")?.addEventListener("click", () => {
+  document.querySelector<HTMLButtonElement>("[data-import-trends]")?.addEventListener("click", async (event) => {
+    const button = event.currentTarget as HTMLButtonElement;
     const input = document.querySelector<HTMLTextAreaElement>("[name='trendSignals']");
     const feedback = document.querySelector<HTMLSpanElement>("[data-import-feedback]");
-    const parsed = parseTrendSignals(input?.value ?? "");
-    if (!parsed) {
-      if (feedback) {
-        feedback.textContent = "No usable signals found";
+    const rawSignals = input?.value ?? "";
+    const githubIssueCount = parseGitHubIssueUrls(rawSignals).length;
+
+    button.disabled = true;
+    if (githubIssueCount > 0) {
+      updateImportFeedback(
+        feedback,
+        `Fetching ${githubIssueCount} public GitHub issue${githubIssueCount === 1 ? "" : "s"}...`
+      );
+    }
+
+    try {
+      const parsed = githubIssueCount > 0 ? await fetchGitHubIssueSignals(rawSignals) : parseTrendSignals(rawSignals);
+
+      if (!parsed) {
+        updateImportFeedback(feedback, "No usable signals found");
+        return;
       }
-      return;
+
+      updateImportFeedback(
+        feedback,
+        `Imported ${parsed.rowCount} ${labelForTrendImport(parsed.format)}${
+          parsed.ignoredCount > 0 ? `, skipped ${parsed.ignoredCount}` : ""
+        }${parsed.failures?.length ? `, failed ${parsed.failures.length}` : ""}`
+      );
+      currentInput = {
+        ...currentInput,
+        signal: parsed.signal,
+        channels: parsed.channels || currentInput.channels,
+        distribution: Math.max(currentInput.distribution, Math.min(10, 5 + Math.ceil(parsed.rowCount / 2)))
+      };
+      saveInput(currentInput);
+      void runAnalysis();
+    } catch (error) {
+      updateImportFeedback(feedback, error instanceof Error ? error.message : "Could not import GitHub issues");
+    } finally {
+      button.disabled = false;
     }
-    if (feedback) {
-      feedback.textContent = `Imported ${parsed.rowCount} ${parsed.format === "csv" ? "CSV rows" : "notes"}${
-        parsed.ignoredCount > 0 ? `, skipped ${parsed.ignoredCount}` : ""
-      }`;
-    }
-    currentInput = {
-      ...currentInput,
-      signal: parsed.signal,
-      channels: parsed.channels || currentInput.channels,
-      distribution: Math.max(currentInput.distribution, Math.min(10, 5 + Math.ceil(parsed.rowCount / 2)))
-    };
-    saveInput(currentInput);
-    void runAnalysis();
   });
 
   document.querySelector<HTMLButtonElement>("[data-download]")?.addEventListener("click", () => {
@@ -572,6 +592,23 @@ function labelForProvider(provider: ProviderSettings["provider"]): string {
     return "Anthropic ready";
   }
   return "API ready";
+}
+
+function labelForTrendImport(format: "csv" | "notes" | "github-issues"): string {
+  if (format === "csv") {
+    return "CSV rows";
+  }
+  if (format === "github-issues") {
+    return "GitHub issues";
+  }
+  return "notes";
+}
+
+function updateImportFeedback(element: HTMLSpanElement | null, message: string): void {
+  importFeedback = message;
+  if (element) {
+    element.textContent = message;
+  }
 }
 
 function humanize(value: string): string {
