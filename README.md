@@ -47,6 +47,13 @@ Build for production:
 pnpm build
 ```
 
+Run the local quality gate:
+
+```bash
+pnpm test
+pnpm build
+```
+
 ## Model Setup
 
 OpenTop works in demo mode by default. To use a model, open **Model Settings** in the app.
