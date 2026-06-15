@@ -9,6 +9,8 @@ import {
   buildContributorQueueMarkdown,
   buildGitHubIssueBody,
   buildLaunchKit,
+  buildPublicLaunchBrief,
+  buildPublicLaunchBriefMarkdown,
   buildReadmeBrief,
   buildRedditPost,
   buildRepoListingPack,
@@ -367,6 +369,8 @@ describe("launch text exports", () => {
     const issue = buildGitHubIssueBody(opportunity);
     const scaffold = buildRepoScaffoldPlan(opportunity);
     const launchKit = buildLaunchKit(opportunity);
+    const publicLaunchBrief = buildPublicLaunchBrief(opportunity);
+    const publicLaunchBriefMarkdown = buildPublicLaunchBriefMarkdown(opportunity);
     const contributorIssues = buildContributorIssueQueue(opportunity);
     const contributorQueue = buildContributorQueueMarkdown(opportunity);
     const repoListingPack = buildRepoListingPack(opportunity);
@@ -388,6 +392,7 @@ describe("launch text exports", () => {
     assert.match(scaffold, /## Starter Issues/);
     assert.match(launchKit, /# .* Launch Kit/);
     assert.match(launchKit, /## Launch Checklist/);
+    assert.match(launchKit, /## Public Launch Brief/);
     assert.match(launchKit, /## GitHub Issue Body/);
     assert.match(launchKit, /## Show HN Draft/);
     assert.match(launchKit, /## X Thread Draft/);
@@ -396,6 +401,16 @@ describe("launch text exports", () => {
     assert.match(launchKit, /## Star Growth Plan/);
     assert.match(launchKit, /## GitHub Repo Listing Pack/);
     assert.match(launchKit, new RegExp(opportunity.name));
+    assert.equal(publicLaunchBrief.demoStory.length, 3);
+    assert.equal(publicLaunchBrief.channelSequence.length, 4);
+    assert.equal(publicLaunchBrief.followUpLoop.length, 3);
+    assert.match(publicLaunchBrief.feedbackAsk, new RegExp(opportunity.name));
+    assert.match(publicLaunchBriefMarkdown, /# .* Public Launch Brief/);
+    assert.match(publicLaunchBriefMarkdown, /## Demo Story/);
+    assert.match(publicLaunchBriefMarkdown, /## Proof Checklist/);
+    assert.match(publicLaunchBriefMarkdown, /## Channel Sequence/);
+    assert.match(publicLaunchBriefMarkdown, /## Follow-Up Loop/);
+    assert.match(publicLaunchBriefMarkdown, /## Feedback Ask/);
     assert.ok(contributorIssues.length >= 5);
     assert.deepEqual(contributorIssues[0].labels, ["good-first-issue", "first-release", "help-wanted"]);
     assert.match(contributorIssues[0].body, /## Acceptance/);

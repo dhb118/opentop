@@ -7,6 +7,7 @@ import {
   buildContributorQueueMarkdown,
   buildGitHubIssueBody,
   buildLaunchKit,
+  buildPublicLaunchBriefMarkdown,
   buildReadmeBrief,
   buildRedditPost,
   buildRepoListingPackMarkdown,
@@ -617,6 +618,20 @@ function bindEvents(): void {
     }
   });
 
+  document.querySelector<HTMLButtonElement>("[data-download-launch-brief]")?.addEventListener("click", (event) => {
+    const selected = result?.opportunities.find((item) => item.id === selectedId);
+    if (!selected) {
+      return;
+    }
+
+    const button = event.currentTarget as HTMLButtonElement;
+    button.textContent = "Downloaded";
+    downloadMarkdown(`${repoScaffoldRootName(selected)}-public-launch-brief.md`, buildPublicLaunchBriefMarkdown(selected));
+    window.setTimeout(() => {
+      button.textContent = "Download Launch Brief";
+    }, 1400);
+  });
+
   document.querySelector<HTMLButtonElement>("[data-download-launch-kit]")?.addEventListener("click", (event) => {
     const selected = result?.opportunities.find((item) => item.id === selectedId);
     if (!selected) {
@@ -818,11 +833,13 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
           <button class="secondary-action" data-copy="x-thread" type="button">Copy X Thread</button>
           <button class="secondary-action" data-copy="reddit" type="button">Copy Reddit</button>
           <button class="secondary-action" data-copy="github-issue" type="button">Copy GitHub Issue</button>
+          <button class="secondary-action" data-copy="launch-brief" type="button">Copy Launch Brief</button>
           <button class="secondary-action" data-copy="launch-kit" type="button">Copy Launch Kit</button>
           <button class="secondary-action" data-copy="contributor-queue" type="button">Copy Contributor Queue</button>
           <button class="secondary-action" data-copy="star-plan" type="button">Copy Star Plan</button>
           <button class="secondary-action" data-copy="repo-listing" type="button">Copy Repo Listing</button>
           <button class="secondary-action" data-copy="repo-scaffold" type="button">Copy Repo Plan</button>
+          <button class="secondary-action" data-download-launch-brief type="button">Download Launch Brief</button>
           <button class="secondary-action" data-download-launch-kit type="button">Download Launch Kit</button>
           <button class="secondary-action" data-download-contributor-queue type="button">Download Contributor Queue</button>
           <button class="secondary-action" data-download-star-plan type="button">Download Star Plan</button>
@@ -1160,6 +1177,9 @@ function copyPayload(mode: string | undefined, item: AnalysisResult["opportuniti
   if (mode === "github-issue") {
     return buildGitHubIssueBody(item);
   }
+  if (mode === "launch-brief") {
+    return buildPublicLaunchBriefMarkdown(item);
+  }
   if (mode === "launch-kit") {
     return buildLaunchKit(item);
   }
@@ -1193,6 +1213,9 @@ function copyLabel(mode: string | undefined): string {
   }
   if (mode === "github-issue") {
     return "Copy GitHub Issue";
+  }
+  if (mode === "launch-brief") {
+    return "Copy Launch Brief";
   }
   if (mode === "launch-kit") {
     return "Copy Launch Kit";

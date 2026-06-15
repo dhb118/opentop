@@ -25,6 +25,16 @@ export interface RepoListingPack {
   checklist: string[];
 }
 
+export interface PublicLaunchBrief {
+  headline: string;
+  oneLiner: string;
+  demoStory: string[];
+  proofChecklist: string[];
+  channelSequence: string[];
+  followUpLoop: string[];
+  feedbackAsk: string;
+}
+
 export function buildReadmeBrief(title: string, item: Opportunity): string {
   return `# ${title}
 
@@ -177,9 +187,14 @@ ${buildRepoListingPackMarkdown(item).trim()}
 
 - [ ] Add a screenshot or short demo clip above the README fold.
 - [ ] Publish a no-login local quick start that works in under 60 seconds.
+- [ ] Copy the public launch brief and make every post point to one concrete proof item.
 - [ ] Open starter issues from the first-release scope below.
 - [ ] Share one concrete before/after example in every launch post.
 - [ ] Ask for feedback on the wedge, not on the whole product category.
+
+## Public Launch Brief
+
+${buildPublicLaunchBriefMarkdown(item).trim()}
 
 ## README Brief
 
@@ -208,6 +223,73 @@ ${buildXThread(item).trim()}
 ## Reddit Draft
 
 ${buildRedditPost(item).trim()}
+`;
+}
+
+export function buildPublicLaunchBrief(item: Opportunity): PublicLaunchBrief {
+  const firstSlice = item.firstRelease[0] ?? "Ship one narrow workflow that proves the wedge.";
+  const secondSlice = item.firstRelease[1] ?? "Add one example that makes the output easy to judge.";
+  const primaryChannel = pickFirstChannel(item.launchPlan);
+
+  return {
+    headline: trimForGitHubDescription(`${item.name}: ${item.repoHook}`),
+    oneLiner: `${item.name} helps ${item.targetUser} ${item.wedge.toLowerCase()}.`,
+    demoStory: [
+      `Before: ${item.targetUser} has a signal but no clear first-release wedge.`,
+      `Action: run ${item.name} and compare ideas by pain, urgency, distribution, buildability, and star potential.`,
+      `After: publish a scoped repository plan with this first slice: ${firstSlice}`
+    ],
+    proofChecklist: [
+      "README first screen names the user, outcome, local quick start, and current demo path.",
+      "Screenshot, share card, or generated output is visible before broad launch.",
+      `Starter issue exists for the next slice: ${secondSlice}`,
+      "Launch posts link to GitHub, the hosted or fallback demo, and one concrete example."
+    ],
+    channelSequence: [
+      `Primary channel: ${primaryChannel}`,
+      "GitHub: pin the first-release map and label good-first-issue work before posting.",
+      "Hacker News or Reddit: lead with the before/after demo story, not a generic AI app claim.",
+      "X/Twitter or newsletter: show one generated artifact and invite feedback on the wedge."
+    ],
+    followUpLoop: [
+      "First 24 hours: answer setup questions and convert repeated confusion into README edits.",
+      "First 72 hours: open issues for every useful request and close unclear or broad suggestions with scope notes.",
+      "First week: ship one example, one doc improvement, and one contributor-friendly issue from launch feedback."
+    ],
+    feedbackAsk: `What would make ${item.name} more useful for ${item.targetUser}: sharper scoring, clearer examples, or a smaller first-release scope?`
+  };
+}
+
+export function buildPublicLaunchBriefMarkdown(item: Opportunity): string {
+  const brief = buildPublicLaunchBrief(item);
+
+  return `# ${item.name} Public Launch Brief
+
+${brief.headline}
+
+## One-Liner
+
+${brief.oneLiner}
+
+## Demo Story
+
+${brief.demoStory.map((entry) => `- ${entry}`).join("\n")}
+
+## Proof Checklist
+
+${brief.proofChecklist.map((entry) => `- [ ] ${entry}`).join("\n")}
+
+## Channel Sequence
+
+${brief.channelSequence.map((entry) => `- ${entry}`).join("\n")}
+
+## Follow-Up Loop
+
+${brief.followUpLoop.map((entry) => `- [ ] ${entry}`).join("\n")}
+
+## Feedback Ask
+
+${brief.feedbackAsk}
 `;
 }
 
