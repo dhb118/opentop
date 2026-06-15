@@ -203,7 +203,7 @@ form {
 
 .readme-audit-actions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(116px, max-content)) 1fr;
+  grid-template-columns: repeat(3, minmax(116px, max-content)) 1fr;
   align-items: center;
   gap: 10px;
 }

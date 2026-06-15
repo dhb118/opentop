@@ -15,7 +15,12 @@ import {
 import { isOpportunityNavigationKey, nextOpportunityIndex } from "./keyboardNavigation";
 import { analyzeLocally, totalScore } from "./opportunityEngine";
 import { buildOpportunityJsonExport } from "./opportunityJsonExport";
-import { auditReadmeForStars, formatReadmeStarAudit, type ReadmeStarAudit } from "./readmeAudit";
+import {
+  auditReadmeForStars,
+  fetchGitHubReadme,
+  formatReadmeStarAudit,
+  type ReadmeStarAudit
+} from "./readmeAudit";
 import { buildRepoScaffoldZipBlob, repoScaffoldRootName } from "./repoScaffold";
 import { sampleBriefs } from "./sampleBriefs";
 import {
@@ -53,6 +58,7 @@ let selectedId = "";
 let isBusy = false;
 let pendingFocusId = "";
 let importFeedback = "";
+let readmeAuditRepoUrl = "";
 let readmeAuditText = "";
 let readmeAuditResult: ReadmeStarAudit | null = null;
 let readmeAuditFeedback = "";
@@ -212,10 +218,15 @@ function renderReadmeAuditPanel(): string {
     <details class="readme-audit-panel" ${isOpen}>
       <summary>README Star Audit</summary>
       <label>
-        Paste a project README
+        GitHub repository URL
+        <input name="readmeRepoUrl" placeholder="https://github.com/owner/repo" value="${escapeHtml(readmeAuditRepoUrl)}" />
+      </label>
+      <label>
+        Paste or fetch a project README
         <textarea name="readmeAudit" rows="5" placeholder="# My AI Tool&#10;&#10;A local-first assistant for...">${escapeHtml(readmeAuditText)}</textarea>
       </label>
       <div class="readme-audit-actions">
+        <button class="secondary-action" data-fetch-readme type="button">Fetch README</button>
         <button class="secondary-action" data-audit-readme type="button">Audit README</button>
         ${
           result
@@ -441,11 +452,38 @@ function bindEvents(): void {
   });
 
   document.querySelector<HTMLButtonElement>("[data-audit-readme]")?.addEventListener("click", () => {
+    const repoUrlInput = document.querySelector<HTMLInputElement>("[name='readmeRepoUrl']");
     const input = document.querySelector<HTMLTextAreaElement>("[name='readmeAudit']");
+    readmeAuditRepoUrl = repoUrlInput?.value ?? "";
     readmeAuditText = input?.value ?? "";
     readmeAuditResult = auditReadmeForStars(readmeAuditText);
     readmeAuditFeedback = `${readmeAuditResult.score}/100 ${readmeAuditResult.grade}`;
     render();
+  });
+
+  document.querySelector<HTMLButtonElement>("[data-fetch-readme]")?.addEventListener("click", async (event) => {
+    const button = event.currentTarget as HTMLButtonElement;
+    const repoUrlInput = document.querySelector<HTMLInputElement>("[name='readmeRepoUrl']");
+    const repoUrl = repoUrlInput?.value ?? "";
+
+    button.disabled = true;
+    readmeAuditFeedback = "Fetching README...";
+    updateReadmeAuditFeedback(readmeAuditFeedback);
+
+    try {
+      const fetched = await fetchGitHubReadme(repoUrl);
+      readmeAuditRepoUrl = fetched.reference.displayUrl;
+      readmeAuditText = fetched.readme;
+      readmeAuditResult = auditReadmeForStars(fetched.readme);
+      readmeAuditFeedback = `${fetched.reference.owner}/${fetched.reference.repo}: ${readmeAuditResult.score}/100 ${readmeAuditResult.grade}`;
+      render();
+    } catch (error) {
+      readmeAuditRepoUrl = repoUrl;
+      readmeAuditFeedback = error instanceof Error ? error.message : "Could not fetch README";
+      updateReadmeAuditFeedback(readmeAuditFeedback);
+    } finally {
+      button.disabled = false;
+    }
   });
 
   document.querySelector<HTMLButtonElement>("[data-copy-readme-audit]")?.addEventListener("click", async (event) => {
@@ -971,6 +1009,14 @@ function readGitHubUrl(value: unknown): string {
 
 function updateImportFeedback(element: HTMLSpanElement | null, message: string): void {
   importFeedback = message;
+  if (element) {
+    element.textContent = message;
+  }
+}
+
+function updateReadmeAuditFeedback(message: string): void {
+  readmeAuditFeedback = message;
+  const element = document.querySelector<HTMLSpanElement>("[data-readme-audit-feedback]");
   if (element) {
     element.textContent = message;
   }

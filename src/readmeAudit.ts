@@ -17,6 +17,18 @@ export interface ReadmeStarAudit {
   topFixes: ReadmeAuditItem[];
 }
 
+export interface GitHubReadmeReference {
+  owner: string;
+  repo: string;
+  displayUrl: string;
+  apiUrl: string;
+}
+
+export interface GitHubReadmeFetchResult {
+  reference: GitHubReadmeReference;
+  readme: string;
+}
+
 interface AuditRule {
   id: string;
   label: string;
@@ -103,6 +115,68 @@ const auditRules: AuditRule[] = [
   }
 ];
 
+export function parseGitHubRepoUrl(input: string): GitHubReadmeReference | null {
+  const trimmed = input.trim();
+  const shorthand = trimmed.match(/^([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)$/);
+  if (shorthand) {
+    return buildGitHubReadmeReference(shorthand[1], shorthand[2]);
+  }
+
+  let url: URL;
+  try {
+    url = new URL(trimmed);
+  } catch {
+    return null;
+  }
+
+  if (url.hostname !== "github.com") {
+    return null;
+  }
+
+  const [owner, repo] = url.pathname
+    .replace(/^\/+|\/+$/g, "")
+    .split("/")
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  if (!owner || !repo) {
+    return null;
+  }
+
+  return buildGitHubReadmeReference(owner, repo.replace(/\.git$/i, ""));
+}
+
+export async function fetchGitHubReadme(
+  repoUrl: string,
+  fetchImpl: typeof fetch = fetch
+): Promise<GitHubReadmeFetchResult> {
+  const reference = parseGitHubRepoUrl(repoUrl);
+  if (!reference) {
+    throw new Error("Paste a GitHub repository URL like https://github.com/owner/repo or owner/repo.");
+  }
+
+  const response = await fetchImpl(reference.apiUrl, {
+    headers: {
+      Accept: "application/vnd.github+json"
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Could not fetch README for ${reference.owner}/${reference.repo}: ${response.status}`);
+  }
+
+  const payload = (await response.json()) as unknown;
+  const readme = decodeGitHubReadmePayload(payload);
+  if (!readme) {
+    throw new Error(`GitHub did not return a readable README for ${reference.owner}/${reference.repo}.`);
+  }
+
+  return {
+    reference,
+    readme
+  };
+}
+
 export function auditReadmeForStars(readme: string): ReadmeStarAudit {
   const normalized = readme.trim();
   const items = auditRules.map((rule) => {
@@ -182,4 +256,39 @@ function summaryForScore(score: number, topFixes: ReadmeAuditItem[]): string {
     return "This README already gives visitors a clear reason to try, trust, and share the project.";
   }
   return `The README has a usable foundation. The fastest lift is: ${topFixes.map((item) => item.label).join(", ")}.`;
+}
+
+function buildGitHubReadmeReference(owner: string, repo: string): GitHubReadmeReference {
+  return {
+    owner,
+    repo,
+    displayUrl: `https://github.com/${owner}/${repo}`,
+    apiUrl: `https://api.github.com/repos/${owner}/${repo}/readme`
+  };
+}
+
+function decodeGitHubReadmePayload(payload: unknown): string {
+  if (!payload || typeof payload !== "object") {
+    return "";
+  }
+
+  const record = payload as Record<string, unknown>;
+  const content = typeof record.content === "string" ? record.content : "";
+  const encoding = typeof record.encoding === "string" ? record.encoding.toLowerCase() : "";
+
+  if (!content || encoding !== "base64") {
+    return "";
+  }
+
+  return decodeBase64Utf8(content.replace(/\s+/g, ""));
+}
+
+function decodeBase64Utf8(value: string): string {
+  try {
+    return decodeURIComponent(
+      Array.from(atob(value), (character) => `%${character.charCodeAt(0).toString(16).padStart(2, "0")}`).join("")
+    );
+  } catch {
+    return "";
+  }
 }

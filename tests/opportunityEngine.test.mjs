@@ -16,7 +16,12 @@ import {
 import { parseModelAnalysis } from "../src/modelResponse.ts";
 import { analyzeLocally, scoreWeights, totalScore } from "../src/opportunityEngine.ts";
 import { buildOpportunityJsonExport } from "../src/opportunityJsonExport.ts";
-import { auditReadmeForStars, formatReadmeStarAudit } from "../src/readmeAudit.ts";
+import {
+  auditReadmeForStars,
+  fetchGitHubReadme,
+  formatReadmeStarAudit,
+  parseGitHubRepoUrl
+} from "../src/readmeAudit.ts";
 import {
   buildRepoScaffoldFiles,
   buildRepoScaffoldZipBytes,
@@ -438,6 +443,56 @@ TODO`);
     assert.match(markdown, /# README Star Audit/);
     assert.match(markdown, /## Top Fixes/);
     assert.match(markdown, /## Checklist/);
+  });
+
+  it("parses GitHub repository URLs and owner/repo shorthand", () => {
+    assert.deepEqual(parseGitHubRepoUrl("dhb118/opentop"), {
+      owner: "dhb118",
+      repo: "opentop",
+      displayUrl: "https://github.com/dhb118/opentop",
+      apiUrl: "https://api.github.com/repos/dhb118/opentop/readme"
+    });
+    assert.deepEqual(parseGitHubRepoUrl("https://github.com/openai/openai-node.git/issues/1"), {
+      owner: "openai",
+      repo: "openai-node",
+      displayUrl: "https://github.com/openai/openai-node",
+      apiUrl: "https://api.github.com/repos/openai/openai-node/readme"
+    });
+    assert.equal(parseGitHubRepoUrl("https://example.com/openai/openai-node"), null);
+  });
+
+  it("fetches and decodes a public GitHub README", async () => {
+    const fetched = await fetchGitHubReadme("https://github.com/acme/local-agent", async (url) => {
+      assert.equal(url, "https://api.github.com/repos/acme/local-agent/readme");
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          encoding: "base64",
+          content: Buffer.from("# Local Agent\n\nRuns locally without an API key.").toString("base64")
+        })
+      };
+    });
+
+    assert.equal(fetched.reference.displayUrl, "https://github.com/acme/local-agent");
+    assert.match(fetched.readme, /Runs locally/);
+  });
+
+  it("reports unreadable GitHub README responses", async () => {
+    await assert.rejects(
+      fetchGitHubReadme("not a repo", async () => {
+        throw new Error("should not fetch");
+      }),
+      /GitHub repository URL/
+    );
+    await assert.rejects(
+      fetchGitHubReadme("acme/missing", async () => ({
+        ok: false,
+        status: 404,
+        json: async () => ({})
+      })),
+      /Could not fetch README/
+    );
   });
 });
 
