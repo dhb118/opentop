@@ -1228,6 +1228,9 @@ describe("launch documentation", () => {
     assert.match(starterIssues, /#11 Fix GitHub Pages custom domain redirect/);
     assert.match(starterIssues, /#12 Publish a working fallback demo URL and wire launch links/);
     assert.match(starterIssues, /#13 Apply GitHub About metadata and discovery topics/);
+    assert.match(starterIssues, /#14 Record a 90-second product demo GIF or video/);
+    assert.match(starterIssues, /#15 Keep high-quality AI builder sample briefs current/);
+    assert.match(starterIssues, /#16 Add a weekly gallery update workflow/);
     assert.match(starterIssues, /Launch Media Kit/);
     assert.match(starterIssues, /Refine the public launch brief with real feedback/);
     assert.match(starterIssues, /Keep Cloudflare Pages direct-upload instructions current/);
