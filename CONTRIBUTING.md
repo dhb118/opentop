@@ -8,6 +8,7 @@ OpenTop is designed to be easy to fork, tune, and extend.
 - Current launch blockers are tracked in [#11](https://github.com/dhb118/opentop/issues/11), [#12](https://github.com/dhb118/opentop/issues/12), and [#13](https://github.com/dhb118/opentop/issues/13).
 - Good first growth tasks are tracked in [#14](https://github.com/dhb118/opentop/issues/14), [#15](https://github.com/dhb118/opentop/issues/15), and [#16](https://github.com/dhb118/opentop/issues/16).
 - Pick tasks that improve the hosted demo, launch proof, sample briefs, exports, README clarity, or the weekly gallery workflow.
+- Use the bug report template for reproducible issues, and include the smallest steps, browser/runtime, and console or smoke-check evidence.
 
 ## Useful Contribution Areas
 
@@ -27,8 +28,11 @@ pnpm dev
 Before opening a pull request:
 
 ```bash
+pnpm test
 pnpm build
 ```
+
+Use the pull request template to explain the user-facing trust or launch value of the change. Add screenshots, copied export text, or demo links when the change affects the UI, README, gallery, launch exports, or repository profile.
 
 ## README Translations
 

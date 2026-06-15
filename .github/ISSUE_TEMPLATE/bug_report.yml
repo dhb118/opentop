@@ -1,0 +1,48 @@
+name: Bug report
+description: Report a reproducible issue in the app, demo, docs, or launch exports.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the behavior you saw and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: List the smallest steps that reproduce the issue.
+      placeholder: |
+        1. Open the demo
+        2. Load the "Local model debugger" brief
+        3. Click "Copy Launch Kit"
+        4. See the error
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Demo
+        - Scoring
+        - Export
+        - README audit
+        - Provider settings
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser or runtime
+      placeholder: Chrome 126, Firefox 127, Node 24, etc.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Paste console output, screenshots, smoke-check output, or the generated artifact that looks wrong.

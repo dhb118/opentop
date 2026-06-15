@@ -1254,6 +1254,8 @@ describe("launch documentation", () => {
       publishDoc,
       repoProfileDoc,
       contributing,
+      bugReportTemplate,
+      pullRequestTemplate,
       weeklyGalleryWorkflow,
       demoFlowSvg,
       liveDemoPng
@@ -1268,6 +1270,8 @@ describe("launch documentation", () => {
       readFile("docs/GITHUB_PUBLISH.md", "utf8"),
       readFile("docs/REPO_PROFILE.md", "utf8"),
       readFile("CONTRIBUTING.md", "utf8"),
+      readFile(".github/ISSUE_TEMPLATE/bug_report.yml", "utf8"),
+      readFile(".github/PULL_REQUEST_TEMPLATE.md", "utf8"),
       readFile("docs/WEEKLY_GALLERY_WORKFLOW.md", "utf8"),
       readFile("docs/assets/opentop-demo-flow.svg", "utf8"),
       readFile("docs/assets/opentop-live-demo.png")
@@ -1291,6 +1295,7 @@ describe("launch documentation", () => {
     assert.match(readme, /docs\/assets\/opentop-demo-flow\.svg/);
     assert.match(readme, /docs\/assets\/opentop-live-demo\.png/);
     assert.match(readme, /Repo Profile Pack/);
+    assert.match(readme, /GH_TOKEN=github_pat_\.\.\. pnpm repo:profile:apply/);
     assert.match(readme, /Copy Launch Brief/);
     assert.match(readme, /Copy Demo Script/);
     assert.match(readme, /pnpm smoke:launch-exports/);
@@ -1312,6 +1317,7 @@ describe("launch documentation", () => {
     assert.match(zhReadme, /docs\/assets\/opentop-demo-flow\.svg/);
     assert.match(zhReadme, /docs\/assets\/opentop-live-demo\.png/);
     assert.match(zhReadme, /仓库 Profile 包/);
+    assert.match(zhReadme, /GH_TOKEN=github_pat_\.\.\. pnpm repo:profile:apply/);
     assert.match(zhReadme, /Copy Launch Brief/);
     assert.match(zhReadme, /Copy Demo Script/);
     assert.match(zhReadme, /pnpm smoke:launch-exports/);
@@ -1374,6 +1380,15 @@ describe("launch documentation", () => {
     assert.match(contributing, /https:\/\/github\.com\/dhb118\/opentop\/issues\/12/);
     assert.match(contributing, /https:\/\/github\.com\/dhb118\/opentop\/issues\/14/);
     assert.match(contributing, /https:\/\/github\.com\/dhb118\/opentop\/issues\/16/);
+    assert.match(contributing, /bug report template/);
+    assert.match(contributing, /pnpm test/);
+    assert.match(contributing, /pull request template/);
+    assert.match(bugReportTemplate, /name: Bug report/);
+    assert.match(bugReportTemplate, /labels: \["bug"\]/);
+    assert.match(bugReportTemplate, /Reproduction steps/);
+    assert.match(pullRequestTemplate, /Why This Helps OpenTop Earn Trust/);
+    assert.match(pullRequestTemplate, /pnpm test/);
+    assert.match(pullRequestTemplate, /pnpm build/);
     assert.match(weeklyGalleryWorkflow, /# Weekly Gallery Update Workflow/);
     assert.match(weeklyGalleryWorkflow, /## Signal Sources/);
     assert.match(weeklyGalleryWorkflow, /## Sample Brief Quality Bar/);
@@ -1468,12 +1483,13 @@ describe("GitHub label sync", () => {
   it("parses committed labels into GitHub API payloads", async () => {
     const labels = parseLabelsYaml(await readFile(".github/labels.yml", "utf8"));
 
-    assert.equal(labels.length, 8);
+    assert.equal(labels.length, 9);
     assert.deepEqual(labels[0], {
       name: "good-first-opportunity",
       color: "D8FF4F",
       description: "Small contribution that improves OpenTop's launch value."
     });
+    assert.ok(labels.some((label) => label.name === "bug" && label.color === "D73A4A"));
     assert.ok(labels.every((label) => /^[0-9A-F]{6}$/.test(label.color)));
   });
 });

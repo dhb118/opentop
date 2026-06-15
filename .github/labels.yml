@@ -29,3 +29,7 @@
 - name: growth
   color: F45B69
   description: Assets that help the repository spread and convert visitors.
+
+- name: bug
+  color: D73A4A
+  description: Reproducible defects in the app, demo, docs, or launch exports.
