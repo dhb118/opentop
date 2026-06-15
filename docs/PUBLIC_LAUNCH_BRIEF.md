@@ -40,4 +40,4 @@ What would make OpenTop more useful for deciding whether an AI app idea is worth
 
 ## Current Launch Gate
 
-OpenTop should not be broadly launched until one public demo URL works reliably. Until GitHub Pages is fully restored, use the branch deploy, Vercel, Netlify, or static ZIP fallback path from the demo fallback guide.
+OpenTop should not be broadly launched until one public demo URL works reliably. Until GitHub Pages is fully restored, use the branch deploy, Vercel, Netlify, Cloudflare Pages Direct Upload, or static ZIP fallback path from the demo fallback guide.

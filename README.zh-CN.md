@@ -22,7 +22,7 @@ OpenTop 是面向 AI 开发者的选题雷达：把零散趋势、issue、链接
 
 示例输出：[机会图库](docs/GALLERY.md) | [AI 仓库基准](docs/BENCHMARKS.md)
 
-发布资料：[GitHub 发布指南](docs/GITHUB_PUBLISH.md) | [Demo 备用部署](docs/DEMO_FALLBACKS.md) | [公开发布简报](docs/PUBLIC_LAUNCH_BRIEF.md) | [新手任务](docs/STARTER_ISSUES.md) | [发布手册](docs/LAUNCH_PLAYBOOK.md)
+发布资料：[GitHub 发布指南](docs/GITHUB_PUBLISH.md) | [Demo 备用部署](docs/DEMO_FALLBACKS.md) | [Cloudflare Pages 直传](docs/CLOUDFLARE_PAGES.md) | [公开发布简报](docs/PUBLIC_LAUNCH_BRIEF.md) | [新手任务](docs/STARTER_ISSUES.md) | [发布手册](docs/LAUNCH_PLAYBOOK.md)
 
 ## 适合谁
 

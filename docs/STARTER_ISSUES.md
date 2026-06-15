@@ -84,11 +84,11 @@ Acceptance:
 - It incorporates at least one concrete launch feedback item or demo-status update.
 - README and the launch playbook still link to it.
 
-## 7. Add Cloudflare Pages direct-upload instructions
+## 7. Keep Cloudflare Pages direct-upload instructions current
 
 Labels: `docs`, `growth`
 
-Document a second fallback path for cases where GitHub Pages or Actions are unavailable.
+Keep the documented fallback path current for cases where GitHub Pages or Actions are unavailable.
 
 Acceptance:
 

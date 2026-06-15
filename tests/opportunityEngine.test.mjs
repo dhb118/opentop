@@ -937,11 +937,12 @@ describe("Pages smoke check helpers", () => {
   });
 
   it("keeps fallback static hosting configs ready for blocked Pages deploys", async () => {
-    const [packageText, vercelText, netlifyText, fallbackDoc, publishDoc] = await Promise.all([
+    const [packageText, vercelText, netlifyText, fallbackDoc, cloudflareDoc, publishDoc] = await Promise.all([
       readFile("package.json", "utf8"),
       readFile("vercel.json", "utf8"),
       readFile("netlify.toml", "utf8"),
       readFile("docs/DEMO_FALLBACKS.md", "utf8"),
+      readFile("docs/CLOUDFLARE_PAGES.md", "utf8"),
       readFile("docs/GITHUB_PUBLISH.md", "utf8")
     ]);
     const packageJson = JSON.parse(packageText);
@@ -959,32 +960,45 @@ describe("Pages smoke check helpers", () => {
     assert.match(fallbackDoc, /pnpm package:demo/);
     assert.match(fallbackDoc, /pnpm deploy:pages:branch -- --push/);
     assert.match(fallbackDoc, /Deploy from a branch/);
+    assert.match(fallbackDoc, /Cloudflare Pages Direct Upload/);
+    assert.match(cloudflareDoc, /pnpm build/);
+    assert.match(cloudflareDoc, /pnpm package:demo/);
+    assert.match(cloudflareDoc, /npx wrangler pages deploy dist/);
+    assert.match(cloudflareDoc, /opentop-demo\.zip/);
+    assert.match(cloudflareDoc, /GitHub About homepage/);
     assert.match(publishDoc, /deploy:pages:branch/);
+    assert.match(publishDoc, /CLOUDFLARE_PAGES\.md/);
     assert.match(fallbackDoc, /pnpm smoke:pages -- --url/);
   });
 });
 
 describe("launch documentation", () => {
   it("keeps public launch docs linked and current", async () => {
-    const [readme, zhReadme, launchBrief, starterIssues, launchPlaybook] = await Promise.all([
+    const [readme, zhReadme, launchBrief, starterIssues, launchPlaybook, cloudflareDoc] = await Promise.all([
       readFile("README.md", "utf8"),
       readFile("README.zh-CN.md", "utf8"),
       readFile("docs/PUBLIC_LAUNCH_BRIEF.md", "utf8"),
       readFile("docs/STARTER_ISSUES.md", "utf8"),
-      readFile("docs/LAUNCH_PLAYBOOK.md", "utf8")
+      readFile("docs/LAUNCH_PLAYBOOK.md", "utf8"),
+      readFile("docs/CLOUDFLARE_PAGES.md", "utf8")
     ]);
 
     assert.match(readme, /Public Launch Brief/);
+    assert.match(readme, /Cloudflare Pages Direct Upload/);
     assert.match(zhReadme, /公开发布简报/);
+    assert.match(zhReadme, /Cloudflare Pages 直传/);
     assert.match(zhReadme, /面向 AI 开发者的选题雷达/);
     assert.match(zhReadme, /输入一组研究信号后，它会给出三类结果/);
     assert.match(zhReadme, /首版方案/);
     assert.match(launchBrief, /# OpenTop Public Launch Brief/);
     assert.match(launchBrief, /## Current Launch Gate/);
+    assert.match(launchBrief, /Cloudflare Pages Direct Upload/);
     assert.match(starterIssues, /Enable the working GitHub Pages branch demo/);
     assert.match(starterIssues, /Refine the public launch brief with real feedback/);
+    assert.match(starterIssues, /Keep Cloudflare Pages direct-upload instructions current/);
     assert.doesNotMatch(starterIssues, /Add keyboard navigation for opportunity cards/);
     assert.match(launchPlaybook, /Review the Public Launch Brief/);
+    assert.match(cloudflareDoc, /Cloudflare Pages Direct Upload/);
   });
 });
 

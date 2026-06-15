@@ -37,7 +37,7 @@ gh repo create opentop --public --source . --remote origin --push
 
 1. Confirm GitHub Actions passes.
 2. Enable GitHub Pages with **Source: GitHub Actions**.
-3. If Actions or Pages cannot run, publish a temporary `gh-pages` branch, Vercel, Netlify, or static ZIP fallback from `docs/DEMO_FALLBACKS.md`.
+3. If Actions or Pages cannot run, publish a temporary `gh-pages` branch, Vercel, Netlify, Cloudflare Pages Direct Upload, or static ZIP fallback from `docs/DEMO_FALLBACKS.md`.
 4. Run the Pages or fallback smoke check:
 
 ```bash
@@ -84,12 +84,13 @@ If the page loads but asset checks fail, confirm the Pages workflow deployed the
 
 ## Fallback Demo Hosts
 
-If GitHub Pages is blocked by account settings, billing, or Actions availability, use `docs/DEMO_FALLBACKS.md` to publish the same static build on Vercel or Netlify. Both fallback configs are committed:
+If GitHub Pages is blocked by account settings, billing, or Actions availability, use `docs/DEMO_FALLBACKS.md` to publish the same static build on Vercel, Netlify, Cloudflare Pages Direct Upload, or another static host. The Vercel and Netlify configs are committed:
 
 - `vercel.json` builds with `pnpm build` and publishes `dist`.
 - `netlify.toml` builds with `pnpm build` and publishes `dist`.
 - `pnpm package:demo` writes `dist/opentop-demo.zip` and `dist/opentop-demo-manifest.json` for hosts that need a manual static upload.
 - `pnpm deploy:pages:branch -- --push` publishes the static build to `gh-pages` for branch-based GitHub Pages deploys.
+- `docs/CLOUDFLARE_PAGES.md` explains when to upload `dist` directly and when to use the generated ZIP.
 
 After a fallback deploy passes `pnpm smoke:pages -- --url https://YOUR-DEMO-URL/`, use that URL in the GitHub About homepage and launch posts until Pages recovers.
 

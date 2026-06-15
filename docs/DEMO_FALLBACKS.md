@@ -52,6 +52,8 @@ This writes:
 
 Upload either the extracted `dist` directory or `dist/opentop-demo.zip` to a static host such as Cloudflare Pages Direct Upload, Render Static Sites, Surge, or an internal web server.
 
+For Cloudflare-specific steps, use [Cloudflare Pages Direct Upload](CLOUDFLARE_PAGES.md). Wrangler accepts the `dist` directory, while Cloudflare dashboard drag-and-drop accepts either the directory or `dist/opentop-demo.zip`.
+
 After upload, run:
 
 ```bash
