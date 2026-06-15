@@ -1169,7 +1169,8 @@ describe("launch documentation", () => {
       publishDoc,
       repoProfileDoc,
       contributing,
-      weeklyGalleryWorkflow
+      weeklyGalleryWorkflow,
+      demoFlowSvg
     ] = await Promise.all([
       readFile("README.md", "utf8"),
       readFile("README.zh-CN.md", "utf8"),
@@ -1181,7 +1182,8 @@ describe("launch documentation", () => {
       readFile("docs/GITHUB_PUBLISH.md", "utf8"),
       readFile("docs/REPO_PROFILE.md", "utf8"),
       readFile("CONTRIBUTING.md", "utf8"),
-      readFile("docs/WEEKLY_GALLERY_WORKFLOW.md", "utf8")
+      readFile("docs/WEEKLY_GALLERY_WORKFLOW.md", "utf8"),
+      readFile("docs/assets/opentop-demo-flow.svg", "utf8")
     ]);
 
     assert.match(readme, /Public Launch Brief/);
@@ -1199,6 +1201,7 @@ describe("launch documentation", () => {
     assert.match(readme, /Try it in 90 seconds/);
     assert.match(readme, /Open the demo and load a built-in AI builder brief/);
     assert.match(readme, /Copy a README brief, launch kit, demo script, or starter repo ZIP/);
+    assert.match(readme, /docs\/assets\/opentop-demo-flow\.svg/);
     assert.match(readme, /Repo Profile Pack/);
     assert.match(readme, /Copy Launch Brief/);
     assert.match(readme, /Copy Demo Script/);
@@ -1218,6 +1221,7 @@ describe("launch documentation", () => {
     assert.match(zhReadme, /90 秒试用路径/);
     assert.match(zhReadme, /加载一个内置 AI 开发者简报/);
     assert.match(zhReadme, /复制 README 简报、Launch Kit、demo 脚本或 starter repo ZIP/);
+    assert.match(zhReadme, /docs\/assets\/opentop-demo-flow\.svg/);
     assert.match(zhReadme, /仓库 Profile 包/);
     assert.match(zhReadme, /Copy Launch Brief/);
     assert.match(zhReadme, /Copy Demo Script/);
@@ -1253,6 +1257,7 @@ describe("launch documentation", () => {
     assert.match(launchPlaybook, /Launch Media Kit/);
     assert.match(launchPlaybook, /Weekly Gallery Update Workflow/);
     assert.match(launchMediaKit, /# OpenTop Launch Media Kit/);
+    assert.match(launchMediaKit, /OpenTop 90-second demo flow/);
     assert.match(launchMediaKit, /Copy Demo Script/);
     assert.match(launchMediaKit, /Product Hunt Gallery/);
     assert.match(launchMediaKit, /GitHub Social Preview/);
@@ -1286,6 +1291,8 @@ describe("launch documentation", () => {
     assert.match(weeklyGalleryWorkflow, /pnpm test/);
     assert.match(weeklyGalleryWorkflow, /pnpm build/);
     assert.match(weeklyGalleryWorkflow, /Launch docs were updated or intentionally left unchanged/);
+    assert.match(demoFlowSvg, /OpenTop 90-second demo flow/);
+    assert.match(demoFlowSvg, /signal input, ranked opportunities, score proof, and launch export/);
   });
 });
 

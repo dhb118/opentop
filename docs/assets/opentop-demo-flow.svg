@@ -1,0 +1,80 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">OpenTop 90-second demo flow</title>
+  <desc id="desc">A four-step visual showing signal input, ranked opportunities, score proof, and launch export output.</desc>
+  <rect width="1200" height="630" fill="#10130F"/>
+  <rect x="32" y="30" width="1136" height="570" rx="22" fill="#151912" stroke="#D8FF4F" stroke-opacity="0.35" stroke-width="2"/>
+  <g opacity="0.22">
+    <path d="M72 126H1128" stroke="#D8FF4F" stroke-width="1"/>
+    <path d="M72 220H1128" stroke="#D8FF4F" stroke-width="1"/>
+    <path d="M72 314H1128" stroke="#D8FF4F" stroke-width="1"/>
+    <path d="M72 408H1128" stroke="#D8FF4F" stroke-width="1"/>
+    <path d="M72 502H1128" stroke="#D8FF4F" stroke-width="1"/>
+  </g>
+  <text x="72" y="88" fill="#F4F1E7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="42" font-weight="700">OpenTop 90-second proof loop</text>
+  <text x="72" y="124" fill="#AEB7A1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18">Messy AI builder signal in. Ranked open-source app idea and launch artifact out.</text>
+
+  <g transform="translate(72 174)">
+    <rect width="238" height="300" rx="18" fill="#1F251A" stroke="#38422F"/>
+    <rect x="22" y="22" width="82" height="26" rx="13" fill="#D8FF4F"/>
+    <text x="36" y="41" fill="#10130F" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">Step 1</text>
+    <text x="22" y="88" fill="#F4F1E7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Load signal</text>
+    <text x="22" y="123" fill="#AEB7A1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15">Use a built-in brief or paste</text>
+    <text x="22" y="145" fill="#AEB7A1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15">GitHub issues, notes, links,</text>
+    <text x="22" y="167" fill="#AEB7A1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15">or market research.</text>
+    <rect x="22" y="204" width="194" height="52" rx="10" fill="#10130F" stroke="#38422F"/>
+    <text x="40" y="236" fill="#32DCC0" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15" font-weight="700">Try a brief</text>
+  </g>
+
+  <path d="M330 324H374" stroke="#D8FF4F" stroke-width="4" stroke-linecap="round"/>
+  <path d="M360 310L374 324L360 338" stroke="#D8FF4F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g transform="translate(392 174)">
+    <rect width="238" height="300" rx="18" fill="#1F251A" stroke="#38422F"/>
+    <rect x="22" y="22" width="82" height="26" rx="13" fill="#32DCC0"/>
+    <text x="36" y="41" fill="#10130F" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">Step 2</text>
+    <text x="22" y="88" fill="#F4F1E7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Rank ideas</text>
+    <text x="22" y="123" fill="#AEB7A1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15">Compare pain, urgency,</text>
+    <text x="22" y="145" fill="#AEB7A1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15">distribution, buildability,</text>
+    <text x="22" y="167" fill="#AEB7A1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15">and star potential.</text>
+    <rect x="22" y="202" width="194" height="54" rx="12" fill="#10130F" stroke="#38422F"/>
+    <text x="40" y="226" fill="#F4F1E7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="16" font-weight="700">MCP Contract Lab</text>
+    <text x="40" y="248" fill="#D8FF4F" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="16" font-weight="700">9/10</text>
+  </g>
+
+  <path d="M650 324H694" stroke="#D8FF4F" stroke-width="4" stroke-linecap="round"/>
+  <path d="M680 310L694 324L680 338" stroke="#D8FF4F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g transform="translate(712 174)">
+    <rect width="238" height="300" rx="18" fill="#1F251A" stroke="#38422F"/>
+    <rect x="22" y="22" width="82" height="26" rx="13" fill="#FF704D"/>
+    <text x="36" y="41" fill="#10130F" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">Step 3</text>
+    <text x="22" y="88" fill="#F4F1E7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Check proof</text>
+    <text x="22" y="123" fill="#AEB7A1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15">Read the first-release scope,</text>
+    <text x="22" y="145" fill="#AEB7A1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15">risks, score math, and</text>
+    <text x="22" y="167" fill="#AEB7A1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15">benchmark lessons.</text>
+    <g transform="translate(22 204)">
+      <rect width="194" height="14" rx="7" fill="#10130F"/>
+      <rect width="166" height="14" rx="7" fill="#D8FF4F"/>
+      <rect y="32" width="194" height="14" rx="7" fill="#10130F"/>
+      <rect y="32" width="148" height="14" rx="7" fill="#32DCC0"/>
+      <rect y="64" width="194" height="14" rx="7" fill="#10130F"/>
+      <rect y="64" width="176" height="14" rx="7" fill="#FF704D"/>
+    </g>
+  </g>
+
+  <path d="M970 324H1014" stroke="#D8FF4F" stroke-width="4" stroke-linecap="round"/>
+  <path d="M1000 310L1014 324L1000 338" stroke="#D8FF4F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g transform="translate(1032 174)">
+    <rect width="96" height="300" rx="18" fill="#1F251A" stroke="#38422F"/>
+    <text x="22" y="48" fill="#D8FF4F" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">Step 4</text>
+    <text x="22" y="88" fill="#F4F1E7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="22" font-weight="700">Copy</text>
+    <text x="22" y="118" fill="#F4F1E7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="22" font-weight="700">launch</text>
+    <text x="22" y="148" fill="#F4F1E7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="22" font-weight="700">asset</text>
+    <rect x="20" y="202" width="56" height="44" rx="10" fill="#D8FF4F"/>
+    <text x="34" y="229" fill="#10130F" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="16" font-weight="800">ZIP</text>
+  </g>
+
+  <text x="72" y="550" fill="#F4F1E7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="22" font-weight="700">One loop: choose an AI app idea, explain why it wins, export the launch artifact.</text>
+  <text x="72" y="580" fill="#AEB7A1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="17">No signup. Local demo mode. TypeScript starter output.</text>
+</svg>
