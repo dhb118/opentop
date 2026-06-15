@@ -19,7 +19,8 @@ This playbook turns the repository into a real GitHub launch asset.
 13. Review the Public Launch Brief so every post has the same demo story, proof checklist, channel sequence, and follow-up loop.
 14. Export the GitHub Repo Listing Pack and apply the About description, topics, homepage, social preview, and pinned issue before posting.
 15. Copy the demo script, Product Hunt draft, and newsletter pitch from the launch export panel.
-16. Run README Star Audit and copy the 7-day sprint so top fixes have owners before broad launch.
+16. Copy the build log draft and publish it as a transparent before/after story once the demo and first README proof are ready.
+17. Run README Star Audit and copy the 7-day sprint so top fixes have owners before broad launch.
 
 ## Launch Copy
 

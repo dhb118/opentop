@@ -74,6 +74,62 @@ ${item.launchPlan.map((entry) => `- ${entry}`).join("\n")}
 `;
 }
 
+export function buildBuildLogPost(item: Opportunity): string {
+  const firstSlice = item.firstRelease[0] ?? "Ship one narrow workflow that proves the wedge.";
+  const strongestChannel = pickFirstChannel(item.launchPlan);
+  const topRisk = item.risks[0] ?? "The idea may be too broad for a useful first release.";
+
+  return `# Build Log: How I Chose ${item.name} Before Writing the Whole App
+
+I am using OpenTop to decide whether ${item.name} is worth building as an open-source AI app before committing to a full implementation.
+
+## Starting Signal
+
+${item.repoHook}
+
+## Target User
+
+${item.targetUser}
+
+## Why This Wedge Is Specific
+
+${item.wedge}
+
+## Score Context
+
+- Overall: ${item.score}/10
+- Pain: ${item.scores.pain}/10
+- Urgency: ${item.scores.urgency}/10
+- Distribution: ${item.scores.distribution}/10
+- Buildability: ${item.scores.buildability}/10
+- Star potential: ${item.scores.starPotential}/10
+
+## First Slice
+
+${firstSlice}
+
+## Launch Path
+
+Primary channel: ${strongestChannel}
+
+${item.launchPlan.map((entry) => `- ${entry}`).join("\n")}
+
+## Risks I Am Watching
+
+${item.risks.map((entry) => `- ${entry}`).join("\n")}
+
+The first risk I would ask readers to challenge is: ${topRisk}
+
+## What I Need Feedback On
+
+- Is the target user specific enough?
+- Is the first slice small enough to try in one sitting?
+- Would the README and demo make you star, try, or ignore the repository?
+
+I will use the answers to tighten the README, starter issues, and launch examples before asking a broader audience for stars.
+`;
+}
+
 export function buildXThread(item: Opportunity): string {
   const firstRelease = item.firstRelease.slice(0, 3).map((entry) => `- ${entry}`).join("\n");
   const risks = item.risks.slice(0, 2).map((entry) => `- ${entry}`).join("\n");
@@ -311,6 +367,10 @@ ${buildStarGrowthPlanMarkdown(item).trim()}
 ## Show HN Draft
 
 ${buildShowHnPost(item).trim()}
+
+## Build Log Draft
+
+${buildBuildLogPost(item).trim()}
 
 ## X Thread Draft
 

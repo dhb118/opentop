@@ -7,6 +7,7 @@ import { buildModelRequest, defaultEndpointForProvider, defaultModelForProvider 
 import { buildBenchmarkComparisons } from "../src/benchmarkComparison.ts";
 import { defaultInput } from "../src/domain.ts";
 import {
+  buildBuildLogPost,
   buildContributorIssueQueue,
   buildContributorQueueMarkdown,
   buildDemoRecordingScript,
@@ -388,6 +389,7 @@ describe("launch text exports", () => {
     const opportunity = analyzeLocally(defaultInput).opportunities[0];
     const readme = buildReadmeBrief(opportunity.name, opportunity);
     const showHn = buildShowHnPost(opportunity);
+    const buildLog = buildBuildLogPost(opportunity);
     const productHunt = buildProductHuntLaunchDraft(opportunity);
     const demoScript = buildDemoRecordingScript(opportunity);
     const xThread = buildXThread(opportunity);
@@ -407,6 +409,9 @@ describe("launch text exports", () => {
 
     assert.match(readme, new RegExp(`# ${opportunity.name}`));
     assert.match(showHn, /^Show HN:/);
+    assert.match(buildLog, /^# Build Log:/);
+    assert.match(buildLog, /## Score Context/);
+    assert.match(buildLog, /Would the README and demo make you star, try, or ignore/);
     assert.match(productHunt, /# Product Hunt Launch Draft:/);
     assert.match(productHunt, /## Maker Comment/);
     assert.match(productHunt, /## Gallery Notes/);
@@ -433,6 +438,7 @@ describe("launch text exports", () => {
     assert.match(launchKit, /## 90-Second Demo Script/);
     assert.match(launchKit, /## GitHub Issue Body/);
     assert.match(launchKit, /## Show HN Draft/);
+    assert.match(launchKit, /## Build Log Draft/);
     assert.match(launchKit, /## Product Hunt Draft/);
     assert.match(launchKit, /## Newsletter Pitch/);
     assert.match(launchKit, /## X Thread Draft/);
@@ -1252,6 +1258,7 @@ describe("launch export smoke harness", () => {
           <button>Copy Launch Brief</button>
           <button>Copy Launch Kit</button>
           <button>Copy Product Hunt</button>
+          <button>Copy Build Log</button>
           <button>Copy Demo Script</button>
           <button>Copy Newsletter</button>
           <button>Copy Star Plan</button>
@@ -1262,7 +1269,7 @@ describe("launch export smoke harness", () => {
 
       const result = await runLaunchExportSmoke({ distDir: tempDir });
 
-      assert.equal(result.checks.length, 7);
+      assert.equal(result.checks.length, 8);
       assert.equal(result.checks.every((check) => check.ok), true);
       assert.match(result.appHtml, /Copy Launch Brief/);
       assert.match(result.appHtml, /Download Repo ZIP/);
@@ -1331,6 +1338,7 @@ describe("launch documentation", () => {
     assert.match(readme, /GH_TOKEN=github_pat_\.\.\. pnpm repo:profile:apply/);
     assert.match(readme, /Copy Launch Brief/);
     assert.match(readme, /Copy Demo Script/);
+    assert.match(readme, /build log posts/);
     assert.match(readme, /pnpm smoke:launch-exports/);
     assert.match(zhReadme, /公开发布简报/);
     assert.match(zhReadme, /发布素材包/);
@@ -1353,9 +1361,11 @@ describe("launch documentation", () => {
     assert.match(zhReadme, /GH_TOKEN=github_pat_\.\.\. pnpm repo:profile:apply/);
     assert.match(zhReadme, /Copy Launch Brief/);
     assert.match(zhReadme, /Copy Demo Script/);
+    assert.match(zhReadme, /公开构建日志/);
     assert.match(zhReadme, /pnpm smoke:launch-exports/);
-    assert.match(zhReadme, /OpenTop 帮 AI 开发者在写代码前判断/);
-    assert.match(zhReadme, /你会得到/);
+    assert.match(zhReadme, /OpenTop 是给 AI 应用开发者用的选题雷达/);
+    assert.match(zhReadme, /它主要回答三个问题/);
+    assert.match(zhReadme, /第一版做什么/);
     assert.match(zhReadme, /MVP 边界/);
     assert.match(launchBrief, /# OpenTop Public Launch Brief/);
     assert.match(launchBrief, /## Current Launch Gate/);
@@ -1392,11 +1402,13 @@ describe("launch documentation", () => {
     assert.match(launchMediaKit, /Product Hunt Gallery/);
     assert.match(launchMediaKit, /GitHub Social Preview/);
     assert.match(launchPlaybook, /Product Hunt draft/);
+    assert.match(launchPlaybook, /build log draft/);
     assert.match(launchPlaybook, /newsletter pitch/);
     assert.match(cloudflareDoc, /Cloudflare Pages Direct Upload/);
     assert.match(publishDoc, /Launch Export Smoke Check/);
     assert.match(publishDoc, /Copy Launch Brief/);
     assert.match(publishDoc, /Copy Product Hunt/);
+    assert.match(publishDoc, /Copy Build Log/);
     assert.match(publishDoc, /Copy Demo Script/);
     assert.match(publishDoc, /Copy Newsletter/);
     assert.match(publishDoc, /Repo Profile Check/);

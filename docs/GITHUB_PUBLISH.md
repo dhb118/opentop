@@ -116,7 +116,7 @@ pnpm build
 pnpm smoke:launch-exports
 ```
 
-The check runs the built app module in a lightweight DOM harness and verifies `Copy Launch Brief`, `Copy Launch Kit`, `Copy Product Hunt`, `Copy Demo Script`, `Copy Newsletter`, `Copy Star Plan`, and `Download Repo ZIP` render.
+The check runs the built app module in a lightweight DOM harness and verifies `Copy Launch Brief`, `Copy Launch Kit`, `Copy Product Hunt`, `Copy Build Log`, `Copy Demo Script`, `Copy Newsletter`, `Copy Star Plan`, and `Download Repo ZIP` render.
 
 ## Fallback Demo Hosts
 

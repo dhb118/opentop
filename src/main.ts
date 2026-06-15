@@ -4,6 +4,7 @@ import { buildBenchmarkComparisons } from "./benchmarkComparison";
 import type { BenchmarkDimension, BenchmarkRepo } from "./benchmarkRepos";
 import type { AnalysisResult, Opportunity, OpportunityInput, ProviderSettings } from "./domain";
 import {
+  buildBuildLogPost,
   buildContributorQueueMarkdown,
   buildDemoRecordingScript,
   buildGitHubIssueBody,
@@ -833,6 +834,7 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
         <div class="action-row">
           <button class="secondary-action" data-copy="markdown" type="button">Copy README Brief</button>
           <button class="secondary-action" data-copy="show-hn" type="button">Copy Show HN</button>
+          <button class="secondary-action" data-copy="build-log" type="button">Copy Build Log</button>
           <button class="secondary-action" data-copy="product-hunt" type="button">Copy Product Hunt</button>
           <button class="secondary-action" data-copy="demo-script" type="button">Copy Demo Script</button>
           <button class="secondary-action" data-copy="x-thread" type="button">Copy X Thread</button>
@@ -1183,6 +1185,9 @@ function copyPayload(mode: string | undefined, item: AnalysisResult["opportuniti
   if (mode === "product-hunt") {
     return buildProductHuntLaunchDraft(item);
   }
+  if (mode === "build-log") {
+    return buildBuildLogPost(item);
+  }
   if (mode === "newsletter") {
     return buildNewsletterPitch(item);
   }
@@ -1228,6 +1233,9 @@ function copyLabel(mode: string | undefined): string {
   }
   if (mode === "product-hunt") {
     return "Copy Product Hunt";
+  }
+  if (mode === "build-log") {
+    return "Copy Build Log";
   }
   if (mode === "newsletter") {
     return "Copy Newsletter";
