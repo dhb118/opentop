@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 import { buildModelRequest, defaultEndpointForProvider, defaultModelForProvider } from "../src/aiClient.ts";
+import { buildBenchmarkComparisons } from "../src/benchmarkComparison.ts";
 import { defaultInput } from "../src/domain.ts";
 import {
   buildGitHubIssueBody,
@@ -208,6 +209,21 @@ describe("generated benchmark examples", () => {
       assert.match(benchmark.sourceUrl, /^https:\/\/github\.com\//);
       assert.doesNotMatch(`${benchmark.publicSignal} ${benchmark.lesson}`, /\b\d[\d,.]*\s+stars?\b/i);
       assert.doesNotMatch(`${benchmark.publicSignal} ${benchmark.lesson}`, /\b\d[\d,.]*\s+(ARR|revenue|valuation)\b/i);
+    }
+  });
+
+  it("builds in-app benchmark comparisons from public benchmark JSON", async () => {
+    const opportunity = analyzeLocally(defaultInput).opportunities[0];
+    const publicBenchmarks = JSON.parse(await readFile("public/benchmarks.json", "utf8"));
+    const comparisons = buildBenchmarkComparisons(opportunity, publicBenchmarks);
+
+    assert.equal(comparisons.length, benchmarkRepos.length);
+    for (const comparison of comparisons) {
+      assert.equal(comparison.score, opportunity.scores[comparison.dimension]);
+      assert.match(comparison.url, /^https:\/\/github\.com\//);
+      assert.match(comparison.sourceUrl, /^https:\/\/github\.com\//);
+      assert.ok(["strong", "watch", "gap"].includes(comparison.alignment));
+      assert.doesNotMatch(`${comparison.signal} ${comparison.lesson} ${comparison.use}`, /\b\d[\d,.]*\s+stars?\b/i);
     }
   });
 });

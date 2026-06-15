@@ -603,6 +603,101 @@ canvas {
   font-style: normal;
 }
 
+.benchmark-panel {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 22px;
+  padding: 14px;
+  border: 1px solid rgba(50, 220, 192, 0.24);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(50, 220, 192, 0.08), rgba(16, 19, 15, 0.48));
+}
+
+.benchmark-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.benchmark-heading h3 {
+  margin: 0;
+}
+
+.benchmark-heading p {
+  max-width: 520px;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.benchmark-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.benchmark-card {
+  display: grid;
+  gap: 10px;
+  min-height: 250px;
+  padding: 12px;
+  border: 1px solid rgba(245, 241, 230, 0.12);
+  border-radius: 8px;
+  background: rgba(16, 19, 15, 0.5);
+}
+
+.benchmark-card.strong {
+  border-color: rgba(216, 255, 79, 0.36);
+}
+
+.benchmark-card.watch {
+  border-color: rgba(50, 220, 192, 0.3);
+}
+
+.benchmark-card.gap {
+  border-color: rgba(255, 106, 77, 0.3);
+}
+
+.benchmark-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.benchmark-card span {
+  color: var(--acid);
+  font: 800 12px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.benchmark-card a {
+  color: var(--ink);
+  font-weight: 800;
+  text-decoration-color: rgba(216, 255, 79, 0.5);
+}
+
+.benchmark-card p {
+  margin: 0;
+  color: #d8d4c2;
+  line-height: 1.4;
+}
+
+.benchmark-card b {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--muted);
+  font: 700 11px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.benchmark-source {
+  align-self: end;
+  color: var(--acid) !important;
+  font-size: 12px;
+}
+
 .detail-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -659,7 +754,8 @@ li + li {
   }
 
   .topbar,
-  .detail-heading {
+  .detail-heading,
+  .benchmark-heading {
     align-items: stretch;
     flex-direction: column;
   }
@@ -675,6 +771,7 @@ li + li {
   .layout,
   .results-grid,
   .detail-grid,
+  .benchmark-grid,
   .gallery-rail,
   .gallery-cards {
     grid-template-columns: 1fr;

@@ -1,5 +1,7 @@
 import "./styles.css";
 import { analyzeOpportunity, defaultEndpointForProvider, defaultModelForProvider } from "./aiClient";
+import { buildBenchmarkComparisons } from "./benchmarkComparison";
+import type { BenchmarkDimension, BenchmarkRepo } from "./benchmarkRepos";
 import type { AnalysisResult, Opportunity, OpportunityInput, ProviderSettings } from "./domain";
 import {
   buildGitHubIssueBody,
@@ -19,6 +21,13 @@ import { fetchGitHubIssueSignals, parseGitHubIssueUrls, parseTrendSignals } from
 import { createShareUrl, readBriefFromSearch } from "./urlState";
 
 const appRoot = requireAppRoot();
+const benchmarkDimensions = new Set<BenchmarkDimension>([
+  "pain",
+  "urgency",
+  "distribution",
+  "buildability",
+  "starPotential"
+]);
 
 let currentInput = readBriefFromSearch(window.location.search) ?? loadInput();
 let settings = loadSettings();
@@ -27,9 +36,12 @@ let selectedId = "";
 let isBusy = false;
 let pendingFocusId = "";
 let importFeedback = "";
+let benchmarks: BenchmarkRepo[] = [];
+let benchmarkStatus: "loading" | "ready" | "failed" = "loading";
 
 render();
 void runAnalysis();
+void loadBenchmarks();
 
 function render(): void {
   appRoot.innerHTML = `
@@ -374,6 +386,25 @@ async function runAnalysis(): Promise<void> {
   }
 }
 
+async function loadBenchmarks(): Promise<void> {
+  benchmarkStatus = "loading";
+
+  try {
+    const response = await fetch(new URL("benchmarks.json", new URL(".", window.location.href)));
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText || "request failed"}`);
+    }
+
+    benchmarks = parseBenchmarkRepos(await response.json());
+    benchmarkStatus = benchmarks.length > 0 ? "ready" : "failed";
+  } catch {
+    benchmarks = [];
+    benchmarkStatus = "failed";
+  }
+
+  render();
+}
+
 function renderResults(analysis: AnalysisResult): string {
   const selected = analysis.opportunities.find((item) => item.id === selectedId) ?? analysis.opportunities[0];
 
@@ -472,6 +503,7 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
           .join("")}
       </div>
       ${renderScoreMath(item)}
+      ${renderBenchmarkPanel(item)}
       <div class="detail-grid">
         ${detailBlock("Wedge", item.wedge)}
         ${detailBlock("Differentiator", item.differentiator)}
@@ -505,6 +537,70 @@ function renderScoreMath(item: Opportunity): string {
       </div>
       <div class="score-math-grid">
         ${rows}
+      </div>
+    </section>
+  `;
+}
+
+function renderBenchmarkPanel(item: Opportunity): string {
+  if (benchmarkStatus === "loading") {
+    return `
+      <section class="benchmark-panel" aria-label="Benchmark lessons">
+        <div class="benchmark-heading">
+          <div>
+            <p class="eyebrow">Benchmark proof</p>
+            <h3>Loading public repo lessons...</h3>
+          </div>
+          <p>Lessons load from the committed public benchmark JSON.</p>
+        </div>
+      </section>
+    `;
+  }
+
+  if (benchmarkStatus === "failed") {
+    return `
+      <section class="benchmark-panel" aria-label="Benchmark lessons">
+        <div class="benchmark-heading">
+          <div>
+            <p class="eyebrow">Benchmark proof</p>
+            <h3>Benchmark lessons unavailable</h3>
+          </div>
+          <p>Could not load public benchmark examples from benchmarks.json.</p>
+        </div>
+      </section>
+    `;
+  }
+
+  const cards = buildBenchmarkComparisons(item, benchmarks)
+    .map(
+      (comparison) => `
+        <article class="benchmark-card ${comparison.alignment}">
+          <div class="benchmark-card-top">
+            <span>${comparison.score}/10 ${escapeHtml(comparison.dimensionLabel)}</span>
+            <a href="${escapeHtml(comparison.url)}" target="_blank" rel="noreferrer">${escapeHtml(comparison.repo)}</a>
+          </div>
+          <p><b>Public signal</b>${escapeHtml(comparison.signal)}</p>
+          <p><b>Lesson</b>${escapeHtml(comparison.lesson)}</p>
+          <p><b>OpenTop use</b>${escapeHtml(comparison.use)}</p>
+          <a class="benchmark-source" href="${escapeHtml(comparison.sourceUrl)}" target="_blank" rel="noreferrer">
+            View evidence
+          </a>
+        </article>
+      `
+    )
+    .join("");
+
+  return `
+    <section class="benchmark-panel" aria-label="Benchmark lessons">
+      <div class="benchmark-heading">
+        <div>
+          <p class="eyebrow">Benchmark proof</p>
+          <h3>Patterns from public AI repos</h3>
+        </div>
+        <p>Each benchmark maps to one OpenTop score dimension. No star counts or private metrics are used.</p>
+      </div>
+      <div class="benchmark-grid">
+        ${cards}
       </div>
     </section>
   `;
@@ -620,6 +716,56 @@ function labelForTrendImport(format: "csv" | "notes" | "github-issues"): string 
     return "GitHub issues";
   }
   return "notes";
+}
+
+function parseBenchmarkRepos(value: unknown): BenchmarkRepo[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.flatMap((item): BenchmarkRepo[] => {
+    if (!item || typeof item !== "object") {
+      return [];
+    }
+
+    const record = item as Record<string, unknown>;
+    const dimension = record.dimension;
+    const repo = readBenchmarkText(record.repo);
+    const url = readGitHubUrl(record.url);
+    const sourceUrl = readGitHubUrl(record.sourceUrl);
+    const publicSignal = readBenchmarkText(record.publicSignal);
+    const lesson = readBenchmarkText(record.lesson);
+    const openTopUse = readBenchmarkText(record.openTopUse);
+
+    if (!isBenchmarkDimension(dimension) || !repo || !url || !sourceUrl || !publicSignal || !lesson || !openTopUse) {
+      return [];
+    }
+
+    return [
+      {
+        repo,
+        url,
+        sourceUrl,
+        dimension,
+        publicSignal,
+        lesson,
+        openTopUse
+      }
+    ];
+  });
+}
+
+function isBenchmarkDimension(value: unknown): value is BenchmarkDimension {
+  return typeof value === "string" && benchmarkDimensions.has(value as BenchmarkDimension);
+}
+
+function readBenchmarkText(value: unknown): string {
+  return typeof value === "string" ? value.trim().slice(0, 640) : "";
+}
+
+function readGitHubUrl(value: unknown): string {
+  const text = readBenchmarkText(value);
+  return text.startsWith("https://github.com/") ? text : "";
 }
 
 function updateImportFeedback(element: HTMLSpanElement | null, message: string): void {
