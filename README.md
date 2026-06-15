@@ -8,7 +8,7 @@
 
 OpenTop is an AI opportunity radar for builders who want to choose, shape, and launch open-source AI apps. It turns a messy market signal into ranked product ideas, scoring, a first-release scope, and a launch plan.
 
-The app is TypeScript-first, runs locally without an API key, and can optionally call OpenAI-compatible chat completion APIs or Ollama.
+The app is TypeScript-first, runs locally without an API key, and can optionally call OpenAI-compatible chat completion APIs, Anthropic Messages APIs, or Ollama.
 
 Live demo target: `https://dhb118.github.io/opentop/`
 
@@ -30,6 +30,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 
 - Local demo engine for no-key analysis.
 - OpenAI-compatible endpoint support.
+- Anthropic Messages API provider preset.
 - Ollama-compatible endpoint support through `/v1/chat/completions`.
 - Model response repair for fenced JSON, noisy wrappers, and out-of-range scores.
 - Editable opportunity assumptions: pain, urgency, and distribution.
@@ -82,6 +83,13 @@ For OpenAI-compatible APIs:
 - Endpoint: `https://api.openai.com/v1/chat/completions`
 - Model: `gpt-4.1-mini` or another chat-completions model
 
+For Anthropic:
+
+- Provider: `Anthropic`
+- Endpoint: `https://api.anthropic.com/v1/messages`
+- Model: `claude-sonnet-4-5` or another Claude Messages API model
+- API Key: stored only in your browser settings, never committed
+
 For Ollama:
 
 - Run `ollama serve`.
@@ -92,8 +100,7 @@ For Ollama:
 
 ## Roadmap
 
-- Add screenshot capture and shareable opportunity cards.
-- Import trend signals from Markdown, CSV, GitHub issues, and browser bookmarks.
+- Import trend signals from GitHub issues and browser bookmarks.
 - Export full repository scaffolds for selected ideas.
 - Add a scoring template marketplace.
 - Add benchmark examples for successful AI repos.

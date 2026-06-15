@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
+import { buildModelRequest, defaultEndpointForProvider, defaultModelForProvider } from "../src/aiClient.ts";
 import { defaultInput } from "../src/domain.ts";
 import { buildGitHubIssueBody, buildReadmeBrief, buildRepoScaffoldPlan, buildShowHnPost } from "../src/launchExports.ts";
 import { parseModelAnalysis } from "../src/modelResponse.ts";
@@ -94,6 +95,45 @@ describe("brief URL state", () => {
     assert.equal(decoded?.pain, 10);
     assert.equal(decoded?.urgency, 2);
     assert.equal(decoded?.distribution, defaultInput.distribution);
+  });
+});
+
+describe("model provider requests", () => {
+  it("builds an Anthropic Messages API request without placing secrets in the body", () => {
+    const request = buildModelRequest(defaultInput, {
+      provider: "anthropic",
+      endpoint: "",
+      apiKey: "sk-ant-test",
+      model: ""
+    });
+    const body = JSON.parse(request.body);
+
+    assert.equal(request.endpoint, "https://api.anthropic.com/v1/messages");
+    assert.equal(request.headers["x-api-key"], "sk-ant-test");
+    assert.equal(request.headers["anthropic-version"], "2023-06-01");
+    assert.equal(body.model, "claude-sonnet-4-5");
+    assert.equal(body.max_tokens, 2600);
+    assert.equal(body.messages[0].role, "user");
+    assert.equal(typeof body.system, "string");
+    assert.doesNotMatch(request.body, /sk-ant-test/);
+    assert.equal(body.temperature, undefined);
+    assert.equal(body.response_format, undefined);
+  });
+
+  it("keeps OpenAI-compatible requests on chat completions defaults", () => {
+    const request = buildModelRequest(defaultInput, {
+      provider: "openai-compatible",
+      endpoint: "",
+      apiKey: "sk-test",
+      model: ""
+    });
+    const body = JSON.parse(request.body);
+
+    assert.equal(defaultEndpointForProvider("openai-compatible"), "https://api.openai.com/v1/chat/completions");
+    assert.equal(defaultModelForProvider("openai-compatible"), "gpt-4.1-mini");
+    assert.equal(request.headers.Authorization, "Bearer sk-test");
+    assert.equal(body.response_format.type, "json_object");
+    assert.equal(body.messages[0].role, "system");
   });
 });
 

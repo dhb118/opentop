@@ -1,5 +1,5 @@
 import "./styles.css";
-import { analyzeOpportunity } from "./aiClient";
+import { analyzeOpportunity, defaultEndpointForProvider, defaultModelForProvider } from "./aiClient";
 import type { AnalysisResult, Opportunity, OpportunityInput, ProviderSettings } from "./domain";
 import { buildGitHubIssueBody, buildReadmeBrief, buildRepoScaffoldPlan, buildShowHnPost } from "./launchExports";
 import { analyzeLocally, scoreWeights } from "./opportunityEngine";
@@ -102,6 +102,7 @@ function render(): void {
                     ${option("demo", "Demo engine", settings.provider)}
                     ${option("openai-compatible", "OpenAI-compatible", settings.provider)}
                     ${option("ollama", "Ollama", settings.provider)}
+                    ${option("anthropic", "Anthropic", settings.provider)}
                   </select>
                 </label>
                 <label>
@@ -166,6 +167,20 @@ function bindEvents(): void {
     settings = readSettings(event.currentTarget as HTMLFormElement);
     saveSettings(settings);
     render();
+  });
+
+  document.querySelector<HTMLSelectElement>("#settingsForm [name='provider']")?.addEventListener("change", (event) => {
+    const provider = (event.currentTarget as HTMLSelectElement).value as ProviderSettings["provider"];
+    const form = document.querySelector<HTMLFormElement>("#settingsForm");
+    const endpoint = form?.elements.namedItem("endpoint") as HTMLInputElement | null;
+    const model = form?.elements.namedItem("model") as HTMLInputElement | null;
+
+    if (endpoint && (!settings.endpoint || endpoint.value === defaultEndpointForProvider(settings.provider))) {
+      endpoint.value = provider === "demo" ? "" : defaultEndpointForProvider(provider);
+    }
+    if (model && (!settings.model || model.value === defaultModelForProvider(settings.provider))) {
+      model.value = provider === "demo" ? "" : defaultModelForProvider(provider);
+    }
   });
 
   document.querySelectorAll<HTMLButtonElement>("[data-select]").forEach((button) => {
@@ -503,7 +518,16 @@ function listBlock(title: string, items: string[]): string {
 }
 
 function labelForProvider(provider: ProviderSettings["provider"]): string {
-  return provider === "demo" ? "Demo engine" : provider === "ollama" ? "Ollama ready" : "API ready";
+  if (provider === "demo") {
+    return "Demo engine";
+  }
+  if (provider === "ollama") {
+    return "Ollama ready";
+  }
+  if (provider === "anthropic") {
+    return "Anthropic ready";
+  }
+  return "API ready";
 }
 
 function humanize(value: string): string {

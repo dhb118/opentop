@@ -1,4 +1,4 @@
-export type AiProvider = "demo" | "openai-compatible" | "ollama";
+export type AiProvider = "demo" | "openai-compatible" | "ollama" | "anthropic";
 
 export interface ProviderSettings {
   provider: AiProvider;

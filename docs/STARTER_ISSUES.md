@@ -6,16 +6,16 @@ Use these as the first public issues after pushing the repository. They are writ
 
 Create labels from [.github/labels.yml](../.github/labels.yml), then apply the suggested labels below.
 
-## 1. Add Anthropic-compatible provider preset
+## 1. Add cloud-specific Anthropic provider variants
 
 Labels: `provider`, `good-first-opportunity`
 
-OpenTop currently supports demo mode, OpenAI-compatible endpoints, and Ollama-compatible endpoints. Add a provider preset for Anthropic-style chat APIs without hard-coding secrets.
+OpenTop currently supports demo mode, OpenAI-compatible endpoints, the direct Anthropic Messages API, and Ollama-compatible endpoints. Add optional presets for Anthropic access through cloud platforms without hard-coding secrets.
 
 Acceptance:
 
-- Provider can be selected from the UI.
-- Endpoint/model defaults are documented.
+- Direct Anthropic support remains available.
+- Cloud provider endpoint/model defaults are documented.
 - No API key is committed or logged.
 - `pnpm test` and `pnpm build` pass.
 
