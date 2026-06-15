@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, it } from "node:test";
 import { buildModelRequest, defaultEndpointForProvider, defaultModelForProvider } from "../src/aiClient.ts";
 import { buildBenchmarkComparisons } from "../src/benchmarkComparison.ts";
@@ -58,6 +60,7 @@ import { parseDeployArgs } from "../scripts/deploy-gh-pages.mjs";
 import { buildBenchmarksJson, buildBenchmarksMarkdown } from "../scripts/generate-benchmarks.mjs";
 import { buildGalleryJson, buildGalleryMarkdown } from "../scripts/generate-gallery.mjs";
 import { buildDemoManifest, buildDemoZipBytes } from "../scripts/package-demo.mjs";
+import { runLaunchExportSmoke } from "../scripts/smoke-launch-exports.mjs";
 import { extractAssetUrls, resolveSmokeOptions } from "../scripts/smoke-pages.mjs";
 import { parseLabelsYaml } from "../scripts/sync-labels.mjs";
 
@@ -950,6 +953,7 @@ describe("Pages smoke check helpers", () => {
 
     assert.equal(packageJson.scripts["package:demo"], "node scripts/package-demo.mjs");
     assert.equal(packageJson.scripts["deploy:pages:branch"], "node scripts/deploy-gh-pages.mjs");
+    assert.equal(packageJson.scripts["smoke:launch-exports"], "node scripts/smoke-launch-exports.mjs");
     assert.equal(vercel.framework, "vite");
     assert.equal(vercel.buildCommand, "pnpm build");
     assert.equal(vercel.outputDirectory, "dist");
@@ -972,21 +976,54 @@ describe("Pages smoke check helpers", () => {
   });
 });
 
+describe("launch export smoke harness", () => {
+  it("executes a built app module and verifies launch export actions render", async () => {
+    const tempDir = await mkdtemp(join(tmpdir(), "opentop-launch-smoke-"));
+    const assetsDir = join(tempDir, "assets");
+
+    try {
+      await mkdir(assetsDir, { recursive: true });
+      await writeFile(
+        join(assetsDir, "index-smoke.js"),
+        `document.querySelector("#app").innerHTML = ${JSON.stringify(`
+          <button>Copy Launch Brief</button>
+          <button>Copy Launch Kit</button>
+          <button>Copy Star Plan</button>
+          <button>Download Repo ZIP</button>
+          <section>Patterns from public AI repos</section>
+        `)};`
+      );
+
+      const result = await runLaunchExportSmoke({ distDir: tempDir });
+
+      assert.equal(result.checks.length, 4);
+      assert.equal(result.checks.every((check) => check.ok), true);
+      assert.match(result.appHtml, /Copy Launch Brief/);
+      assert.match(result.appHtml, /Download Repo ZIP/);
+    } finally {
+      await rm(tempDir, { force: true, recursive: true });
+    }
+  });
+});
+
 describe("launch documentation", () => {
   it("keeps public launch docs linked and current", async () => {
-    const [readme, zhReadme, launchBrief, starterIssues, launchPlaybook, cloudflareDoc] = await Promise.all([
+    const [readme, zhReadme, launchBrief, starterIssues, launchPlaybook, cloudflareDoc, publishDoc] = await Promise.all([
       readFile("README.md", "utf8"),
       readFile("README.zh-CN.md", "utf8"),
       readFile("docs/PUBLIC_LAUNCH_BRIEF.md", "utf8"),
       readFile("docs/STARTER_ISSUES.md", "utf8"),
       readFile("docs/LAUNCH_PLAYBOOK.md", "utf8"),
-      readFile("docs/CLOUDFLARE_PAGES.md", "utf8")
+      readFile("docs/CLOUDFLARE_PAGES.md", "utf8"),
+      readFile("docs/GITHUB_PUBLISH.md", "utf8")
     ]);
 
     assert.match(readme, /Public Launch Brief/);
     assert.match(readme, /Cloudflare Pages Direct Upload/);
+    assert.match(readme, /pnpm smoke:launch-exports/);
     assert.match(zhReadme, /公开发布简报/);
     assert.match(zhReadme, /Cloudflare Pages 直传/);
+    assert.match(zhReadme, /pnpm smoke:launch-exports/);
     assert.match(zhReadme, /面向 AI 开发者的选题雷达/);
     assert.match(zhReadme, /输入一组研究信号后，它会给出三类结果/);
     assert.match(zhReadme, /首版方案/);
@@ -996,9 +1033,12 @@ describe("launch documentation", () => {
     assert.match(starterIssues, /Enable the working GitHub Pages branch demo/);
     assert.match(starterIssues, /Refine the public launch brief with real feedback/);
     assert.match(starterIssues, /Keep Cloudflare Pages direct-upload instructions current/);
+    assert.match(starterIssues, /Keep end-to-end smoke coverage for launch exports current/);
     assert.doesNotMatch(starterIssues, /Add keyboard navigation for opportunity cards/);
     assert.match(launchPlaybook, /Review the Public Launch Brief/);
     assert.match(cloudflareDoc, /Cloudflare Pages Direct Upload/);
+    assert.match(publishDoc, /Launch Export Smoke Check/);
+    assert.match(publishDoc, /Copy Launch Brief/);
   });
 });
 

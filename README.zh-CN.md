@@ -62,6 +62,7 @@ pnpm generate:benchmarks
 pnpm sync:labels
 pnpm test
 pnpm build
+pnpm smoke:launch-exports
 pnpm package:demo
 pnpm check:publish
 ```

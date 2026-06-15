@@ -32,11 +32,11 @@ Acceptance:
 - README includes the visual above or near the first feature list.
 - The visual is committed under `docs/assets/` or linked from a stable public URL.
 
-## 3. Add end-to-end smoke coverage for launch exports
+## 3. Keep end-to-end smoke coverage for launch exports current
 
 Labels: `ui`, `exporter`, `growth`
 
-Add a browser-level smoke test or lightweight DOM harness that proves the most important export buttons render after a production build.
+Keep the lightweight DOM harness current so the most important export buttons render after a production build.
 
 Acceptance:
 

@@ -82,6 +82,17 @@ The smoke check verifies:
 
 If the page loads but asset checks fail, confirm the Pages workflow deployed the latest `dist` output and keep `base: "./"` in `vite.config.ts` so asset paths stay relative under `/opentop/`.
 
+## Launch Export Smoke Check
+
+Before publishing a demo URL, verify the production bundle renders the export actions visitors need for launch artifacts:
+
+```bash
+pnpm build
+pnpm smoke:launch-exports
+```
+
+The check runs the built app module in a lightweight DOM harness and verifies `Copy Launch Brief`, `Copy Launch Kit`, `Copy Star Plan`, and `Download Repo ZIP` render.
+
 ## Fallback Demo Hosts
 
 If GitHub Pages is blocked by account settings, billing, or Actions availability, use `docs/DEMO_FALLBACKS.md` to publish the same static build on Vercel, Netlify, Cloudflare Pages Direct Upload, or another static host. The Vercel and Netlify configs are committed:
