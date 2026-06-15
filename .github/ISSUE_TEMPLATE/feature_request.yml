@@ -1,0 +1,32 @@
+name: Feature request
+description: Suggest a scoring dimension, provider, exporter, or workflow improvement.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What builder workflow gets better if this exists?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: Describe the smallest useful version.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Scoring
+        - Provider
+        - Exporter
+        - Sample brief
+        - UI
+        - Documentation
+    validations:
+      required: true
