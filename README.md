@@ -12,7 +12,7 @@ OpenTop is an AI opportunity radar for builders who want to choose, shape, and l
 
 The app is TypeScript-first, runs locally without an API key, and can optionally call OpenAI-compatible chat completion APIs, direct Anthropic Messages APIs, Anthropic on Amazon Bedrock, Anthropic on Vertex AI, or Ollama.
 
-Live demo status: temporarily unavailable while GitHub Pages custom domain settings are being repaired. Use the Quick Start commands below or publish a temporary [Vercel/Netlify fallback demo](docs/DEMO_FALLBACKS.md).
+Live demo status: temporarily unavailable while GitHub Pages custom domain settings are being repaired. Use the Quick Start commands below or publish a temporary [fallback demo](docs/DEMO_FALLBACKS.md) on Vercel, Netlify, or any static host from the demo ZIP.
 
 Example outputs: [Opportunity Gallery](docs/GALLERY.md), [AI Repo Benchmarks](docs/BENCHMARKS.md)
 
@@ -78,6 +78,7 @@ pnpm generate:benchmarks
 pnpm sync:labels
 pnpm test
 pnpm build
+pnpm package:demo
 pnpm check:publish
 ```
 

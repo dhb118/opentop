@@ -54,6 +54,7 @@ import { benchmarkRepos } from "../src/benchmarkRepos.ts";
 import { sampleBriefs } from "../src/sampleBriefs.ts";
 import { buildBenchmarksJson, buildBenchmarksMarkdown } from "../scripts/generate-benchmarks.mjs";
 import { buildGalleryJson, buildGalleryMarkdown } from "../scripts/generate-gallery.mjs";
+import { buildDemoManifest, buildDemoZipBytes } from "../scripts/package-demo.mjs";
 import { extractAssetUrls, resolveSmokeOptions } from "../scripts/smoke-pages.mjs";
 import { parseLabelsYaml } from "../scripts/sync-labels.mjs";
 
@@ -920,13 +921,16 @@ describe("Pages smoke check helpers", () => {
   });
 
   it("keeps fallback static hosting configs ready for blocked Pages deploys", async () => {
-    const [vercelText, netlifyText, fallbackDoc] = await Promise.all([
+    const [packageText, vercelText, netlifyText, fallbackDoc] = await Promise.all([
+      readFile("package.json", "utf8"),
       readFile("vercel.json", "utf8"),
       readFile("netlify.toml", "utf8"),
       readFile("docs/DEMO_FALLBACKS.md", "utf8")
     ]);
+    const packageJson = JSON.parse(packageText);
     const vercel = JSON.parse(vercelText);
 
+    assert.equal(packageJson.scripts["package:demo"], "node scripts/package-demo.mjs");
     assert.equal(vercel.framework, "vite");
     assert.equal(vercel.buildCommand, "pnpm build");
     assert.equal(vercel.outputDirectory, "dist");
@@ -934,7 +938,47 @@ describe("Pages smoke check helpers", () => {
     assert.match(netlifyText, /publish = "dist"/);
     assert.match(fallbackDoc, /Deploy with Vercel/);
     assert.match(fallbackDoc, /Deploy to Netlify/);
+    assert.match(fallbackDoc, /pnpm package:demo/);
     assert.match(fallbackDoc, /pnpm smoke:pages -- --url/);
+  });
+});
+
+describe("static demo bundle packaging", () => {
+  it("builds a deterministic manifest for static demo files", () => {
+    const files = [
+      { path: "assets/app.js", bytes: new TextEncoder().encode("console.log('OpenTop');") },
+      { path: "index.html", bytes: new TextEncoder().encode("<div id=\"app\">OpenTop</div>") }
+    ];
+    const manifest = buildDemoManifest(files, {
+      packageName: "opentop",
+      version: "0.1.0",
+      createdAt: "2026-06-15T00:00:00.000Z"
+    });
+
+    assert.equal(manifest.name, "opentop");
+    assert.equal(manifest.version, "0.1.0");
+    assert.equal(manifest.entry, "index.html");
+    assert.equal(manifest.fileCount, 2);
+    assert.equal(manifest.files[0].path, "assets/app.js");
+    assert.equal(manifest.files[1].path, "index.html");
+    assert.match(manifest.files[0].sha256, /^[a-f0-9]{64}$/);
+    assert.match(manifest.uploadHint, /static host/);
+  });
+
+  it("builds a dependency-free ZIP archive for the static demo", () => {
+    const zip = buildDemoZipBytes([
+      { path: "index.html", content: "<div>OpenTop</div>" },
+      { path: "assets/app.js", content: "console.log('OpenTop');" }
+    ]);
+    const zipText = new TextDecoder().decode(zip);
+
+    assert.equal(zip[0], 0x50);
+    assert.equal(zip[1], 0x4b);
+    assert.equal(zip[2], 0x03);
+    assert.equal(zip[3], 0x04);
+    assert.match(zipText, /index\.html/);
+    assert.match(zipText, /assets\/app\.js/);
+    assert.match(zipText, /OpenTop/);
   });
 });
 

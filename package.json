@@ -18,6 +18,7 @@
     "check:publish": "node scripts/prepublish-check.mjs",
     "generate:benchmarks": "node scripts/generate-benchmarks.mjs",
     "generate:gallery": "node scripts/generate-gallery.mjs",
+    "package:demo": "node scripts/package-demo.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "sync:labels": "node scripts/sync-labels.mjs --dry-run",
     "smoke:pages": "node scripts/smoke-pages.mjs",

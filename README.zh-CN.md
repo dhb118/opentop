@@ -8,13 +8,13 @@
 
 ![OpenTop 界面截图：AI Opportunity Radar、示例简报和机会图库](docs/assets/opentop-app-screenshot.png)
 
-OpenTop 是一个本地优先的 AI 应用选题和发布工具。
+OpenTop 帮开发者从混乱的趋势信号里选出值得做的开源 AI 应用。
 
-你可以把趋势笔记、GitHub issue、链接列表或一段产品想法粘贴进去。OpenTop 会生成可排序的开源 AI 应用方向，并给出评分依据、首版范围、README 文案、发布草稿和仓库脚手架。
+粘贴趋势笔记、GitHub issue、链接列表或产品想法，它会输出可排序的候选方向、评分依据、首版范围、README/发布草稿和 starter repo。
 
-默认不需要 API Key；需要更强生成能力时，也可以连接 OpenAI 兼容接口、Anthropic、Bedrock、Vertex AI 或 Ollama。
+默认本地可跑，不需要 API Key；需要更强生成能力时，可接入 OpenAI 兼容接口、Anthropic、Bedrock、Vertex AI 或 Ollama。
 
-在线演示暂不可用：GitHub Pages custom domain 仍在修复中。请先用下方命令在本地运行，或发布临时 [Vercel/Netlify fallback demo](docs/DEMO_FALLBACKS.md)。
+在线演示暂不可用：GitHub Pages custom domain 仍在修复中。请先用下方命令本地运行，或用 [Demo 备用部署](docs/DEMO_FALLBACKS.md) 发布 Vercel/Netlify/静态 ZIP 版本。
 
 示例输出：[机会图库](docs/GALLERY.md) | [AI 仓库基准](docs/BENCHMARKS.md)
 
@@ -22,9 +22,9 @@ OpenTop 是一个本地优先的 AI 应用选题和发布工具。
 
 ## 适合谁
 
-- 想做开源 AI 工具，但还没有确定切入点的开发者。
-- 需要把零散趋势、用户反馈或 issue 变成产品方向的维护者。
-- 想让 README、demo、issue 和发布文案更容易获得 GitHub stars 的团队。
+- 想从 AI 趋势里选一个可发布切入点的开发者。
+- 需要把用户反馈、issue 或调研笔记整理成产品机会的维护者。
+- 希望让 demo、README 和贡献入口更利于获得 GitHub stars 的团队。
 
 ## 核心能力
 
@@ -58,6 +58,7 @@ pnpm generate:benchmarks
 pnpm sync:labels
 pnpm test
 pnpm build
+pnpm package:demo
 pnpm check:publish
 ```
 
