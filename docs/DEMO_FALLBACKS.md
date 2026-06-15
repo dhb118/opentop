@@ -58,10 +58,28 @@ After upload, run:
 pnpm smoke:pages -- --url https://YOUR-DEMO-URL/
 ```
 
+## GitHub Pages Branch Deploy
+
+Use this when GitHub Actions cannot run but the repository can serve Pages from a branch.
+
+```bash
+pnpm build
+pnpm deploy:pages:branch -- --push
+```
+
+Then open the repository settings and set **Pages > Build and deployment > Source** to:
+
+- Source: `Deploy from a branch`
+- Branch: `gh-pages`
+- Folder: `/`
+
+The script writes the same static build, `.nojekyll`, `opentop-demo.zip`, and `opentop-demo-manifest.json` to the `gh-pages` branch. It does not push unless `--push` is present.
+
 ## Release Checklist
 
 - [ ] The fallback demo returns HTTP 200.
 - [ ] CSS and JavaScript assets load from the deployed host.
+- [ ] If using GitHub Pages branch deploy, Pages source points to `gh-pages` and `/`.
 - [ ] The README live demo status links to the working fallback.
 - [ ] The GitHub About homepage points to the working fallback until Pages is restored.
 - [ ] `dist/opentop-demo-manifest.json` matches the uploaded bundle when using a manual ZIP upload.

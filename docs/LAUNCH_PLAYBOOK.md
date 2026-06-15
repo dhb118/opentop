@@ -9,14 +9,15 @@ This playbook turns the repository into a real GitHub launch asset.
 3. Record a 90-second demo using the sample briefs.
 4. Add three screenshots to the README.
 5. If GitHub Pages is blocked, publish the fallback demo from `docs/DEMO_FALLBACKS.md`.
-6. Run `pnpm package:demo` after `pnpm build` so a manual static ZIP is ready even when CI is unavailable.
-7. Run `pnpm smoke:pages -- --url https://YOUR-DEMO-URL/` against the hosted demo.
-8. Create labels from `.github/labels.yml`.
-9. Open starter issues from `docs/STARTER_ISSUES.md` so new visitors can contribute immediately.
-10. Export the selected opportunity's Star Growth Plan and use it to stage the 1, 10, 100, 1k, and 10k star loops.
-11. Export the Public Launch Brief so every post has the same demo story, proof checklist, channel sequence, and follow-up loop.
-12. Export the GitHub Repo Listing Pack and apply the About description, topics, homepage, social preview, and pinned issue before posting.
-13. Run README Star Audit and copy the 7-day sprint so top fixes have owners before broad launch.
+6. Run `pnpm deploy:pages:branch -- --push` after `pnpm build` if Pages can serve from `gh-pages` but Actions cannot run.
+7. Run `pnpm package:demo` after `pnpm build` so a manual static ZIP is ready even when CI is unavailable.
+8. Run `pnpm smoke:pages -- --url https://YOUR-DEMO-URL/` against the hosted demo.
+9. Create labels from `.github/labels.yml`.
+10. Open starter issues from `docs/STARTER_ISSUES.md` so new visitors can contribute immediately.
+11. Export the selected opportunity's Star Growth Plan and use it to stage the 1, 10, 100, 1k, and 10k star loops.
+12. Export the Public Launch Brief so every post has the same demo story, proof checklist, channel sequence, and follow-up loop.
+13. Export the GitHub Repo Listing Pack and apply the About description, topics, homepage, social preview, and pinned issue before posting.
+14. Run README Star Audit and copy the 7-day sprint so top fixes have owners before broad launch.
 
 ## Launch Copy
 
@@ -47,7 +48,7 @@ OpenTop cannot earn 10k stars from code alone. The repository needs compounding 
 - Public Launch Briefs that keep demo story, proof, channel copy, and follow-up tasks aligned across launch surfaces.
 - Repo listing packs that keep GitHub About metadata, topics, and pinned issues aligned with the sharpest wedge.
 - 7-day readiness sprints that convert README and repository profile gaps into launch-gate tasks.
-- A fallback demo host and uploadable static ZIP when GitHub Pages is unavailable.
+- A fallback demo host, `gh-pages` branch deploy, and uploadable static ZIP when GitHub Pages Actions are unavailable.
 - Fast maintainer response for the first 100 contributors.
 - A hosted demo that works before visitors read the README.
 - Clear positioning: not another chatbot, but a decision tool for builders.

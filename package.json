@@ -16,6 +16,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
     "check:publish": "node scripts/prepublish-check.mjs",
+    "deploy:pages:branch": "node scripts/deploy-gh-pages.mjs",
     "generate:benchmarks": "node scripts/generate-benchmarks.mjs",
     "generate:gallery": "node scripts/generate-gallery.mjs",
     "package:demo": "node scripts/package-demo.mjs",

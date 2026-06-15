@@ -54,6 +54,7 @@ import {
 import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
 import { benchmarkRepos } from "../src/benchmarkRepos.ts";
 import { sampleBriefs } from "../src/sampleBriefs.ts";
+import { parseDeployArgs } from "../scripts/deploy-gh-pages.mjs";
 import { buildBenchmarksJson, buildBenchmarksMarkdown } from "../scripts/generate-benchmarks.mjs";
 import { buildGalleryJson, buildGalleryMarkdown } from "../scripts/generate-gallery.mjs";
 import { buildDemoManifest, buildDemoZipBytes } from "../scripts/package-demo.mjs";
@@ -936,16 +937,18 @@ describe("Pages smoke check helpers", () => {
   });
 
   it("keeps fallback static hosting configs ready for blocked Pages deploys", async () => {
-    const [packageText, vercelText, netlifyText, fallbackDoc] = await Promise.all([
+    const [packageText, vercelText, netlifyText, fallbackDoc, publishDoc] = await Promise.all([
       readFile("package.json", "utf8"),
       readFile("vercel.json", "utf8"),
       readFile("netlify.toml", "utf8"),
-      readFile("docs/DEMO_FALLBACKS.md", "utf8")
+      readFile("docs/DEMO_FALLBACKS.md", "utf8"),
+      readFile("docs/GITHUB_PUBLISH.md", "utf8")
     ]);
     const packageJson = JSON.parse(packageText);
     const vercel = JSON.parse(vercelText);
 
     assert.equal(packageJson.scripts["package:demo"], "node scripts/package-demo.mjs");
+    assert.equal(packageJson.scripts["deploy:pages:branch"], "node scripts/deploy-gh-pages.mjs");
     assert.equal(vercel.framework, "vite");
     assert.equal(vercel.buildCommand, "pnpm build");
     assert.equal(vercel.outputDirectory, "dist");
@@ -954,7 +957,47 @@ describe("Pages smoke check helpers", () => {
     assert.match(fallbackDoc, /Deploy with Vercel/);
     assert.match(fallbackDoc, /Deploy to Netlify/);
     assert.match(fallbackDoc, /pnpm package:demo/);
+    assert.match(fallbackDoc, /pnpm deploy:pages:branch -- --push/);
+    assert.match(fallbackDoc, /Deploy from a branch/);
+    assert.match(publishDoc, /deploy:pages:branch/);
     assert.match(fallbackDoc, /pnpm smoke:pages -- --url/);
+  });
+});
+
+describe("GitHub Pages branch deploy script", () => {
+  it("parses safe branch deploy options", () => {
+    assert.deepEqual(parseDeployArgs([]), {
+      branch: "gh-pages",
+      distDir: "dist",
+      force: false,
+      message: "Deploy OpenTop static demo",
+      push: false,
+      remote: "origin"
+    });
+    assert.deepEqual(
+      parseDeployArgs([
+        "--push",
+        "--force",
+        "--branch",
+        "pages",
+        "--dist",
+        "public-build",
+        "--message",
+        "Deploy demo",
+        "--remote",
+        "upstream"
+      ]),
+      {
+        branch: "pages",
+        distDir: "public-build",
+        force: true,
+        message: "Deploy demo",
+        push: true,
+        remote: "upstream"
+      }
+    );
+    assert.throws(() => parseDeployArgs(["--branch"]), /Missing value/);
+    assert.throws(() => parseDeployArgs(["--unknown"]), /Unknown option/);
   });
 });
 
