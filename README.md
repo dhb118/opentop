@@ -14,6 +14,8 @@ Live demo target: `https://dhb118.github.io/opentop/`
 
 Example outputs: [Opportunity Gallery](docs/GALLERY.md)
 
+Launch assets: [GitHub Publish Guide](docs/GITHUB_PUBLISH.md), [Starter Issues](docs/STARTER_ISSUES.md), [Launch Playbook](docs/LAUNCH_PLAYBOOK.md)
+
 ## Why It Can Earn Stars
 
 Open-source AI projects usually spread when they do three things well:

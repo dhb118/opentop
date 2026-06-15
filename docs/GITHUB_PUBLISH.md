@@ -39,4 +39,6 @@ gh repo create opentop --public --source . --remote origin --push
 2. Enable GitHub Pages with **Source: GitHub Actions**.
 3. Add the hosted demo URL to the repository About section.
 4. Add screenshots or a GIF to `README.md`.
-5. Create the starter labels and issues from `docs/LAUNCH_PLAYBOOK.md`.
+5. Create labels from `.github/labels.yml`.
+6. Create the first public issues from `docs/STARTER_ISSUES.md`.
+7. Use `docs/LAUNCH_PLAYBOOK.md` for the first distribution posts.
