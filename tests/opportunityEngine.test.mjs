@@ -9,6 +9,7 @@ import { defaultInput } from "../src/domain.ts";
 import {
   buildContributorIssueQueue,
   buildContributorQueueMarkdown,
+  buildDemoRecordingScript,
   buildGitHubIssueBody,
   buildLaunchKit,
   buildNewsletterPitch,
@@ -384,6 +385,7 @@ describe("launch text exports", () => {
     const readme = buildReadmeBrief(opportunity.name, opportunity);
     const showHn = buildShowHnPost(opportunity);
     const productHunt = buildProductHuntLaunchDraft(opportunity);
+    const demoScript = buildDemoRecordingScript(opportunity);
     const xThread = buildXThread(opportunity);
     const newsletter = buildNewsletterPitch(opportunity);
     const reddit = buildRedditPost(opportunity);
@@ -404,6 +406,10 @@ describe("launch text exports", () => {
     assert.match(productHunt, /# Product Hunt Launch Draft:/);
     assert.match(productHunt, /## Maker Comment/);
     assert.match(productHunt, /## Gallery Notes/);
+    assert.match(demoScript, /# 90-Second Demo Script:/);
+    assert.match(demoScript, /## Timeline/);
+    assert.match(demoScript, /0-10s/);
+    assert.match(demoScript, /75-90s/);
     assert.match(xThread, /^1\/ I am building/);
     assert.match(xThread, /8\/ The goal:/);
     assert.match(newsletter, /^Subject:/);
@@ -420,6 +426,7 @@ describe("launch text exports", () => {
     assert.match(launchKit, /# .* Launch Kit/);
     assert.match(launchKit, /## Launch Checklist/);
     assert.match(launchKit, /## Public Launch Brief/);
+    assert.match(launchKit, /## 90-Second Demo Script/);
     assert.match(launchKit, /## GitHub Issue Body/);
     assert.match(launchKit, /## Show HN Draft/);
     assert.match(launchKit, /## Product Hunt Draft/);
@@ -985,7 +992,7 @@ describe("Pages smoke check helpers", () => {
 
     assert.equal(
       packageJson.homepage,
-      "https://rawcdn.githack.com/dhb118/opentop/c649701ee280ef1e1aab6d86eb2affc98553e2d8/"
+      "https://rawcdn.githack.com/dhb118/opentop/5bb91b3f4d97f6502db365a7b3b17d908460e50d/"
     );
     assert.equal(packageJson.scripts["package:demo"], "node scripts/package-demo.mjs");
     assert.equal(packageJson.scripts["deploy:pages:branch"], "node scripts/deploy-gh-pages.mjs");
@@ -1003,7 +1010,7 @@ describe("Pages smoke check helpers", () => {
     assert.match(fallbackDoc, /pnpm package:demo/);
     assert.match(
       fallbackDoc,
-      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/c649701ee280ef1e1aab6d86eb2affc98553e2d8\//
+      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/5bb91b3f4d97f6502db365a7b3b17d908460e50d\//
     );
     assert.match(fallbackDoc, /billing issue/);
     assert.match(fallbackDoc, /text\/plain/);
@@ -1127,6 +1134,7 @@ describe("launch export smoke harness", () => {
           <button>Copy Launch Brief</button>
           <button>Copy Launch Kit</button>
           <button>Copy Product Hunt</button>
+          <button>Copy Demo Script</button>
           <button>Copy Newsletter</button>
           <button>Copy Star Plan</button>
           <button>Download Repo ZIP</button>
@@ -1136,7 +1144,7 @@ describe("launch export smoke harness", () => {
 
       const result = await runLaunchExportSmoke({ distDir: tempDir });
 
-      assert.equal(result.checks.length, 6);
+      assert.equal(result.checks.length, 7);
       assert.equal(result.checks.every((check) => check.ok), true);
       assert.match(result.appHtml, /Copy Launch Brief/);
       assert.match(result.appHtml, /Download Repo ZIP/);
@@ -1154,6 +1162,7 @@ describe("launch documentation", () => {
       launchBrief,
       starterIssues,
       launchPlaybook,
+      launchMediaKit,
       cloudflareDoc,
       publishDoc,
       repoProfileDoc,
@@ -1164,6 +1173,7 @@ describe("launch documentation", () => {
       readFile("docs/PUBLIC_LAUNCH_BRIEF.md", "utf8"),
       readFile("docs/STARTER_ISSUES.md", "utf8"),
       readFile("docs/LAUNCH_PLAYBOOK.md", "utf8"),
+      readFile("docs/LAUNCH_MEDIA_KIT.md", "utf8"),
       readFile("docs/CLOUDFLARE_PAGES.md", "utf8"),
       readFile("docs/GITHUB_PUBLISH.md", "utf8"),
       readFile("docs/REPO_PROFILE.md", "utf8"),
@@ -1171,59 +1181,71 @@ describe("launch documentation", () => {
     ]);
 
     assert.match(readme, /Public Launch Brief/);
+    assert.match(readme, /Launch Media Kit/);
     assert.match(readme, /Cloudflare Pages Direct Upload/);
     assert.match(readme, /## Launch Evidence/);
     assert.match(readme, /14 built-in AI builder briefs/);
     assert.match(readme, /https:\/\/github\.com\/dhb118\/opentop\/issues\/12/);
     assert.match(
       readme,
-      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/c649701ee280ef1e1aab6d86eb2affc98553e2d8\//
+      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/5bb91b3f4d97f6502db365a7b3b17d908460e50d\//
     );
     assert.match(readme, /billing lock/);
     assert.match(readme, /Repo Profile Pack/);
     assert.match(readme, /Copy Launch Brief/);
+    assert.match(readme, /Copy Demo Script/);
     assert.match(readme, /pnpm smoke:launch-exports/);
     assert.match(zhReadme, /公开发布简报/);
+    assert.match(zhReadme, /发布素材包/);
     assert.match(zhReadme, /Cloudflare Pages 直传/);
     assert.match(zhReadme, /## 发布证据/);
     assert.match(zhReadme, /14 个内置 AI 开发者简报/);
     assert.match(zhReadme, /https:\/\/github\.com\/dhb118\/opentop\/issues\/12/);
     assert.match(
       zhReadme,
-      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/c649701ee280ef1e1aab6d86eb2affc98553e2d8\//
+      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/5bb91b3f4d97f6502db365a7b3b17d908460e50d\//
     );
     assert.match(zhReadme, /billing lock/);
     assert.match(zhReadme, /仓库 Profile 包/);
     assert.match(zhReadme, /Copy Launch Brief/);
+    assert.match(zhReadme, /Copy Demo Script/);
     assert.match(zhReadme, /pnpm smoke:launch-exports/);
-    assert.match(zhReadme, /OpenTop 是一款 AI 应用选题和发布准备工具/);
-    assert.match(zhReadme, /输入一段市场或用户信号，OpenTop 会输出三件事/);
-    assert.match(zhReadme, /MVP 范围/);
+    assert.match(zhReadme, /OpenTop 是面向 AI 开源项目的选题雷达/);
+    assert.match(zhReadme, /输入一段市场或用户信号，OpenTop 会直接产出/);
+    assert.match(zhReadme, /MVP 边界/);
     assert.match(launchBrief, /# OpenTop Public Launch Brief/);
     assert.match(launchBrief, /## Current Launch Gate/);
     assert.match(launchBrief, /current demo status, local proof, and example proof/);
     assert.match(launchBrief, /Cloudflare Pages Direct Upload/);
     assert.match(launchBrief, /Product Hunt/);
+    assert.match(launchBrief, /Launch Media Kit/);
     assert.match(launchBrief, /newsletter drafts/);
     assert.match(
       launchBrief,
-      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/c649701ee280ef1e1aab6d86eb2affc98553e2d8\//
+      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/5bb91b3f4d97f6502db365a7b3b17d908460e50d\//
     );
     assert.match(starterIssues, /Enable the working GitHub Pages branch demo/);
     assert.match(starterIssues, /#11 Fix GitHub Pages custom domain redirect/);
     assert.match(starterIssues, /#12 Publish a working fallback demo URL and wire launch links/);
     assert.match(starterIssues, /#13 Apply GitHub About metadata and discovery topics/);
+    assert.match(starterIssues, /Launch Media Kit/);
     assert.match(starterIssues, /Refine the public launch brief with real feedback/);
     assert.match(starterIssues, /Keep Cloudflare Pages direct-upload instructions current/);
     assert.match(starterIssues, /Keep end-to-end smoke coverage for launch exports current/);
     assert.doesNotMatch(starterIssues, /Add keyboard navigation for opportunity cards/);
     assert.match(launchPlaybook, /Review the Public Launch Brief/);
+    assert.match(launchPlaybook, /Launch Media Kit/);
+    assert.match(launchMediaKit, /# OpenTop Launch Media Kit/);
+    assert.match(launchMediaKit, /Copy Demo Script/);
+    assert.match(launchMediaKit, /Product Hunt Gallery/);
+    assert.match(launchMediaKit, /GitHub Social Preview/);
     assert.match(launchPlaybook, /Product Hunt draft/);
     assert.match(launchPlaybook, /newsletter pitch/);
     assert.match(cloudflareDoc, /Cloudflare Pages Direct Upload/);
     assert.match(publishDoc, /Launch Export Smoke Check/);
     assert.match(publishDoc, /Copy Launch Brief/);
     assert.match(publishDoc, /Copy Product Hunt/);
+    assert.match(publishDoc, /Copy Demo Script/);
     assert.match(publishDoc, /Copy Newsletter/);
     assert.match(publishDoc, /Repo Profile Check/);
     assert.match(publishDoc, /pnpm repo:profile:apply/);
@@ -1231,7 +1253,7 @@ describe("launch documentation", () => {
     assert.match(repoProfileDoc, /# OpenTop GitHub Repo Profile Pack/);
     assert.match(
       repoProfileDoc,
-      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/c649701ee280ef1e1aab6d86eb2affc98553e2d8\//
+      /https:\/\/rawcdn\.githack\.com\/dhb118\/opentop\/5bb91b3f4d97f6502db365a7b3b17d908460e50d\//
     );
     assert.match(repoProfileDoc, /--add-topic github-readme/);
     assert.match(contributing, /## Find Work/);

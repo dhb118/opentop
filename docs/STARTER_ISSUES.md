@@ -13,6 +13,7 @@ These public issues are already open and should be used as the current contribut
 - [#11 Fix GitHub Pages custom domain redirect](https://github.com/dhb118/opentop/issues/11): restore a reliable public demo URL.
 - [#12 Publish a working fallback demo URL and wire launch links](https://github.com/dhb118/opentop/issues/12): publish a fallback demo and update launch links.
 - [#13 Apply GitHub About metadata and discovery topics](https://github.com/dhb118/opentop/issues/13): run `pnpm repo:profile:apply` or apply the repo profile pack manually so GitHub visitors see the correct description, Website, topics, and pinned issue.
+- Launch Media Kit: use [the media kit](LAUNCH_MEDIA_KIT.md) when recording the first demo or preparing Product Hunt/newsletter visuals.
 
 ## 1. Enable the working GitHub Pages branch demo
 
@@ -36,7 +37,7 @@ Create visual proof that shows the actual OpenTop workflow from signal input to 
 Acceptance:
 
 - The recording uses the current UI and one built-in sample brief.
-- It shows a generated opportunity, score explanation, and one launch export.
+- It follows the Launch Media Kit, showing a generated opportunity, score explanation, and one launch export.
 - README includes the visual above or near the first feature list.
 - The visual is committed under `docs/assets/` or linked from a stable public URL.
 

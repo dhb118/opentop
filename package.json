@@ -4,7 +4,7 @@
   "description": "AI opportunity radar for builders who want to choose, shape, and launch open-source AI apps.",
   "type": "module",
   "private": false,
-  "homepage": "https://rawcdn.githack.com/dhb118/opentop/c649701ee280ef1e1aab6d86eb2affc98553e2d8/",
+  "homepage": "https://rawcdn.githack.com/dhb118/opentop/5bb91b3f4d97f6502db365a7b3b17d908460e50d/",
   "repository": {
     "type": "git",
     "url": "https://github.com/dhb118/opentop.git"

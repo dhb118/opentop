@@ -17,6 +17,7 @@ OpenTop helps AI builders decide which open-source app idea is worth shipping be
 - [ ] Public demo URL returns HTTP 200 and passes the smoke check.
 - [ ] README first screen shows who OpenTop helps, what it produces, current demo status, local proof, and example proof.
 - [ ] Screenshot or short recording shows the actual interface and one generated opportunity.
+- [ ] Launch Media Kit checklist is complete for the selected opportunity.
 - [ ] Starter issues are current and map to real launch gaps.
 - [ ] Launch posts link to GitHub, the hosted or fallback demo, and one concrete generated example.
 - [ ] Product Hunt and newsletter drafts reuse the same proof points as the README and launch brief.
@@ -42,4 +43,4 @@ What would make OpenTop more useful for deciding whether an AI app idea is worth
 
 ## Current Launch Gate
 
-OpenTop now has a verified fallback demo at https://rawcdn.githack.com/dhb118/opentop/c649701ee280ef1e1aab6d86eb2affc98553e2d8/. GitHub Actions and GitHub Pages remain blocked by an account billing lock, so use the rawcdn fallback in launch copy until the native Pages URL passes the smoke check again. Keep Vercel, Netlify, Cloudflare Pages Direct Upload, and the static ZIP path ready as secondary fallbacks.
+OpenTop now has a verified fallback demo at https://rawcdn.githack.com/dhb118/opentop/5bb91b3f4d97f6502db365a7b3b17d908460e50d/. GitHub Actions and GitHub Pages remain blocked by an account billing lock, so use the rawcdn fallback in launch copy until the native Pages URL passes the smoke check again. Keep Vercel, Netlify, Cloudflare Pages Direct Upload, and the static ZIP path ready as secondary fallbacks.

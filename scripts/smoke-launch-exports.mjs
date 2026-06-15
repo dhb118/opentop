@@ -9,6 +9,7 @@ const requiredExportButtons = [
   "Copy Launch Brief",
   "Copy Launch Kit",
   "Copy Product Hunt",
+  "Copy Demo Script",
   "Copy Newsletter",
   "Copy Star Plan",
   "Download Repo ZIP"

@@ -8,28 +8,28 @@
 
 ![OpenTop 界面截图：AI Opportunity Radar、示例简报和机会图库](docs/assets/opentop-app-screenshot.png)
 
-OpenTop 是一款 AI 应用选题和发布准备工具。它把趋势、GitHub issue、竞品链接和调研笔记，整理成可评分、可验证、可发布的开源项目方向。
+OpenTop 是面向 AI 开源项目的选题雷达。它把趋势、GitHub issue、竞品链接和调研笔记，整理成可比较的项目机会，帮你判断一个想法是否值得做、先做多大、怎么发布。
 
-输入一段市场或用户信号，OpenTop 会输出三件事：
+输入一段市场或用户信号，OpenTop 会直接产出：
 
-- 该不该做：按痛点、紧迫性、分发路径、可构建性和 Star 潜力排序。
-- 先做什么：生成目标用户、MVP 范围、验证步骤和主要风险。
-- 怎么发布：生成 README 简报、Launch Kit、Star 增长计划、Product Hunt/newsletter 草稿和 starter repo ZIP。
+- 机会排序：按痛点、紧迫性、分发路径、可构建性和 Star 潜力打分。
+- 首版范围：给出目标用户、MVP 边界、验证步骤和主要风险。
+- 发布素材：生成 README 简报、Launch Kit、90 秒 demo 脚本、增长计划、Product Hunt/newsletter 草稿和 starter repo ZIP。
 
-默认本地运行，不需要 API Key。需要更强生成能力时，可接入 OpenAI 兼容接口、Anthropic、Bedrock、Vertex AI 或 Ollama。
+OpenTop 默认本地运行，不需要 API Key；需要更强生成能力时，可接入 OpenAI 兼容接口、Anthropic、Bedrock、Vertex AI 或 Ollama。
 
-在线演示：[已验证的 rawcdn 备用 demo](https://rawcdn.githack.com/dhb118/opentop/c649701ee280ef1e1aab6d86eb2affc98553e2d8/)。当前 GitHub Actions 因账号 billing lock 无法启动，GitHub Pages 仍不可用；在 Pages 恢复前，这个固定的 `gh-pages` 构建作为公开 demo。
+在线演示：[已验证的 rawcdn 备用 demo](https://rawcdn.githack.com/dhb118/opentop/5bb91b3f4d97f6502db365a7b3b17d908460e50d/)。当前 GitHub Actions 因账号 billing lock 无法启动，GitHub Pages 仍不可用；在 Pages 恢复前，这个固定的 `gh-pages` 构建作为公开 demo。
 
 示例输出：[机会图库](docs/GALLERY.md) | [AI 仓库基准](docs/BENCHMARKS.md)
 
-发布资料：[GitHub 发布指南](docs/GITHUB_PUBLISH.md) | [仓库 Profile 包](docs/REPO_PROFILE.md) | [Demo 备用部署](docs/DEMO_FALLBACKS.md) | [Cloudflare Pages 直传](docs/CLOUDFLARE_PAGES.md) | [公开发布简报](docs/PUBLIC_LAUNCH_BRIEF.md) | [新手任务](docs/STARTER_ISSUES.md) | [发布手册](docs/LAUNCH_PLAYBOOK.md)
+发布资料：[GitHub 发布指南](docs/GITHUB_PUBLISH.md) | [仓库 Profile 包](docs/REPO_PROFILE.md) | [Demo 备用部署](docs/DEMO_FALLBACKS.md) | [Cloudflare Pages 直传](docs/CLOUDFLARE_PAGES.md) | [公开发布简报](docs/PUBLIC_LAUNCH_BRIEF.md) | [发布素材包](docs/LAUNCH_MEDIA_KIT.md) | [新手任务](docs/STARTER_ISSUES.md) | [发布手册](docs/LAUNCH_PLAYBOOK.md)
 
 ## 发布证据
 
 - Demo 状态：当前已验证的备用 demo 通过 rawcdn 托管固定的 `gh-pages` 构建；GitHub Actions 和 GitHub Pages 仍被账号 billing lock 阻塞。
 - 本地验证：`pnpm test`、`pnpm build`、`pnpm smoke:launch-exports` 和 `pnpm package:demo` 会在公开 demo 链接前验证生产应用和发布导出能力。
 - 示例验证：机会图库包含 14 个内置 AI 开发者简报，覆盖本地模型、Agent、RAG、eval、Provider 迁移、发布风险和 README 定位。
-- 导出验证：生产 bundle smoke check 会确认 `Copy Launch Brief`、`Copy Launch Kit`、`Copy Product Hunt`、`Copy Newsletter`、`Copy Star Plan` 和 `Download Repo ZIP` 可渲染。
+- 导出验证：生产 bundle smoke check 会确认 `Copy Launch Brief`、`Copy Launch Kit`、`Copy Product Hunt`、`Copy Demo Script`、`Copy Newsletter`、`Copy Star Plan` 和 `Download Repo ZIP` 可渲染。
 - 发布验证：公开发布简报、新手任务、发布手册和 open issues [#11](https://github.com/dhb118/opentop/issues/11) / [#12](https://github.com/dhb118/opentop/issues/12) 会同步 demo 状态、贡献入口和分发文案。
 - 仓库 Profile 验证：[仓库 Profile 包](docs/REPO_PROFILE.md) 提供发布前需要填写的 About 描述、Website、topics、pinned issue 和审计命令。
 - 仓库 metadata 应用：`GITHUB_TOKEN=github_pat_... pnpm repo:profile:apply` 可在发布前同步 About 描述、homepage、issues 开关和 topics。
@@ -45,7 +45,7 @@ OpenTop 是一款 AI 应用选题和发布准备工具。它把趋势、GitHub i
 - 从 CSV、Markdown、书签、链接列表和公开 GitHub issue 中提取选题信号。
 - 生成多条 AI 应用方向，并解释每个方向的评分依据。
 - 用评分模板切换判断标准，例如本地优先工具、Provider SDK、Agent 调试和发布生成器。
-- 导出 README 简报、公开发布简报、Launch Kit、Star 增长计划、仓库 Profile 包、贡献者 issue 队列、Product Hunt 草稿和 newsletter pitch。
+- 导出 README 简报、公开发布简报、90 秒 demo 脚本、Launch Kit、Star 增长计划、仓库 Profile 包、贡献者 issue 队列、Product Hunt 草稿和 newsletter pitch。
 - 下载 PNG/SVG 分享卡片和可运行的 TypeScript starter repo ZIP。
 - 审计公开 GitHub README，并给出 7 天修复冲刺计划。
 - 支持本地演示模式，也可接入 OpenAI 兼容接口、Anthropic、Bedrock、Vertex AI 和 Ollama。

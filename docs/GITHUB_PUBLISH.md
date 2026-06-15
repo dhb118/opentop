@@ -54,7 +54,7 @@ pnpm repo:profile:audit
 6. Add the hosted demo URL to the repository About section.
 7. Add the topics from [Repo Profile Pack](REPO_PROFILE.md).
 8. Pin the fallback demo issue from the profile pack until GitHub Pages works.
-9. Add screenshots or a GIF to `README.md`.
+9. Use the [Launch Media Kit](LAUNCH_MEDIA_KIT.md) to prepare screenshots, a 90-second recording, and channel visuals.
 10. Run the **Sync Labels** workflow or validate labels locally with `pnpm sync:labels`.
 11. Create the first public issues from `docs/STARTER_ISSUES.md`.
 12. Use `docs/LAUNCH_PLAYBOOK.md` for the first distribution posts.
@@ -113,7 +113,7 @@ pnpm build
 pnpm smoke:launch-exports
 ```
 
-The check runs the built app module in a lightweight DOM harness and verifies `Copy Launch Brief`, `Copy Launch Kit`, `Copy Product Hunt`, `Copy Newsletter`, `Copy Star Plan`, and `Download Repo ZIP` render.
+The check runs the built app module in a lightweight DOM harness and verifies `Copy Launch Brief`, `Copy Launch Kit`, `Copy Product Hunt`, `Copy Demo Script`, `Copy Newsletter`, `Copy Star Plan`, and `Download Repo ZIP` render.
 
 ## Fallback Demo Hosts
 
@@ -123,7 +123,7 @@ If GitHub Pages is blocked by account settings, billing, or Actions availability
 - `netlify.toml` builds with `pnpm build` and publishes `dist`.
 - `pnpm package:demo` writes `dist/opentop-demo.zip` and `dist/opentop-demo-manifest.json` for hosts that need a manual static upload.
 - `pnpm deploy:pages:branch -- --push` publishes the static build to `gh-pages` for branch-based GitHub Pages deploys.
-- `https://rawcdn.githack.com/dhb118/opentop/c649701ee280ef1e1aab6d86eb2affc98553e2d8/` serves the verified pushed branch build while GitHub Actions is blocked.
+- `https://rawcdn.githack.com/dhb118/opentop/5bb91b3f4d97f6502db365a7b3b17d908460e50d/` serves the verified pushed branch build while GitHub Actions is blocked.
 - `docs/CLOUDFLARE_PAGES.md` explains when to upload `dist` directly and when to use the generated ZIP.
 
 After a fallback deploy passes `pnpm smoke:pages -- --url https://YOUR-DEMO-URL/`, use that URL in the GitHub About homepage and launch posts until Pages recovers.

@@ -194,6 +194,34 @@ I would be grateful for feedback on whether the scoring dimensions match how bui
 `;
 }
 
+export function buildDemoRecordingScript(item: Opportunity): string {
+  const firstSlice = item.firstRelease[0] ?? "Ship one narrow workflow that proves the wedge.";
+  const strongestRisk = item.risks[0] ?? "The wedge is too broad to judge quickly.";
+
+  return `# 90-Second Demo Script: ${item.name}
+
+## Recording Goal
+
+Show how ${item.name} turns one messy AI product signal into a scored open-source project direction and a launch-ready artifact.
+
+## Timeline
+
+- 0-10s: Open with the problem: ${item.targetUser} need to decide whether an AI app idea is worth building before writing code.
+- 10-25s: Paste one trend signal, GitHub issue, link list, or research note into OpenTop.
+- 25-45s: Show the ranked opportunities and call out why ${item.name} scored ${item.score}/10.
+- 45-60s: Explain the wedge: ${item.wedge}
+- 60-75s: Show the first release slice: ${firstSlice}
+- 75-90s: Copy one launch artifact, then ask viewers to star the repo, try the demo, or comment on the biggest risk: ${strongestRisk}
+
+## Shot Checklist
+
+- Show the input signal before generating ideas.
+- Show the score matrix and selected opportunity.
+- Show one copied artifact, such as the README brief, Product Hunt draft, launch kit, or starter repo ZIP.
+- End on the GitHub repository or hosted demo URL so viewers know where to act.
+`;
+}
+
 export function buildGitHubIssueBody(item: Opportunity): string {
   return `## Problem
 
@@ -259,6 +287,10 @@ ${buildRepoListingPackMarkdown(item).trim()}
 ## Public Launch Brief
 
 ${buildPublicLaunchBriefMarkdown(item).trim()}
+
+## 90-Second Demo Script
+
+${buildDemoRecordingScript(item).trim()}
 
 ## README Brief
 
