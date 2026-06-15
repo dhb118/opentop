@@ -25,10 +25,12 @@ import { buildOpportunityJsonExport } from "../src/opportunityJsonExport.ts";
 import {
   auditReadmeForStars,
   buildGitHubRepoStarProfile,
+  buildStarReadinessSprint,
   fetchGitHubRepoProfile,
   fetchGitHubReadme,
   formatGitHubRepoStarProfile,
   formatReadmeStarAudit,
+  formatStarReadinessSprint,
   parseGitHubRepoUrl
 } from "../src/readmeAudit.ts";
 import {
@@ -485,6 +487,35 @@ TODO`);
     assert.match(markdown, /# README Star Audit/);
     assert.match(markdown, /## Top Fixes/);
     assert.match(markdown, /## Checklist/);
+  });
+
+  it("turns README and profile gaps into a 7-day star readiness sprint", () => {
+    const audit = auditReadmeForStars(`# Idea
+
+TODO`);
+    const profile = buildGitHubRepoStarProfile({
+      description: "",
+      homepage: "",
+      topics: [],
+      stars: 0,
+      forks: 0,
+      openIssues: 0,
+      license: "",
+      hasIssues: false,
+      archived: false
+    });
+    const sprint = buildStarReadinessSprint(audit, profile);
+    const markdown = formatStarReadinessSprint(audit, profile);
+
+    assert.equal(sprint.days.length, 7);
+    assert.match(sprint.scoreline, /README \d+\/100/);
+    assert.match(sprint.scoreline, /profile \d+\/100/);
+    assert.match(sprint.days[0].tasks.join("\n"), /Open with one sentence|Quick Start|screenshot/i);
+    assert.match(sprint.days[2].tasks.join("\n"), /About description|homepage|topics|license|issue/i);
+    assert.match(markdown, /# 7-Day Star Readiness Sprint/);
+    assert.match(markdown, /## Day 7: Launch gate/);
+    assert.match(markdown, /## Launch Gate/);
+    assert.match(markdown, /- \[ \] Hosted demo works/);
   });
 
   it("parses GitHub repository URLs and owner/repo shorthand", () => {

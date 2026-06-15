@@ -13,6 +13,7 @@ This playbook turns the repository into a real GitHub launch asset.
 7. Open starter issues from `docs/STARTER_ISSUES.md` so new visitors can contribute immediately.
 8. Export the selected opportunity's Star Growth Plan and use it to stage the 1, 10, 100, 1k, and 10k star loops.
 9. Export the GitHub Repo Listing Pack and apply the About description, topics, homepage, social preview, and pinned issue before posting.
+10. Run README Star Audit and copy the 7-day sprint so top fixes have owners before broad launch.
 
 ## Launch Copy
 
@@ -41,6 +42,7 @@ OpenTop cannot earn 10k stars from code alone. The repository needs compounding 
 - Public issues for every requested provider and exporter.
 - Exported Star Growth Plans that turn each selected wedge into staged proof, contribution, and distribution work.
 - Repo listing packs that keep GitHub About metadata, topics, and pinned issues aligned with the sharpest wedge.
+- 7-day readiness sprints that convert README and repository profile gaps into launch-gate tasks.
 - Fast maintainer response for the first 100 contributors.
 - A hosted demo that works before visitors read the README.
 - Clear positioning: not another chatbot, but a decision tool for builders.

@@ -59,6 +59,21 @@ export interface GitHubRepoStarProfile {
   topFixes: RepoProfileItem[];
 }
 
+export interface StarReadinessSprintDay {
+  day: number;
+  title: string;
+  tasks: string[];
+  proof: string;
+}
+
+export interface StarReadinessSprint {
+  title: string;
+  scoreline: string;
+  summary: string;
+  days: StarReadinessSprintDay[];
+  launchGate: string[];
+}
+
 interface RepoProfileRule {
   id: string;
   label: string;
@@ -428,6 +443,129 @@ ${topFixes}
 ## Checklist
 
 ${statusRows}
+`;
+}
+
+export function buildStarReadinessSprint(
+  readmeAudit: ReadmeStarAudit,
+  repoProfile?: GitHubRepoStarProfile | null
+): StarReadinessSprint {
+  const readmeFixes = readmeAudit.topFixes.map((item) => item.fix);
+  const profileFixes = repoProfile?.topFixes.map((item) => item.fix) ?? [];
+  const combinedFixes = [...readmeFixes, ...profileFixes];
+  const fallbackFixes = [
+    "Refresh the first-screen hook, screenshot, quick start, and demo status.",
+    "Open starter issues that are specific enough for first-time contributors.",
+    "Share the repository with a small trusted audience before a broad launch."
+  ];
+  const fixes = combinedFixes.length > 0 ? combinedFixes : fallbackFixes;
+  const profileScore = repoProfile ? `, profile ${repoProfile.score}/100 ${repoProfile.grade}` : "";
+  const summary =
+    combinedFixes.length > 0
+      ? `Focus the next 7 days on the highest-weight gaps before asking a broad audience for stars.`
+      : "The audit is launch-ready; use the next 7 days to keep proof fresh and convert visitors into contributors.";
+
+  return {
+    title: "7-Day Star Readiness Sprint",
+    scoreline: `README ${readmeAudit.score}/100 ${readmeAudit.grade}${profileScore}`,
+    summary,
+    days: [
+      {
+        day: 1,
+        title: "First-screen proof",
+        tasks: [fixes[0], "Move the clearest screenshot, demo status, and one-sentence value proposition above long feature lists."],
+        proof: "A cold visitor can say who the project helps and what it produces in under one minute."
+      },
+      {
+        day: 2,
+        title: "Quick start and local trust",
+        tasks: [
+          fixes[1] ?? fallbackFixes[0],
+          "Run the documented setup locally and update commands, prerequisites, and no-key fallback text."
+        ],
+        proof: "The README quick start works from a clean checkout and does not depend on a paid API key."
+      },
+      {
+        day: 3,
+        title: "GitHub profile metadata",
+        tasks: [
+          profileFixes[0] ?? "Check the repository About description, homepage, topics, license, and issue visibility.",
+          "Apply the repo listing pack before sending launch traffic to GitHub."
+        ],
+        proof: "GitHub About metadata matches the README hook and gives search/discovery context."
+      },
+      {
+        day: 4,
+        title: "Examples and share proof",
+        tasks: [
+          fixes[2] ?? fallbackFixes[1],
+          "Add one concrete example, gallery item, or before/after output that a launch post can cite."
+        ],
+        proof: "A public post can link to a real output, not just a promise."
+      },
+      {
+        day: 5,
+        title: "Contributor entry points",
+        tasks: [
+          profileFixes[1] ?? "Open or refresh small good-first issues with acceptance criteria.",
+          "Pin or link the first-release map so new contributors know where to start."
+        ],
+        proof: "A new contributor can pick one issue without asking for project context."
+      },
+      {
+        day: 6,
+        title: "Launch copy rehearsal",
+        tasks: [
+          "Generate Show HN, X, Reddit, and newsletter copy from the strongest opportunity.",
+          "Ask for feedback on the wedge and first-release scope, not a generic star request."
+        ],
+        proof: "Each launch draft includes the hook, one example, demo/local fallback, and GitHub link."
+      },
+      {
+        day: 7,
+        title: "Launch gate",
+        tasks: [
+          "Run local tests, production build, and the publish check.",
+          "Share first with a small trusted group, then update README or issues from their feedback before broader distribution."
+        ],
+        proof: "The repository is runnable, understandable, and ready for public traffic."
+      }
+    ],
+    launchGate: [
+      "README score is 82+ or all top fixes have owners.",
+      repoProfile ? "Repository profile score is 82+ or all profile top fixes have owners." : "Repository profile has been fetched and reviewed.",
+      "Hosted demo works, or README clearly states demo status and local fallback.",
+      "At least three starter issues are open and scoped.",
+      "Launch copy points to proof, not unsupported star claims."
+    ]
+  };
+}
+
+export function formatStarReadinessSprint(
+  readmeAudit: ReadmeStarAudit,
+  repoProfile?: GitHubRepoStarProfile | null
+): string {
+  const sprint = buildStarReadinessSprint(readmeAudit, repoProfile);
+
+  return `# ${sprint.title}
+
+${sprint.scoreline}
+
+${sprint.summary}
+
+${sprint.days
+  .map(
+    (day) => `## Day ${day.day}: ${day.title}
+
+${day.tasks.map((task) => `- [ ] ${task}`).join("\n")}
+
+Proof: ${day.proof}
+`
+  )
+  .join("\n")}
+## Launch Gate
+
+${sprint.launchGate.map((item) => `- [ ] ${item}`).join("\n")}
 `;
 }
 

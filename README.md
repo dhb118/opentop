@@ -53,7 +53,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 - One-click sample briefs for local models, agents, prompt regression, and README positioning.
 - In-app opportunity gallery with scored examples and share links.
 - In-app benchmark lessons mapped to OpenTop score dimensions from public AI repos.
-- Local README Star Audit that can paste or fetch a public GitHub README, then score first-screen hooks, screenshots, quick starts, demo paths, examples, contributor paths, trust signals, and repository profile metadata.
+- Local README Star Audit that can paste or fetch a public GitHub README, then score first-screen hooks, screenshots, quick starts, demo paths, examples, contributor paths, trust signals, and repository profile metadata, with a copyable 7-day fix sprint.
 - CSV, Markdown, notes, browser bookmarks, copied link lists, and public GitHub issue URL import for turning research snippets into signal briefs.
 - Responsive single-page interface built with Vite and TypeScript.
 
@@ -136,10 +136,11 @@ For Ollama:
 2. Add five high-quality sample briefs based on recognizable AI developer pains.
 3. Open starter issues for new scorers, export formats, and providers.
 4. Export a GitHub Repo Listing Pack so the About description, topics, homepage, social preview, and pinned issue are ready.
-5. Export a Star Growth Plan for the strongest opportunity and use it to stage the 1, 10, 100, 1k, and 10k star loops.
-6. Submit to Hacker News, Product Hunt, Reddit, and AI engineering newsletters.
-7. Write a transparent build log: "How I pick AI app ideas before writing code."
-8. Keep a public gallery of generated ideas so stars compound through examples.
+5. Run README Star Audit and copy the 7-day fix sprint before broad launch.
+6. Export a Star Growth Plan for the strongest opportunity and use it to stage the 1, 10, 100, 1k, and 10k star loops.
+7. Submit to Hacker News, Product Hunt, Reddit, and AI engineering newsletters.
+8. Write a transparent build log: "How I pick AI app ideas before writing code."
+9. Keep a public gallery of generated ideas so stars compound through examples.
 
 ## License
 

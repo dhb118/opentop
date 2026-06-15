@@ -203,12 +203,13 @@ form {
 
 .readme-audit-actions {
   display: grid;
-  grid-template-columns: repeat(3, minmax(116px, max-content)) 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(116px, max-content));
   align-items: center;
   gap: 10px;
 }
 
 .readme-audit-actions span {
+  grid-column: 1 / -1;
   min-height: 18px;
   color: var(--muted);
   font: 700 12px/1.3 ui-monospace, SFMono-Regular, Consolas, monospace;

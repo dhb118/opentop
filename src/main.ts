@@ -24,6 +24,7 @@ import {
   fetchGitHubReadme,
   formatGitHubRepoStarProfile,
   formatReadmeStarAudit,
+  formatStarReadinessSprint,
   type GitHubRepoStarProfile,
   type ReadmeStarAudit
 } from "./readmeAudit";
@@ -238,6 +239,11 @@ function renderReadmeAuditPanel(): string {
         ${
           result
             ? `<button class="secondary-action" data-copy-readme-audit type="button">Copy Audit</button>`
+            : ""
+        }
+        ${
+          result
+            ? `<button class="secondary-action" data-copy-star-sprint type="button">Copy 7-Day Sprint</button>`
             : ""
         }
         ${
@@ -556,6 +562,19 @@ function bindEvents(): void {
     button.textContent = "Copied";
     window.setTimeout(() => {
       button.textContent = "Copy Profile";
+    }, 1400);
+  });
+
+  document.querySelector<HTMLButtonElement>("[data-copy-star-sprint]")?.addEventListener("click", async (event) => {
+    if (!readmeAuditResult) {
+      return;
+    }
+
+    const button = event.currentTarget as HTMLButtonElement;
+    await navigator.clipboard.writeText(formatStarReadinessSprint(readmeAuditResult, repoStarProfileResult));
+    button.textContent = "Copied";
+    window.setTimeout(() => {
+      button.textContent = "Copy 7-Day Sprint";
     }, 1400);
   });
 
