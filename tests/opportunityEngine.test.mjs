@@ -3,7 +3,14 @@ import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 import { buildModelRequest, defaultEndpointForProvider, defaultModelForProvider } from "../src/aiClient.ts";
 import { defaultInput } from "../src/domain.ts";
-import { buildGitHubIssueBody, buildReadmeBrief, buildRepoScaffoldPlan, buildShowHnPost } from "../src/launchExports.ts";
+import {
+  buildGitHubIssueBody,
+  buildReadmeBrief,
+  buildRedditPost,
+  buildRepoScaffoldPlan,
+  buildShowHnPost,
+  buildXThread
+} from "../src/launchExports.ts";
 import { parseModelAnalysis } from "../src/modelResponse.ts";
 import { analyzeLocally, scoreWeights } from "../src/opportunityEngine.ts";
 import { buildShareCardSvg, buildShareCardSvgDataUrl, shareCardDimensions } from "../src/shareCard.ts";
@@ -214,11 +221,17 @@ describe("launch text exports", () => {
     const opportunity = analyzeLocally(defaultInput).opportunities[0];
     const readme = buildReadmeBrief(opportunity.name, opportunity);
     const showHn = buildShowHnPost(opportunity);
+    const xThread = buildXThread(opportunity);
+    const reddit = buildRedditPost(opportunity);
     const issue = buildGitHubIssueBody(opportunity);
     const scaffold = buildRepoScaffoldPlan(opportunity);
 
     assert.match(readme, new RegExp(`# ${opportunity.name}`));
     assert.match(showHn, /^Show HN:/);
+    assert.match(xThread, /^1\/ I am building/);
+    assert.match(xThread, /8\/ The goal:/);
+    assert.match(reddit, /^Title:/);
+    assert.match(reddit, /I would like feedback/);
     assert.match(issue, /## First release scope/);
     assert.match(issue, /- \[ \] /);
     assert.match(issue, /Star potential:/);

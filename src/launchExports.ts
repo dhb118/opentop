@@ -39,6 +39,62 @@ ${item.launchPlan.map((entry) => `- ${entry}`).join("\n")}
 `;
 }
 
+export function buildXThread(item: Opportunity): string {
+  const firstRelease = item.firstRelease.slice(0, 3).map((entry) => `- ${entry}`).join("\n");
+  const risks = item.risks.slice(0, 2).map((entry) => `- ${entry}`).join("\n");
+
+  return `1/ I am building ${item.name}: ${item.repoHook}
+
+2/ Target user:
+${item.targetUser}
+
+3/ Wedge:
+${item.wedge}
+
+4/ Why it is different:
+${item.differentiator}
+
+5/ First release:
+${firstRelease}
+
+6/ Why it could earn GitHub stars:
+Pain ${item.scores.pain}/10, distribution ${item.scores.distribution}/10, star potential ${item.scores.starPotential}/10.
+
+7/ Risks I am watching:
+${risks}
+
+8/ The goal: a small TypeScript-first AI app that is useful locally, easy to fork, and clear enough to judge from the README.
+`;
+}
+
+export function buildRedditPost(item: Opportunity): string {
+  return `Title: I am building ${item.name}, a TypeScript-first AI app for ${item.targetUser}
+
+${item.repoHook}
+
+The problem:
+${item.wedge}
+
+What makes it different:
+${item.differentiator}
+
+First release scope:
+${item.firstRelease.map((entry) => `- ${entry}`).join("\n")}
+
+Why I think it has open-source potential:
+- Pain: ${item.scores.pain}/10
+- Urgency: ${item.scores.urgency}/10
+- Distribution: ${item.scores.distribution}/10
+- Buildability: ${item.scores.buildability}/10
+- Star potential: ${item.scores.starPotential}/10
+
+Risks:
+${item.risks.map((entry) => `- ${entry}`).join("\n")}
+
+I would like feedback on the first-release scope and whether the wedge is specific enough for a useful GitHub project.
+`;
+}
+
 export function buildGitHubIssueBody(item: Opportunity): string {
   return `## Problem
 

@@ -1,7 +1,14 @@
 import "./styles.css";
 import { analyzeOpportunity, defaultEndpointForProvider, defaultModelForProvider } from "./aiClient";
 import type { AnalysisResult, Opportunity, OpportunityInput, ProviderSettings } from "./domain";
-import { buildGitHubIssueBody, buildReadmeBrief, buildRepoScaffoldPlan, buildShowHnPost } from "./launchExports";
+import {
+  buildGitHubIssueBody,
+  buildReadmeBrief,
+  buildRedditPost,
+  buildRepoScaffoldPlan,
+  buildShowHnPost,
+  buildXThread
+} from "./launchExports";
 import { analyzeLocally, scoreWeights } from "./opportunityEngine";
 import { sampleBriefs } from "./sampleBriefs";
 import { buildShareCardSvg, renderShareCardPngBlob } from "./shareCard";
@@ -375,6 +382,8 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
         <div class="action-row">
           <button class="secondary-action" data-copy="markdown" type="button">Copy README Brief</button>
           <button class="secondary-action" data-copy="show-hn" type="button">Copy Show HN</button>
+          <button class="secondary-action" data-copy="x-thread" type="button">Copy X Thread</button>
+          <button class="secondary-action" data-copy="reddit" type="button">Copy Reddit</button>
           <button class="secondary-action" data-copy="github-issue" type="button">Copy GitHub Issue</button>
           <button class="secondary-action" data-copy="repo-scaffold" type="button">Copy Repo Plan</button>
           <button class="secondary-action" data-copy="share-url" type="button">Copy Share Link</button>
@@ -541,6 +550,12 @@ function copyPayload(mode: string | undefined, item: AnalysisResult["opportuniti
   if (mode === "github-issue") {
     return buildGitHubIssueBody(item);
   }
+  if (mode === "x-thread") {
+    return buildXThread(item);
+  }
+  if (mode === "reddit") {
+    return buildRedditPost(item);
+  }
   if (mode === "repo-scaffold") {
     return buildRepoScaffoldPlan(item);
   }
@@ -556,6 +571,12 @@ function copyLabel(mode: string | undefined): string {
   }
   if (mode === "github-issue") {
     return "Copy GitHub Issue";
+  }
+  if (mode === "x-thread") {
+    return "Copy X Thread";
+  }
+  if (mode === "reddit") {
+    return "Copy Reddit";
   }
   if (mode === "repo-scaffold") {
     return "Copy Repo Plan";
