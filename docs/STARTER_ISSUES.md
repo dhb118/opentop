@@ -19,31 +19,7 @@ Acceptance:
 - No API key is committed or logged.
 - `pnpm test` and `pnpm build` pass.
 
-## 2. Export a GitHub issue body from the selected opportunity
-
-Labels: `exporter`, `good-first-opportunity`, `growth`
-
-Add an export action that copies a GitHub issue body for the selected opportunity.
-
-Acceptance:
-
-- Export includes problem, target user, first-release scope, and risks.
-- Button label is clear on desktop and mobile.
-- Existing README, Show HN, share link, and JSON exports still work.
-
-## 3. Add a weighted scoring explanation panel
-
-Labels: `scoring`, `ui`
-
-Show how the top score is calculated from pain, urgency, distribution, buildability, and star potential.
-
-Acceptance:
-
-- Users can inspect the score without reading source code.
-- Explanation is specific to the selected opportunity.
-- No layout shift in desktop or mobile views.
-
-## 4. Add five new sample briefs from real AI builder pains
+## 2. Add five new sample briefs from real AI builder pains
 
 Labels: `sample-brief`, `growth`, `good-first-opportunity`
 
@@ -55,19 +31,7 @@ Acceptance:
 - `pnpm generate:gallery` updates docs and JSON.
 - Gallery synchronization test passes.
 
-## 5. Add share-card image generation for selected opportunities
-
-Labels: `exporter`, `growth`
-
-Create a local canvas export that turns the selected opportunity into a shareable image.
-
-Acceptance:
-
-- Exported image includes name, score, wedge, and repo hook.
-- Works without a backend or model API.
-- Image is readable at social preview dimensions.
-
-## 6. Add keyboard navigation for opportunity cards
+## 3. Add keyboard navigation for opportunity cards
 
 Labels: `ui`, `good-first-opportunity`
 
@@ -79,50 +43,87 @@ Acceptance:
 - Focus states are visible.
 - Enter/Space activation works for opportunity cards and action buttons.
 
-## 7. Add CSV import for trend signals
+## 4. Import trend signals from GitHub issues
 
-Labels: `exporter`, `scoring`
+Labels: `exporter`, `scoring`, `growth`
 
-Allow users to paste or upload a small CSV of trend notes and turn it into a consolidated signal brief.
-
-Acceptance:
-
-- CSV parsing is local-only.
-- Invalid rows are ignored with a clear count.
-- Generated signal can be edited before analysis.
-
-## 8. Add a model response repair layer
-
-Labels: `provider`, `scoring`
-
-When a real model returns malformed JSON, repair or gracefully fall back to the local engine.
+Allow users to paste one or more GitHub issue URLs and turn titles/bodies into a consolidated signal brief.
 
 Acceptance:
 
-- Empty or invalid model responses never break the UI.
-- Error summary explains what happened.
-- Local fallback still produces opportunities.
+- Import works without storing credentials.
+- Public issue URLs can be parsed or fetched with clear failure states.
+- Imported source links remain visible in the generated signal.
+- `pnpm test` and `pnpm build` pass.
 
-## 9. Add benchmark examples for well-known AI repos
+## 5. Import browser bookmarks or copied link lists
 
-Labels: `sample-brief`, `docs`, `growth`
+Labels: `exporter`, `growth`, `good-first-opportunity`
 
-Create a gallery section that explains why successful AI repos had strong distribution and contributor hooks.
+Support pasted bookmark exports or newline-separated links as trend sources.
 
 Acceptance:
 
-- Examples are factual and concise.
-- No claims about private metrics.
-- Each example maps to one OpenTop scoring dimension.
+- Pasted links are normalized into source + signal rows.
+- Duplicate links are ignored.
+- Invalid rows are counted and reported.
 
-## 10. Add GitHub Pages post-deploy smoke check
+## 6. Turn benchmark examples into in-app scoring presets
+
+Labels: `scoring`, `sample-brief`, `growth`
+
+Use `public/benchmarks.json` to let users compare a selected opportunity against patterns from successful AI repos.
+
+Acceptance:
+
+- Users can inspect benchmark lessons without leaving the app.
+- Every benchmark maps to one OpenTop score dimension.
+- No private metrics or hard-coded star counts are introduced.
+
+## 7. Add a scoring template marketplace
+
+Labels: `scoring`, `ui`
+
+Let users switch between opinionated scoring profiles, such as local-first tools, provider SDKs, agent debugging, and launch-content generators.
+
+Acceptance:
+
+- Templates adjust score weights in a visible, reversible way.
+- The selected template is included in exported JSON.
+- Existing default scoring remains available.
+
+## 8. Export a downloadable repository scaffold
+
+Labels: `exporter`, `growth`
+
+Turn the selected opportunity into a local starter scaffold that can be downloaded as source files or a ZIP.
+
+Acceptance:
+
+- Export includes README, package metadata, source placeholders, tests, and CI workflow.
+- Generated file names are safe and deterministic.
+- No dependency install is required to generate the scaffold.
+
+## 9. Add README screenshots or an animated demo GIF
 
 Labels: `docs`, `growth`
 
-Document or automate a basic check that the deployed demo loads after the Pages workflow finishes.
+Create visual proof above the fold for GitHub visitors.
 
 Acceptance:
 
-- The check verifies HTTP 200 for the Pages URL.
-- The guide explains how to diagnose broken asset paths.
-- Pages workflow remains simple for contributors.
+- README includes at least one current screenshot or GIF.
+- Image assets are committed under `public/` or `docs/assets/`.
+- Visuals show the actual OpenTop interface and one generated opportunity.
+
+## 10. Add a label sync workflow
+
+Labels: `docs`, `growth`
+
+Automate creation of labels from `.github/labels.yml` so starter issues can be tagged consistently after forks or fresh repo setup.
+
+Acceptance:
+
+- Workflow or script reads `.github/labels.yml`.
+- It documents the required GitHub token permissions.
+- Running it is optional and does not affect local demo mode.
