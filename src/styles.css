@@ -154,6 +154,7 @@ form {
 #briefForm,
 .sample-strip,
 .import-panel,
+.readme-audit-panel,
 .scoring-marketplace,
 .settings {
   padding: 22px;
@@ -161,6 +162,7 @@ form {
 
 .sample-strip,
 .import-panel,
+.readme-audit-panel,
 .scoring-marketplace {
   border-bottom: 1px solid var(--line);
 }
@@ -185,6 +187,106 @@ form {
   min-height: 18px;
   color: var(--muted);
   font: 700 12px/1.3 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.readme-audit-panel {
+  display: grid;
+  gap: 14px;
+  background:
+    linear-gradient(135deg, rgba(255, 112, 77, 0.08), transparent 44%),
+    rgba(245, 241, 230, 0.025);
+}
+
+.readme-audit-panel label {
+  margin-top: 14px;
+}
+
+.readme-audit-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(116px, max-content)) 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.readme-audit-actions span {
+  min-height: 18px;
+  color: var(--muted);
+  font: 700 12px/1.3 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.readme-audit-result {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(255, 112, 77, 0.24);
+  border-radius: 8px;
+  background: rgba(16, 19, 15, 0.42);
+}
+
+.readme-audit-score {
+  display: grid;
+  grid-template-columns: minmax(76px, max-content) 1fr;
+  gap: 2px 12px;
+  align-items: center;
+}
+
+.readme-audit-score strong {
+  grid-row: span 2;
+  color: var(--acid);
+  font: 800 46px/0.9 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.readme-audit-score span {
+  color: var(--ink);
+  font: 800 13px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.readme-audit-score small,
+.readme-audit-result p {
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.readme-audit-result ol {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  color: var(--ink);
+  line-height: 1.35;
+}
+
+.readme-audit-checks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.readme-audit-checks span {
+  min-height: 44px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.readme-audit-checks b {
+  display: block;
+  color: var(--ink);
+  font: 800 11px/1.1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.readme-audit-checks .passed {
+  border-color: rgba(216, 255, 79, 0.34);
+  background: rgba(216, 255, 79, 0.07);
+}
+
+.readme-audit-checks .missing {
+  border-color: rgba(255, 112, 77, 0.32);
+  background: rgba(255, 112, 77, 0.06);
 }
 
 .scoring-marketplace {
@@ -882,7 +984,9 @@ li + li {
   .score-math,
   .score-math-grid,
   .template-grid,
-  .import-actions {
+  .import-actions,
+  .readme-audit-actions,
+  .readme-audit-checks {
     grid-template-columns: 1fr;
   }
 }
@@ -892,6 +996,7 @@ li + li {
   #briefForm,
   .sample-strip,
   .import-panel,
+  .readme-audit-panel,
   .scoring-marketplace,
   .settings,
   .detail-panel {

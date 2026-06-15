@@ -15,6 +15,7 @@ import {
 import { isOpportunityNavigationKey, nextOpportunityIndex } from "./keyboardNavigation";
 import { analyzeLocally, totalScore } from "./opportunityEngine";
 import { buildOpportunityJsonExport } from "./opportunityJsonExport";
+import { auditReadmeForStars, formatReadmeStarAudit, type ReadmeStarAudit } from "./readmeAudit";
 import { buildRepoScaffoldZipBlob, repoScaffoldRootName } from "./repoScaffold";
 import { sampleBriefs } from "./sampleBriefs";
 import {
@@ -52,6 +53,9 @@ let selectedId = "";
 let isBusy = false;
 let pendingFocusId = "";
 let importFeedback = "";
+let readmeAuditText = "";
+let readmeAuditResult: ReadmeStarAudit | null = null;
+let readmeAuditFeedback = "";
 let benchmarks: BenchmarkRepo[] = [];
 let benchmarkStatus: "loading" | "ready" | "failed" = "loading";
 
@@ -102,6 +106,8 @@ function render(): void {
                 <span data-import-feedback aria-live="polite">${escapeHtml(importFeedback)}</span>
               </div>
             </details>
+
+            ${renderReadmeAuditPanel()}
 
             ${renderScoringMarketplace()}
 
@@ -196,6 +202,66 @@ function requireAppRoot(): HTMLDivElement {
     throw new Error("Missing #app root.");
   }
   return root;
+}
+
+function renderReadmeAuditPanel(): string {
+  const result = readmeAuditResult;
+  const isOpen = readmeAuditText || result ? "open" : "";
+
+  return `
+    <details class="readme-audit-panel" ${isOpen}>
+      <summary>README Star Audit</summary>
+      <label>
+        Paste a project README
+        <textarea name="readmeAudit" rows="5" placeholder="# My AI Tool&#10;&#10;A local-first assistant for...">${escapeHtml(readmeAuditText)}</textarea>
+      </label>
+      <div class="readme-audit-actions">
+        <button class="secondary-action" data-audit-readme type="button">Audit README</button>
+        ${
+          result
+            ? `<button class="secondary-action" data-copy-readme-audit type="button">Copy Audit</button>`
+            : ""
+        }
+        <span data-readme-audit-feedback aria-live="polite">${escapeHtml(readmeAuditFeedback)}</span>
+      </div>
+      ${result ? renderReadmeAuditResult(result) : ""}
+    </details>
+  `;
+}
+
+function renderReadmeAuditResult(result: ReadmeStarAudit): string {
+  const topFixes =
+    result.topFixes.length > 0
+      ? result.topFixes.map((item) => `<li>${escapeHtml(item.fix)}</li>`).join("")
+      : "<li>No critical gaps found. Keep screenshots, examples, and demo links current.</li>";
+  const checks = result.items
+    .map(
+      (item) => `
+        <span class="${item.passed ? "passed" : "missing"}">
+          <b>${item.passed ? "Pass" : "Fix"}</b>
+          ${escapeHtml(item.label)}
+        </span>
+      `
+    )
+    .join("");
+
+  return `
+    <section class="readme-audit-result" aria-label="README star audit result">
+      <div class="readme-audit-score">
+        <strong>${result.score}</strong>
+        <span>${escapeHtml(result.grade)}</span>
+        <small>${result.passedCount}/${result.totalCount} checks</small>
+      </div>
+      <p>${escapeHtml(result.summary)}</p>
+      <div>
+        <h3>Top fixes</h3>
+        <ol>${topFixes}</ol>
+      </div>
+      <div class="readme-audit-checks">
+        ${checks}
+      </div>
+    </section>
+  `;
 }
 
 function renderScoringMarketplace(): string {
@@ -372,6 +438,27 @@ function bindEvents(): void {
     } finally {
       button.disabled = false;
     }
+  });
+
+  document.querySelector<HTMLButtonElement>("[data-audit-readme]")?.addEventListener("click", () => {
+    const input = document.querySelector<HTMLTextAreaElement>("[name='readmeAudit']");
+    readmeAuditText = input?.value ?? "";
+    readmeAuditResult = auditReadmeForStars(readmeAuditText);
+    readmeAuditFeedback = `${readmeAuditResult.score}/100 ${readmeAuditResult.grade}`;
+    render();
+  });
+
+  document.querySelector<HTMLButtonElement>("[data-copy-readme-audit]")?.addEventListener("click", async (event) => {
+    if (!readmeAuditResult) {
+      return;
+    }
+
+    const button = event.currentTarget as HTMLButtonElement;
+    await navigator.clipboard.writeText(formatReadmeStarAudit(readmeAuditResult));
+    button.textContent = "Copied";
+    window.setTimeout(() => {
+      button.textContent = "Copy Audit";
+    }, 1400);
   });
 
   document.querySelector<HTMLButtonElement>("[data-download]")?.addEventListener("click", () => {

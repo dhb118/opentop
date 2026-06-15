@@ -53,6 +53,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 - One-click sample briefs for local models, agents, prompt regression, and README positioning.
 - In-app opportunity gallery with scored examples and share links.
 - In-app benchmark lessons mapped to OpenTop score dimensions from public AI repos.
+- Local README Star Audit for scoring first-screen hooks, screenshots, quick starts, demo paths, examples, contributor paths, and trust signals.
 - CSV, Markdown, notes, browser bookmarks, copied link lists, and public GitHub issue URL import for turning research snippets into signal briefs.
 - Responsive single-page interface built with Vite and TypeScript.
 

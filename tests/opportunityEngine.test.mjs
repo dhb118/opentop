@@ -16,6 +16,7 @@ import {
 import { parseModelAnalysis } from "../src/modelResponse.ts";
 import { analyzeLocally, scoreWeights, totalScore } from "../src/opportunityEngine.ts";
 import { buildOpportunityJsonExport } from "../src/opportunityJsonExport.ts";
+import { auditReadmeForStars, formatReadmeStarAudit } from "../src/readmeAudit.ts";
 import {
   buildRepoScaffoldFiles,
   buildRepoScaffoldZipBytes,
@@ -383,6 +384,60 @@ describe("launch text exports", () => {
       bestFor: profile.bestFor,
       weights: profile.weights
     });
+  });
+});
+
+describe("README star audit", () => {
+  it("scores a launch-ready README with concrete adoption signals", () => {
+    const audit = auditReadmeForStars(`# Local Agent Workbench
+
+[![CI](https://github.com/acme/local-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/acme/local-agent/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+![Local Agent Workbench screenshot](docs/screenshot.png)
+
+Local Agent Workbench helps AI engineers debug local agent runs without an API key. It runs locally, captures tool calls, and exports shareable examples.
+
+Live demo: https://example.com/local-agent
+
+## Quick Start
+
+\`\`\`bash
+pnpm install
+pnpm dev
+\`\`\`
+
+## Examples
+
+See the sample gallery for before/after traces.
+
+## Contributing
+
+Open a good first issue or starter issue from the roadmap.
+
+## Launch
+
+Share the demo on Hacker News and Reddit after the first release.
+`);
+
+    assert.equal(audit.grade, "launch-ready");
+    assert.ok(audit.score >= 82);
+    assert.equal(audit.topFixes.length, 0);
+  });
+
+  it("finds high-leverage fixes for a vague README", () => {
+    const audit = auditReadmeForStars(`# Idea
+
+TODO`);
+    const markdown = formatReadmeStarAudit(audit);
+
+    assert.equal(audit.grade, "needs-work");
+    assert.ok(audit.score < 58);
+    assert.ok(audit.topFixes.length > 0);
+    assert.match(audit.topFixes[0].fix, /who it helps|Quick Start|screenshot/i);
+    assert.match(markdown, /# README Star Audit/);
+    assert.match(markdown, /## Top Fixes/);
+    assert.match(markdown, /## Checklist/);
   });
 });
 

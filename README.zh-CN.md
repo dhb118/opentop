@@ -53,6 +53,7 @@ OpenTop 围绕这些循环设计：粘贴趋势信号，得到排序后的应用
 - 一键加载面向本地模型、Agent、Prompt 回归和 README 定位的示例简报。
 - 应用内机会图库，包含评分示例和分享链接。
 - 应用内 benchmark lesson，会把公开 AI 仓库模式映射到 OpenTop 评分维度。
+- 本地 README Star Audit，可检查首屏钩子、截图、快速开始、演示路径、示例、贡献入口和信任信号。
 - 支持从 CSV、Markdown、笔记、浏览器书签、复制的链接列表和公开 GitHub issue URL 导入研究片段，并转成信号简报。
 - 使用 Vite 和 TypeScript 构建的响应式单页界面。
 
