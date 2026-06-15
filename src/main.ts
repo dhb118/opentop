@@ -93,8 +93,8 @@ function render(): void {
             <details class="import-panel">
               <summary>Import Trend Signals</summary>
               <label>
-                Paste CSV, bullets, notes, or GitHub issue URLs
-                <textarea name="trendSignals" rows="5" placeholder="HN: Developers want local-first AI debugging&#10;https://github.com/example/repo/issues/42&#10;- Reddit: Local model setup is still painful"></textarea>
+                Paste CSV, bullets, notes, bookmark links, or GitHub issue URLs
+                <textarea name="trendSignals" rows="5" placeholder="Local-first AI debugging https://news.ycombinator.com/item?id=4242&#10;<A HREF=&quot;https://github.com/example/repo&quot;>Agent debugging toolkit</A>&#10;- Reddit: Local model setup is still painful"></textarea>
               </label>
               <div class="import-actions">
                 <button class="secondary-action" data-import-trends type="button">Use Signals</button>
@@ -794,12 +794,15 @@ function labelForProvider(provider: ProviderSettings["provider"]): string {
   return "API ready";
 }
 
-function labelForTrendImport(format: "csv" | "notes" | "github-issues"): string {
+function labelForTrendImport(format: "csv" | "notes" | "github-issues" | "links"): string {
   if (format === "csv") {
     return "CSV rows";
   }
   if (format === "github-issues") {
     return "GitHub issues";
+  }
+  if (format === "links") {
+    return "links";
   }
   return "notes";
 }

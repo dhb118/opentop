@@ -23,6 +23,12 @@ Before opening a pull request:
 pnpm build
 ```
 
+## README Translations
+
+- Keep the English and Simplified Chinese READMEs aligned when setup, feature, model, or roadmap copy changes.
+- New README translations should use a locale suffix and be added to the language switcher in every README.
+- Prefer human review for translation changes; avoid changing product claims in only one language.
+
 ## Product Bar
 
 Good changes should make at least one of these stronger:

@@ -18,6 +18,13 @@ Example outputs: [Opportunity Gallery](docs/GALLERY.md), [AI Repo Benchmarks](do
 
 Launch assets: [GitHub Publish Guide](docs/GITHUB_PUBLISH.md), [Starter Issues](docs/STARTER_ISSUES.md), [Launch Playbook](docs/LAUNCH_PLAYBOOK.md)
 
+## Languages
+
+- [English](README.md) is the default GitHub landing page.
+- [简体中文](README.zh-CN.md) mirrors the product overview, setup, model configuration, roadmap, and growth plan.
+
+When user-facing setup or feature text changes, update both README files in the same pull request.
+
 ## Why It Can Earn Stars
 
 Open-source AI projects usually spread when they do three things well:
@@ -46,7 +53,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 - One-click sample briefs for local models, agents, prompt regression, and README positioning.
 - In-app opportunity gallery with scored examples and share links.
 - In-app benchmark lessons mapped to OpenTop score dimensions from public AI repos.
-- CSV, Markdown, notes, and public GitHub issue URL import for turning research snippets into signal briefs.
+- CSV, Markdown, notes, browser bookmarks, copied link lists, and public GitHub issue URL import for turning research snippets into signal briefs.
 - Responsive single-page interface built with Vite and TypeScript.
 
 ## Quick Start
@@ -103,10 +110,6 @@ For Ollama:
 - Provider: `Ollama`
 - Endpoint: `http://localhost:11434/v1/chat/completions`
 - Model: `llama3.1`
-
-## Roadmap
-
-- Import browser bookmarks or copied link lists as trend sources.
 
 ## Star Growth Plan
 

@@ -27,6 +27,7 @@ import {
   fetchGitHubIssueSignals,
   parseGitHubIssueUrls,
   parseTrendCsv,
+  parseTrendLinks,
   parseTrendNotes,
   parseTrendSignals
 } from "../src/trendImport.ts";
@@ -461,6 +462,48 @@ describe("trend notes import", () => {
 
     assert.equal(parsed?.rowCount, 1);
     assert.equal(parsed?.ignoredCount, 1);
+  });
+});
+
+describe("trend link import", () => {
+  it("turns browser bookmark anchors into source and signal rows", () => {
+    const parsed = parseTrendLinks(`
+      <!DOCTYPE NETSCAPE-Bookmark-file-1>
+      <DT><A HREF="https://news.ycombinator.com/item?id=4242">Local-first AI launch thread</A>
+      <DT><A HREF="https://www.example.com/agent-tools/">Agent tools directory</A>
+    `);
+
+    assert.equal(parsed?.format, "links");
+    assert.equal(parsed?.rowCount, 2);
+    assert.equal(parsed?.ignoredCount, 0);
+    assert.equal(parsed?.channels, "news.ycombinator.com, example.com");
+    assert.match(parsed?.signal ?? "", /news\.ycombinator\.com: Local-first AI launch thread - https:\/\/news\.ycombinator\.com\/item\?id=4242/);
+    assert.match(parsed?.signal ?? "", /example\.com: Agent tools directory - https:\/\/www\.example\.com\/agent-tools/);
+  });
+
+  it("deduplicates copied links and counts invalid rows", () => {
+    const parsed = parseTrendLinks(`
+      Local AI launch guide https://example.com/ai-launch/
+      https://example.com/ai-launch/#comments
+      not a url
+      [OpenAI cookbook](https://github.com/openai/openai-cookbook)
+    `);
+
+    assert.equal(parsed?.format, "links");
+    assert.equal(parsed?.rowCount, 2);
+    assert.equal(parsed?.ignoredCount, 2);
+    assert.equal(parsed?.channels, "example.com, github.com");
+    assert.match(parsed?.signal ?? "", /example\.com: Local AI launch guide - https:\/\/example\.com\/ai-launch/);
+    assert.match(parsed?.signal ?? "", /github\.com: OpenAI cookbook - https:\/\/github\.com\/openai\/openai-cookbook/);
+  });
+
+  it("auto-detects link lists without stealing source-prefixed Markdown notes", () => {
+    assert.equal(parseTrendSignals("Local AI launch guide https://example.com/ai-launch")?.format, "links");
+    assert.equal(
+      parseTrendSignals("* GitHub: [Maintainers want release notes](https://github.com/example/repo/issues/1)")
+        ?.format,
+      "notes"
+    );
   });
 });
 

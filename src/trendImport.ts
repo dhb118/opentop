@@ -3,13 +3,18 @@ export interface TrendSignalImport {
   channels: string;
   rowCount: number;
   ignoredCount: number;
-  format: "csv" | "notes" | "github-issues";
+  format: "csv" | "notes" | "github-issues" | "links";
   failures?: string[];
 }
 
 interface TrendItem {
   source: string;
   signal: string;
+}
+
+interface LinkParseResult {
+  key: string;
+  item: TrendItem;
 }
 
 export interface GitHubIssueReference {
@@ -39,9 +44,16 @@ type FetchLike = (url: string, init?: RequestInit) => Promise<MinimalFetchRespon
 
 const githubIssueUrlPattern =
   /https?:\/\/github\.com\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)\/issues\/(\d+)(?:[/?#][^\s<)]*)?/gi;
+const bookmarkAnchorPattern = /<a\b[^>]*\bhref\s*=\s*(?:"([^"]+)"|'([^']+)'|([^\s>]+))[^>]*>([\s\S]*?)<\/a>/gi;
+const markdownLinkPattern = /^\[([^\]]+)]\((https?:\/\/[^)]+)\)$/i;
+const httpUrlPattern = /https?:\/\/[^\s<>"']+/i;
 
 export function parseTrendSignals(input: string): TrendSignalImport | null {
-  return looksLikeCsv(input) ? parseTrendCsv(input) : parseTrendNotes(input);
+  if (looksLikeCsv(input)) {
+    return parseTrendCsv(input);
+  }
+
+  return parseTrendLinks(input) ?? parseTrendNotes(input);
 }
 
 export function parseGitHubIssueUrls(input: string): GitHubIssueReference[] {
@@ -151,6 +163,24 @@ export function parseTrendNotes(notes: string): TrendSignalImport | null {
   };
 }
 
+export function parseTrendLinks(input: string): TrendSignalImport | null {
+  const bookmarkRows = parseBookmarkAnchors(input);
+  if (bookmarkRows.length > 0) {
+    return buildLinkImport(bookmarkRows);
+  }
+
+  const lines = input
+    .split(/\r?\n/)
+    .map(cleanCopiedLinkLine)
+    .filter((line) => line.length > 0);
+
+  if (!looksLikeCopiedLinkList(lines)) {
+    return null;
+  }
+
+  return buildLinkImport(lines.map((line) => parseCopiedLinkLine(line)));
+}
+
 function buildImport(items: TrendItem[]): Pick<TrendSignalImport, "signal" | "channels" | "rowCount"> {
   const channels = Array.from(new Set(items.map((item) => item.source).filter(Boolean))).join(", ");
   const signal = items.map((item) => `${item.source ? `${item.source}: ` : ""}${item.signal}`).join("\n");
@@ -160,6 +190,151 @@ function buildImport(items: TrendItem[]): Pick<TrendSignalImport, "signal" | "ch
     rowCount: items.length,
     signal
   };
+}
+
+function buildLinkImport(rows: Array<LinkParseResult | null>): TrendSignalImport | null {
+  const seen = new Set<string>();
+  const items: TrendItem[] = [];
+  let ignoredCount = 0;
+
+  for (const row of rows) {
+    if (!row || seen.has(row.key) || items.length >= 12) {
+      ignoredCount += 1;
+      continue;
+    }
+
+    seen.add(row.key);
+    items.push(row.item);
+  }
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  return {
+    ...buildImport(items),
+    ignoredCount,
+    format: "links"
+  };
+}
+
+function parseBookmarkAnchors(input: string): Array<LinkParseResult | null> {
+  const rows: Array<LinkParseResult | null> = [];
+
+  for (const match of input.matchAll(bookmarkAnchorPattern)) {
+    const href = match[1] ?? match[2] ?? match[3] ?? "";
+    const title = cleanHtmlText(match[4]);
+    rows.push(buildLinkResult(href, title));
+  }
+
+  return rows;
+}
+
+function cleanCopiedLinkLine(line: string): string {
+  return line
+    .replace(/^\s{0,3}[-*+]\s+/, "")
+    .replace(/^\s{0,3}\d+[.)]\s+/, "")
+    .replace(/^>\s?/, "")
+    .trim();
+}
+
+function looksLikeCopiedLinkList(lines: string[]): boolean {
+  if (lines.length === 0) {
+    return false;
+  }
+
+  const urlRows = lines.filter((line) => httpUrlPattern.test(line)).length;
+  if (urlRows === 0) {
+    return false;
+  }
+
+  const sourcePrefixedMarkdownRows = lines.filter(looksLikeSourcePrefixedMarkdownNote).length;
+  if (sourcePrefixedMarkdownRows > 0 && sourcePrefixedMarkdownRows >= urlRows) {
+    return false;
+  }
+
+  return urlRows >= Math.ceil(lines.length / 2);
+}
+
+function looksLikeSourcePrefixedMarkdownNote(line: string): boolean {
+  return /^[^:|-]{2,32}\s*:\s*\[[^\]]+]\(https?:\/\//i.test(line);
+}
+
+function parseCopiedLinkLine(line: string): LinkParseResult | null {
+  const markdownLink = line.match(markdownLinkPattern);
+  if (markdownLink) {
+    return buildLinkResult(markdownLink[2], markdownLink[1]);
+  }
+
+  const url = line.match(httpUrlPattern)?.[0] ?? "";
+  if (!url) {
+    return null;
+  }
+
+  const title = cleanCell(line.replace(url, "").replace(/^[\s:|\u2013\u2014-]+|[\s:|\u2013\u2014-]+$/g, ""));
+  return buildLinkResult(url, title);
+}
+
+function buildLinkResult(rawUrl: string, title: string): LinkParseResult | null {
+  const normalized = normalizeHttpUrl(rawUrl);
+  if (!normalized) {
+    return null;
+  }
+
+  const url = new URL(normalized);
+  const source = normalizeHost(url.hostname);
+  const label = cleanCell(title) || linkFallbackLabel(url);
+
+  return {
+    key: normalized.toLowerCase(),
+    item: {
+      source,
+      signal: `${label} - ${normalized}`
+    }
+  };
+}
+
+function normalizeHttpUrl(rawUrl: string): string | null {
+  const cleaned = rawUrl
+    .replace(/&amp;/g, "&")
+    .trim()
+    .replace(/[)\].,;!?]+$/g, "");
+
+  try {
+    const url = new URL(cleaned);
+    if (url.protocol !== "http:" && url.protocol !== "https:") {
+      return null;
+    }
+
+    url.hash = "";
+    url.hostname = url.hostname.toLowerCase();
+    url.pathname = url.pathname.length > 1 ? url.pathname.replace(/\/+$/g, "") : url.pathname;
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
+function normalizeHost(hostname: string): string {
+  return hostname.replace(/^www\./i, "").toLowerCase();
+}
+
+function linkFallbackLabel(url: URL): string {
+  const host = normalizeHost(url.hostname);
+  const path = decodeURIComponent(url.pathname).replace(/^\/+/, "").replace(/\/+/g, " / ");
+  return cleanCell(path ? `${host} / ${path}` : host);
+}
+
+function cleanHtmlText(value: string): string {
+  return cleanCell(
+    value
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+  );
 }
 
 async function fetchGitHubIssue(
