@@ -154,12 +154,14 @@ form {
 #briefForm,
 .sample-strip,
 .import-panel,
+.scoring-marketplace,
 .settings {
   padding: 22px;
 }
 
 .sample-strip,
-.import-panel {
+.import-panel,
+.scoring-marketplace {
   border-bottom: 1px solid var(--line);
 }
 
@@ -183,6 +185,92 @@ form {
   min-height: 18px;
   color: var(--muted);
   font: 700 12px/1.3 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.scoring-marketplace {
+  display: grid;
+  gap: 12px;
+  background: rgba(50, 220, 192, 0.035);
+}
+
+.marketplace-heading {
+  display: grid;
+  gap: 4px;
+}
+
+.marketplace-heading strong {
+  color: var(--ink);
+  font-size: 18px;
+}
+
+.marketplace-heading span {
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.template-card {
+  display: grid;
+  gap: 8px;
+  min-height: 132px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(16, 19, 15, 0.45);
+  color: var(--ink);
+  text-align: left;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.template-card:hover,
+.template-card.active {
+  transform: translateY(-1px);
+  border-color: rgba(216, 255, 79, 0.58);
+  background: rgba(216, 255, 79, 0.09);
+}
+
+.template-card span {
+  font: 800 12px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.template-card small {
+  color: var(--muted);
+  line-height: 1.25;
+}
+
+.weight-bars {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: end;
+  gap: 4px;
+  height: 34px;
+  margin-top: auto;
+}
+
+.weight-bars span {
+  display: flex;
+  align-items: end;
+  height: 100%;
+  border: 1px solid rgba(245, 241, 230, 0.1);
+  border-radius: 999px;
+  background: rgba(245, 241, 230, 0.04);
+  overflow: hidden;
+}
+
+.weight-bars i {
+  display: block;
+  width: 100%;
+  min-height: 6px;
+  border-radius: inherit;
+  background: linear-gradient(180deg, var(--acid), var(--cyan));
 }
 
 .sample-grid {
@@ -793,6 +881,7 @@ li + li {
 
   .score-math,
   .score-math-grid,
+  .template-grid,
   .import-actions {
     grid-template-columns: 1fr;
   }
@@ -803,6 +892,7 @@ li + li {
   #briefForm,
   .sample-strip,
   .import-panel,
+  .scoring-marketplace,
   .settings,
   .detail-panel {
     padding: 18px;

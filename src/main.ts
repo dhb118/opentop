@@ -12,11 +12,25 @@ import {
   buildXThread
 } from "./launchExports";
 import { isOpportunityNavigationKey, nextOpportunityIndex } from "./keyboardNavigation";
-import { analyzeLocally, scoreWeights } from "./opportunityEngine";
+import { analyzeLocally, totalScore } from "./opportunityEngine";
+import { buildOpportunityJsonExport } from "./opportunityJsonExport";
 import { buildRepoScaffoldZipBlob, repoScaffoldRootName } from "./repoScaffold";
 import { sampleBriefs } from "./sampleBriefs";
+import {
+  defaultScoringProfileId,
+  getScoringProfile,
+  scoringProfiles,
+  type ScoringProfile
+} from "./scoringProfiles";
 import { buildShareCardSvg, renderShareCardPngBlob } from "./shareCard";
-import { loadInput, loadSettings, saveInput, saveSettings } from "./storage";
+import {
+  loadInput,
+  loadScoringProfileId,
+  loadSettings,
+  saveInput,
+  saveScoringProfileId,
+  saveSettings
+} from "./storage";
 import { fetchGitHubIssueSignals, parseGitHubIssueUrls, parseTrendSignals } from "./trendImport";
 import { createShareUrl, readBriefFromSearch } from "./urlState";
 
@@ -31,6 +45,7 @@ const benchmarkDimensions = new Set<BenchmarkDimension>([
 
 let currentInput = readBriefFromSearch(window.location.search) ?? loadInput();
 let settings = loadSettings();
+let selectedScoringProfileId = loadScoringProfileId();
 let result: AnalysisResult | null = null;
 let selectedId = "";
 let isBusy = false;
@@ -86,6 +101,8 @@ function render(): void {
                 <span data-import-feedback aria-live="polite">${escapeHtml(importFeedback)}</span>
               </div>
             </details>
+
+            ${renderScoringMarketplace()}
 
             <form id="briefForm">
               <label>
@@ -178,6 +195,51 @@ function requireAppRoot(): HTMLDivElement {
   return root;
 }
 
+function renderScoringMarketplace(): string {
+  const activeProfile = selectedScoringProfile();
+
+  return `
+    <section class="scoring-marketplace" aria-label="Scoring template marketplace">
+      <div class="marketplace-heading">
+        <p class="eyebrow">Scoring templates</p>
+        <strong>${escapeHtml(activeProfile.name)}</strong>
+        <span>${escapeHtml(activeProfile.bestFor)}</span>
+      </div>
+      <div class="template-grid">
+        ${scoringProfiles.map((profile) => renderScoringProfileButton(profile, activeProfile.id)).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderScoringProfileButton(profile: ScoringProfile, activeProfileId: string): string {
+  const isActive = profile.id === activeProfileId;
+  const weights = Object.entries(profile.weights)
+    .map(
+      ([dimension, weight]) => `
+        <span title="${escapeHtml(humanize(dimension))}: ${Math.round(weight * 100)}%">
+          <i style="height: ${Math.round(weight * 100)}%"></i>
+        </span>
+      `
+    )
+    .join("");
+
+  return `
+    <button
+      class="template-card ${isActive ? "active" : ""}"
+      data-scoring-profile="${profile.id}"
+      type="button"
+      aria-pressed="${isActive ? "true" : "false"}"
+    >
+      <span>${escapeHtml(profile.name)}</span>
+      <small>${escapeHtml(profile.tagline)}</small>
+      <div class="weight-bars" aria-label="${escapeHtml(profile.name)} score weights">
+        ${weights}
+      </div>
+    </button>
+  `;
+}
+
 function bindEvents(): void {
   document.querySelector<HTMLFormElement>("#briefForm")?.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -238,6 +300,14 @@ function bindEvents(): void {
       }
       currentInput = sample.input;
       saveInput(currentInput);
+      void runAnalysis();
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>("[data-scoring-profile]").forEach((button) => {
+    button.addEventListener("click", () => {
+      selectedScoringProfileId = getScoringProfile(button.dataset.scoringProfile ?? defaultScoringProfileId).id;
+      saveScoringProfileId(selectedScoringProfileId);
       void runAnalysis();
     });
   });
@@ -361,7 +431,7 @@ async function runAnalysis(): Promise<void> {
   isBusy = true;
   render();
   try {
-    result = await analyzeOpportunity(currentInput, settings);
+    result = applyScoringProfile(await analyzeOpportunity(currentInput, settings), selectedScoringProfile());
     selectedId = result.opportunities[0]?.id ?? "";
   } catch (error) {
     result = {
@@ -375,10 +445,7 @@ async function runAnalysis(): Promise<void> {
     if (!currentResult || currentResult.opportunities.length === 0) {
       const fallback = analyzeFallback(currentInput);
       result = currentResult
-        ? {
-            ...currentResult,
-            opportunities: fallback.opportunities
-          }
+        ? applyScoringProfile({ ...currentResult, opportunities: fallback.opportunities }, selectedScoringProfile())
         : fallback;
       selectedId = result.opportunities[0]?.id ?? "";
     }
@@ -452,7 +519,7 @@ function renderGalleryRail(): string {
       <div class="gallery-cards">
         ${sampleBriefs
           .map((brief) => {
-            const top = analyzeLocally(brief.input).opportunities[0];
+            const top = analyzeLocally(brief.input, selectedScoringProfile().weights).opportunities[0];
             const shareUrl = createShareUrl(brief.input, window.location.href);
             return `
               <article class="gallery-card">
@@ -517,7 +584,8 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
 }
 
 function renderScoreMath(item: Opportunity): string {
-  const rows = Object.entries(scoreWeights)
+  const profile = selectedScoringProfile();
+  const rows = Object.entries(profile.weights)
     .map(([key, weight]) => {
       const value = item.scores[key as keyof Opportunity["scores"]];
       return `
@@ -533,7 +601,7 @@ function renderScoreMath(item: Opportunity): string {
     <section class="score-math" aria-label="Score explanation">
       <div>
         <h3>Score math</h3>
-        <p>Weighted total rounds to ${item.score}/10.</p>
+        <p>${escapeHtml(profile.name)} weights round to ${item.score}/10.</p>
       </div>
       <div class="score-math-grid">
         ${rows}
@@ -695,6 +763,24 @@ function listBlock(title: string, items: string[]): string {
   return `<section><h3>${title}</h3><ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section>`;
 }
 
+function selectedScoringProfile(): ScoringProfile {
+  return getScoringProfile(selectedScoringProfileId);
+}
+
+function applyScoringProfile(analysis: AnalysisResult, profile: ScoringProfile): AnalysisResult {
+  const opportunities = analysis.opportunities
+    .map((item) => ({
+      ...item,
+      score: totalScore(item.scores, profile.weights)
+    }))
+    .sort((a, b) => b.score - a.score);
+
+  return {
+    ...analysis,
+    opportunities
+  };
+}
+
 function labelForProvider(provider: ProviderSettings["provider"]): string {
   if (provider === "demo") {
     return "Demo engine";
@@ -824,7 +910,9 @@ function copyLabel(mode: string | undefined): string {
 }
 
 function downloadJson(filename: string, item: AnalysisResult["opportunities"][number]): void {
-  const blob = new Blob([JSON.stringify(item, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify(buildOpportunityJsonExport(item, selectedScoringProfile()), null, 2)], {
+    type: "application/json"
+  });
   downloadBlob(filename, blob);
 }
 
@@ -841,7 +929,7 @@ function downloadBlob(filename: string, blob: Blob): void {
 }
 
 function analyzeFallback(input: OpportunityInput): AnalysisResult {
-  return analyzeLocally(input);
+  return analyzeLocally(input, selectedScoringProfile().weights);
 }
 
 function escapeHtml(value: string): string {

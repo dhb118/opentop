@@ -13,12 +13,14 @@ import {
   buildXThread
 } from "../src/launchExports.ts";
 import { parseModelAnalysis } from "../src/modelResponse.ts";
-import { analyzeLocally, scoreWeights } from "../src/opportunityEngine.ts";
+import { analyzeLocally, scoreWeights, totalScore } from "../src/opportunityEngine.ts";
+import { buildOpportunityJsonExport } from "../src/opportunityJsonExport.ts";
 import {
   buildRepoScaffoldFiles,
   buildRepoScaffoldZipBytes,
   repoScaffoldRootName
 } from "../src/repoScaffold.ts";
+import { defaultScoringProfileId, getScoringProfile, scoringProfiles, weightsSum } from "../src/scoringProfiles.ts";
 import { buildShareCardSvg, buildShareCardSvgDataUrl, shareCardDimensions } from "../src/shareCard.ts";
 import { isOpportunityNavigationKey, nextOpportunityIndex } from "../src/keyboardNavigation.ts";
 import {
@@ -84,6 +86,40 @@ describe("analyzeLocally", () => {
       assert.ok(opportunity.launchPlan.length >= 4);
       assert.ok(opportunity.risks.length >= 3);
     }
+  });
+});
+
+describe("scoring templates", () => {
+  it("keeps the default scoring template compatible with public score weights", () => {
+    const defaultProfile = getScoringProfile(defaultScoringProfileId);
+
+    assert.deepEqual(defaultProfile.weights, scoreWeights);
+    assert.equal(weightsSum(defaultProfile.weights), 1);
+    assert.equal(scoringProfiles.some((profile) => profile.id === defaultScoringProfileId), true);
+  });
+
+  it("keeps every scoring template normalized and visible", () => {
+    for (const profile of scoringProfiles) {
+      assert.equal(weightsSum(profile.weights), 1);
+      assert.ok(profile.name.length > 0);
+      assert.ok(profile.bestFor.length > 0);
+    }
+  });
+
+  it("lets templates change total scores without changing raw dimensions", () => {
+    const defaultProfile = getScoringProfile(defaultScoringProfileId);
+    const launchProfile = getScoringProfile("launch-generator");
+    const scores = {
+      pain: 5,
+      urgency: 5,
+      distribution: 10,
+      buildability: 4,
+      starPotential: 10
+    };
+
+    assert.notEqual(totalScore(scores, defaultProfile.weights), totalScore(scores, launchProfile.weights));
+    const launchOpportunity = analyzeLocally(defaultInput, launchProfile.weights).opportunities[0];
+    assert.equal(launchOpportunity.score, totalScore(launchOpportunity.scores, launchProfile.weights));
   });
 });
 
@@ -284,6 +320,20 @@ describe("launch text exports", () => {
     assert.match(scaffold, /## File Tree/);
     assert.match(scaffold, /README\.md/);
     assert.match(scaffold, /## Starter Issues/);
+  });
+
+  it("includes the selected scoring template in JSON opportunity exports", () => {
+    const opportunity = analyzeLocally(defaultInput).opportunities[0];
+    const profile = getScoringProfile("agent-debugging");
+    const exported = buildOpportunityJsonExport(opportunity, profile);
+
+    assert.equal(exported.name, opportunity.name);
+    assert.deepEqual(exported.scoringTemplate, {
+      id: profile.id,
+      name: profile.name,
+      bestFor: profile.bestFor,
+      weights: profile.weights
+    });
   });
 });
 

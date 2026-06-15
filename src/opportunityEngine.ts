@@ -1,4 +1,5 @@
 import type { AnalysisResult, Opportunity, OpportunityInput } from "./domain";
+import { defaultScoringProfile, type ScoreWeights } from "./scoringProfiles.ts";
 
 const productNouns = [
   "Radar",
@@ -35,13 +36,7 @@ const releaseItems = [
   "Exportable Markdown brief for GitHub issues and Product Hunt drafts"
 ];
 
-export const scoreWeights = {
-  pain: 0.24,
-  urgency: 0.18,
-  distribution: 0.24,
-  buildability: 0.16,
-  starPotential: 0.18
-} as const satisfies Record<keyof Opportunity["scores"], number>;
+export const scoreWeights = defaultScoringProfile.weights;
 
 function clampScore(value: number): number {
   return Math.max(1, Math.min(10, Math.round(value)));
@@ -73,11 +68,16 @@ function scoreOpportunity(input: OpportunityInput, index: number): Opportunity["
   };
 }
 
-function totalScore(scores: Opportunity["scores"]): number {
-  return Math.round(Object.entries(scoreWeights).reduce((total, [key, weight]) => total + scores[key as keyof Opportunity["scores"]] * weight, 0));
+export function totalScore(scores: Opportunity["scores"], weights: ScoreWeights = scoreWeights): number {
+  return Math.round(
+    Object.entries(weights).reduce(
+      (total, [key, weight]) => total + scores[key as keyof Opportunity["scores"]] * weight,
+      0
+    )
+  );
 }
 
-export function analyzeLocally(input: OpportunityInput): AnalysisResult {
+export function analyzeLocally(input: OpportunityInput, weights: ScoreWeights = scoreWeights): AnalysisResult {
   const terms = keywords(`${input.audience} ${input.signal} ${input.constraints}`);
   const anchor = terms[0] ?? "ai";
   const audience = input.audience.trim() || "AI builders";
@@ -85,7 +85,7 @@ export function analyzeLocally(input: OpportunityInput): AnalysisResult {
   const opportunities: Opportunity[] = productNouns.slice(0, 5).map((noun, index) => {
     const name = `${capitalize(anchor)} ${noun}`;
     const scores = scoreOpportunity(input, index);
-    const score = totalScore(scores);
+    const score = totalScore(scores, weights);
 
     return {
       id: `${anchor}-${noun.toLowerCase()}`,

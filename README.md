@@ -37,6 +37,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 - Model response repair for fenced JSON, noisy wrappers, and out-of-range scores.
 - Editable opportunity assumptions: pain, urgency, and distribution.
 - Score matrix for pain, urgency, distribution, buildability, and star potential.
+- Scoring template marketplace for local-first tools, provider SDKs, agent debugging, and launch generators.
 - Transparent weighted scoring explanation for every selected opportunity.
 - Copyable Markdown brief for GitHub issues, README sections, and launch drafts.
 - Export actions for README briefs, GitHub issue bodies, repo scaffold plans, downloadable starter ZIPs, Show HN posts, X threads, Reddit posts, and JSON opportunity records.
@@ -106,7 +107,6 @@ For Ollama:
 ## Roadmap
 
 - Import browser bookmarks or copied link lists as trend sources.
-- Add a scoring template marketplace.
 
 ## Star Growth Plan
 
