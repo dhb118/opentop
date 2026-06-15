@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 import { defaultInput } from "../src/domain.ts";
 import { analyzeLocally } from "../src/opportunityEngine.ts";
+import { buildShareCardSvg } from "../src/shareCard.ts";
 import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
 import { buildGalleryJson, buildGalleryMarkdown } from "../scripts/generate-gallery.mjs";
 
@@ -89,5 +90,28 @@ describe("generated opportunity gallery", () => {
 
     assert.equal(markdown, buildGalleryMarkdown());
     assert.equal(json, buildGalleryJson());
+  });
+});
+
+describe("share card export", () => {
+  it("builds a portable SVG card for an opportunity", () => {
+    const opportunity = analyzeLocally(defaultInput).opportunities[0];
+    const svg = buildShareCardSvg(opportunity);
+
+    assert.match(svg, /^<svg width="1200" height="630"/);
+    assert.match(svg, /OPENTOP OPPORTUNITY/);
+    assert.match(svg, new RegExp(opportunity.name));
+    assert.match(svg, /image\/svg\+xml|<\/svg>/);
+  });
+
+  it("escapes text before placing it into SVG markup", () => {
+    const opportunity = {
+      ...analyzeLocally(defaultInput).opportunities[0],
+      name: `A <B> & "C"`
+    };
+    const svg = buildShareCardSvg(opportunity);
+
+    assert.match(svg, /A &lt;B&gt; &amp; &quot;C&quot;/);
+    assert.doesNotMatch(svg, /A <B> & "C"/);
   });
 });

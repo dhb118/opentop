@@ -3,6 +3,7 @@ import { analyzeOpportunity } from "./aiClient";
 import type { AnalysisResult, OpportunityInput, ProviderSettings } from "./domain";
 import { analyzeLocally } from "./opportunityEngine";
 import { sampleBriefs } from "./sampleBriefs";
+import { buildShareCardSvg } from "./shareCard";
 import { loadInput, loadSettings, saveInput, saveSettings } from "./storage";
 import { createShareUrl, readBriefFromSearch } from "./urlState";
 
@@ -194,6 +195,14 @@ function bindEvents(): void {
     }
     downloadJson(`${selected.id}.json`, selected);
   });
+
+  document.querySelector<HTMLButtonElement>("[data-download-card]")?.addEventListener("click", () => {
+    const selected = result?.opportunities.find((item) => item.id === selectedId);
+    if (!selected) {
+      return;
+    }
+    downloadSvg(`${selected.id}-share-card.svg`, buildShareCardSvg(selected));
+  });
 }
 
 async function runAnalysis(): Promise<void> {
@@ -290,6 +299,7 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
           <button class="secondary-action" data-copy="markdown" type="button">Copy README Brief</button>
           <button class="secondary-action" data-copy="show-hn" type="button">Copy Show HN</button>
           <button class="secondary-action" data-copy="share-url" type="button">Copy Share Link</button>
+          <button class="secondary-action" data-download-card type="button">Download Card</button>
           <button class="secondary-action" data-download type="button">Download JSON</button>
         </div>
       </div>
@@ -469,6 +479,14 @@ function copyLabel(mode: string | undefined): string {
 
 function downloadJson(filename: string, item: AnalysisResult["opportunities"][number]): void {
   const blob = new Blob([JSON.stringify(item, null, 2)], { type: "application/json" });
+  downloadBlob(filename, blob);
+}
+
+function downloadSvg(filename: string, svg: string): void {
+  downloadBlob(filename, new Blob([svg], { type: "image/svg+xml" }));
+}
+
+function downloadBlob(filename: string, blob: Blob): void {
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = filename;
