@@ -23,6 +23,10 @@ Try it in 90 seconds:
 
 ![OpenTop 90-second demo flow showing signal input, ranked opportunities, score proof, and launch export](docs/assets/opentop-demo-flow.svg)
 
+Current demo capture from the production build:
+
+![OpenTop live demo capture showing sample briefs, score lights, and opportunity gallery](docs/assets/opentop-live-demo.png)
+
 Example outputs: [Opportunity Gallery](docs/GALLERY.md), [AI Repo Benchmarks](docs/BENCHMARKS.md)
 
 Launch assets: [GitHub Publish Guide](docs/GITHUB_PUBLISH.md), [Repo Profile Pack](docs/REPO_PROFILE.md), [Demo Fallbacks](docs/DEMO_FALLBACKS.md), [Cloudflare Pages Direct Upload](docs/CLOUDFLARE_PAGES.md), [Public Launch Brief](docs/PUBLIC_LAUNCH_BRIEF.md), [Launch Media Kit](docs/LAUNCH_MEDIA_KIT.md), [Starter Issues](docs/STARTER_ISSUES.md), [Launch Playbook](docs/LAUNCH_PLAYBOOK.md)

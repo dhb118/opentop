@@ -1170,7 +1170,8 @@ describe("launch documentation", () => {
       repoProfileDoc,
       contributing,
       weeklyGalleryWorkflow,
-      demoFlowSvg
+      demoFlowSvg,
+      liveDemoPng
     ] = await Promise.all([
       readFile("README.md", "utf8"),
       readFile("README.zh-CN.md", "utf8"),
@@ -1183,7 +1184,8 @@ describe("launch documentation", () => {
       readFile("docs/REPO_PROFILE.md", "utf8"),
       readFile("CONTRIBUTING.md", "utf8"),
       readFile("docs/WEEKLY_GALLERY_WORKFLOW.md", "utf8"),
-      readFile("docs/assets/opentop-demo-flow.svg", "utf8")
+      readFile("docs/assets/opentop-demo-flow.svg", "utf8"),
+      readFile("docs/assets/opentop-live-demo.png")
     ]);
 
     assert.match(readme, /Public Launch Brief/);
@@ -1202,6 +1204,7 @@ describe("launch documentation", () => {
     assert.match(readme, /Open the demo and load a built-in AI builder brief/);
     assert.match(readme, /Copy a README brief, launch kit, demo script, or starter repo ZIP/);
     assert.match(readme, /docs\/assets\/opentop-demo-flow\.svg/);
+    assert.match(readme, /docs\/assets\/opentop-live-demo\.png/);
     assert.match(readme, /Repo Profile Pack/);
     assert.match(readme, /Copy Launch Brief/);
     assert.match(readme, /Copy Demo Script/);
@@ -1222,6 +1225,7 @@ describe("launch documentation", () => {
     assert.match(zhReadme, /选择一个内置 AI 开发者简报/);
     assert.match(zhReadme, /复制 README 简报、Launch Kit、demo 脚本或 starter repo ZIP/);
     assert.match(zhReadme, /docs\/assets\/opentop-demo-flow\.svg/);
+    assert.match(zhReadme, /docs\/assets\/opentop-live-demo\.png/);
     assert.match(zhReadme, /仓库 Profile 包/);
     assert.match(zhReadme, /Copy Launch Brief/);
     assert.match(zhReadme, /Copy Demo Script/);
@@ -1258,6 +1262,7 @@ describe("launch documentation", () => {
     assert.match(launchPlaybook, /Weekly Gallery Update Workflow/);
     assert.match(launchMediaKit, /# OpenTop Launch Media Kit/);
     assert.match(launchMediaKit, /OpenTop 90-second demo flow/);
+    assert.match(launchMediaKit, /OpenTop live demo capture/);
     assert.match(launchMediaKit, /Copy Demo Script/);
     assert.match(launchMediaKit, /Product Hunt Gallery/);
     assert.match(launchMediaKit, /GitHub Social Preview/);
@@ -1293,6 +1298,8 @@ describe("launch documentation", () => {
     assert.match(weeklyGalleryWorkflow, /Launch docs were updated or intentionally left unchanged/);
     assert.match(demoFlowSvg, /OpenTop 90-second demo flow/);
     assert.match(demoFlowSvg, /signal input, ranked opportunities, score proof, and launch export/);
+    assert.deepEqual([...liveDemoPng.subarray(0, 8)], [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+    assert.ok(liveDemoPng.length > 100_000);
   });
 });
 

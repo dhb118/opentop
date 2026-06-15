@@ -5,6 +5,7 @@ Use this kit before posting OpenTop to GitHub, Product Hunt, Hacker News, Reddit
 ## Core Assets
 
 - Primary screenshot: [OpenTop app screenshot](assets/opentop-app-screenshot.png).
+- Live demo capture: [OpenTop live demo capture](assets/opentop-live-demo.png).
 - Demo flow visual: [OpenTop 90-second demo flow](assets/opentop-demo-flow.svg).
 - Hosted demo: [verified rawcdn fallback](https://rawcdn.githack.com/dhb118/opentop/8af0b223db437d2c8235232e32e85ed9b8e6ca8c/).
 - Repo profile alt text: OpenTop interface showing AI opportunity scoring, sample briefs, and launch exports for open-source builders.
@@ -33,11 +34,11 @@ Maker comment source: use the in-app `Copy Product Hunt` action.
 
 ## Newsletter And Blog Visuals
 
-Use one screenshot plus one generated text artifact. The strongest pairing is the app screenshot followed by a copied README brief or 90-second demo script. Link both the GitHub repository and the hosted demo.
+Use one screenshot plus one generated text artifact. The strongest pairing is the live demo capture followed by a copied README brief or 90-second demo script. Link both the GitHub repository and the hosted demo.
 
 ## GitHub Social Preview
 
-Use the primary screenshot until a dedicated preview image is produced. The image should communicate three things without extra explanation: score matrix, selected opportunity, and export actions.
+Use the primary screenshot or live demo capture until a dedicated preview image is produced. The image should communicate three things without extra explanation: score matrix, selected opportunity, and export actions.
 
 ## Publishing Checklist
 
