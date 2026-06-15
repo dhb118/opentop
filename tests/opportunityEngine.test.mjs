@@ -13,6 +13,11 @@ import {
 } from "../src/launchExports.ts";
 import { parseModelAnalysis } from "../src/modelResponse.ts";
 import { analyzeLocally, scoreWeights } from "../src/opportunityEngine.ts";
+import {
+  buildRepoScaffoldFiles,
+  buildRepoScaffoldZipBytes,
+  repoScaffoldRootName
+} from "../src/repoScaffold.ts";
 import { buildShareCardSvg, buildShareCardSvgDataUrl, shareCardDimensions } from "../src/shareCard.ts";
 import { isOpportunityNavigationKey, nextOpportunityIndex } from "../src/keyboardNavigation.ts";
 import {
@@ -263,6 +268,52 @@ describe("launch text exports", () => {
     assert.match(scaffold, /## File Tree/);
     assert.match(scaffold, /README\.md/);
     assert.match(scaffold, /## Starter Issues/);
+  });
+});
+
+describe("downloadable repo scaffold", () => {
+  it("builds the required starter repository files with safe deterministic paths", () => {
+    const opportunity = analyzeLocally(defaultInput).opportunities[0];
+    const root = repoScaffoldRootName(opportunity);
+    const files = buildRepoScaffoldFiles(opportunity);
+    const paths = files.map((file) => file.path);
+
+    assert.equal(root, "developers-radar");
+    assert.equal(repoScaffoldRootName({ ...opportunity, name: "Agent / Trace <> Notebook!" }), "agent-trace-notebook");
+    assert.deepEqual(paths, [
+      `${root}/README.md`,
+      `${root}/LICENSE`,
+      `${root}/package.json`,
+      `${root}/tsconfig.json`,
+      `${root}/src/index.ts`,
+      `${root}/src/app.ts`,
+      `${root}/src/scoring.ts`,
+      `${root}/tests/scoring.test.ts`,
+      `${root}/docs/launch-plan.md`,
+      `${root}/docs/examples.md`,
+      `${root}/.github/workflows/ci.yml`,
+      `${root}/.github/ISSUE_TEMPLATE/feature_request.yml`
+    ]);
+    assert.equal(paths.every((path) => path.startsWith(`${root}/`) && !path.includes("..") && !path.includes("//")), true);
+
+    const packageFile = files.find((file) => file.path.endsWith("/package.json"));
+    assert.equal(JSON.parse(packageFile?.content ?? "{}").name, root);
+  });
+
+  it("builds a deterministic dependency-free ZIP archive", () => {
+    const opportunity = analyzeLocally(defaultInput).opportunities[0];
+    const first = buildRepoScaffoldZipBytes(opportunity);
+    const second = buildRepoScaffoldZipBytes(opportunity);
+    const zipText = new TextDecoder().decode(first);
+
+    assert.deepEqual(first, second);
+    assert.equal(first[0], 0x50);
+    assert.equal(first[1], 0x4b);
+    assert.match(zipText, /README\.md/);
+    assert.match(zipText, /package\.json/);
+    assert.match(zipText, /src\/app\.ts/);
+    assert.match(zipText, /tests\/scoring\.test\.ts/);
+    assert.match(zipText, /\.github\/workflows\/ci\.yml/);
   });
 });
 

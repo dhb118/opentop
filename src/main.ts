@@ -11,6 +11,7 @@ import {
 } from "./launchExports";
 import { isOpportunityNavigationKey, nextOpportunityIndex } from "./keyboardNavigation";
 import { analyzeLocally, scoreWeights } from "./opportunityEngine";
+import { buildRepoScaffoldZipBlob, repoScaffoldRootName } from "./repoScaffold";
 import { sampleBriefs } from "./sampleBriefs";
 import { buildShareCardSvg, renderShareCardPngBlob } from "./shareCard";
 import { loadInput, loadSettings, saveInput, saveSettings } from "./storage";
@@ -326,6 +327,22 @@ function bindEvents(): void {
       }, 1400);
     }
   });
+
+  document.querySelector<HTMLButtonElement>("[data-download-scaffold]")?.addEventListener("click", (event) => {
+    const selected = result?.opportunities.find((item) => item.id === selectedId);
+    if (!selected) {
+      return;
+    }
+
+    const button = event.currentTarget as HTMLButtonElement;
+    button.textContent = "Building ZIP...";
+    button.disabled = true;
+    downloadBlob(`${repoScaffoldRootName(selected)}.zip`, buildRepoScaffoldZipBlob(selected));
+    window.setTimeout(() => {
+      button.textContent = "Download Repo ZIP";
+      button.disabled = false;
+    }, 1400);
+  });
 }
 
 async function runAnalysis(): Promise<void> {
@@ -441,6 +458,7 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
           <button class="secondary-action" data-copy="reddit" type="button">Copy Reddit</button>
           <button class="secondary-action" data-copy="github-issue" type="button">Copy GitHub Issue</button>
           <button class="secondary-action" data-copy="repo-scaffold" type="button">Copy Repo Plan</button>
+          <button class="secondary-action" data-download-scaffold type="button">Download Repo ZIP</button>
           <button class="secondary-action" data-copy="share-url" type="button">Copy Share Link</button>
           <button class="secondary-action" data-download-card-png type="button">Download PNG</button>
           <button class="secondary-action" data-download-card-svg type="button">Download SVG</button>
