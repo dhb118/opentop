@@ -964,6 +964,30 @@ describe("Pages smoke check helpers", () => {
   });
 });
 
+describe("launch documentation", () => {
+  it("keeps public launch docs linked and current", async () => {
+    const [readme, zhReadme, launchBrief, starterIssues, launchPlaybook] = await Promise.all([
+      readFile("README.md", "utf8"),
+      readFile("README.zh-CN.md", "utf8"),
+      readFile("docs/PUBLIC_LAUNCH_BRIEF.md", "utf8"),
+      readFile("docs/STARTER_ISSUES.md", "utf8"),
+      readFile("docs/LAUNCH_PLAYBOOK.md", "utf8")
+    ]);
+
+    assert.match(readme, /Public Launch Brief/);
+    assert.match(zhReadme, /公开发布简报/);
+    assert.match(zhReadme, /面向 AI 开发者的选题雷达/);
+    assert.match(zhReadme, /输入一组研究信号后，它会给出三类结果/);
+    assert.match(zhReadme, /首版方案/);
+    assert.match(launchBrief, /# OpenTop Public Launch Brief/);
+    assert.match(launchBrief, /## Current Launch Gate/);
+    assert.match(starterIssues, /Enable the working GitHub Pages branch demo/);
+    assert.match(starterIssues, /Refine the public launch brief with real feedback/);
+    assert.doesNotMatch(starterIssues, /Add keyboard navigation for opportunity cards/);
+    assert.match(launchPlaybook, /Review the Public Launch Brief/);
+  });
+});
+
 describe("GitHub Pages branch deploy script", () => {
   it("parses safe branch deploy options", () => {
     assert.deepEqual(parseDeployArgs([]), {

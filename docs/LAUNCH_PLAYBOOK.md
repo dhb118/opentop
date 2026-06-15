@@ -15,7 +15,7 @@ This playbook turns the repository into a real GitHub launch asset.
 9. Create labels from `.github/labels.yml`.
 10. Open starter issues from `docs/STARTER_ISSUES.md` so new visitors can contribute immediately.
 11. Export the selected opportunity's Star Growth Plan and use it to stage the 1, 10, 100, 1k, and 10k star loops.
-12. Export the Public Launch Brief so every post has the same demo story, proof checklist, channel sequence, and follow-up loop.
+12. Review the Public Launch Brief so every post has the same demo story, proof checklist, channel sequence, and follow-up loop.
 13. Export the GitHub Repo Listing Pack and apply the About description, topics, homepage, social preview, and pinned issue before posting.
 14. Run README Star Audit and copy the 7-day sprint so top fixes have owners before broad launch.
 

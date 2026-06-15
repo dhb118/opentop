@@ -1,129 +1,111 @@
 # Starter Issues
 
-Use these as the first public issues after pushing the repository. They are written to give new visitors obvious ways to contribute within the first minute.
+Use these as the first public issues for visitors who want to help OpenTop become a launchable, star-worthy GitHub project. Each issue should be small enough for a new contributor to understand without reading the whole codebase.
 
 ## Labels
 
 Create labels from [.github/labels.yml](../.github/labels.yml), then apply the suggested labels below.
 
-## 1. Add cloud-specific Anthropic provider variants
+## 1. Enable the working GitHub Pages branch demo
 
-Labels: `provider`, `good-first-opportunity`
+Labels: `docs`, `growth`, `good-first-opportunity`
 
-OpenTop currently supports demo mode, OpenAI-compatible endpoints, the direct Anthropic Messages API, and Ollama-compatible endpoints. Add optional presets for Anthropic access through cloud platforms without hard-coding secrets.
+OpenTop now publishes a static build to the `gh-pages` branch. Finish the repository settings so the public demo URL works without GitHub Actions.
 
 Acceptance:
 
-- Direct Anthropic support remains available.
-- Cloud provider endpoint/model defaults are documented.
-- No API key is committed or logged.
-- `pnpm test` and `pnpm build` pass.
+- Repository Pages source is set to `Deploy from a branch`.
+- Branch is `gh-pages` and folder is `/`.
+- `pnpm smoke:pages -- --url https://dhb118.github.io/opentop/` passes.
+- README and GitHub About homepage point to the working demo URL.
 
-## 2. Add five new sample briefs from real AI builder pains
+## 2. Record a 90-second product demo GIF or video
+
+Labels: `docs`, `growth`, `good-first-opportunity`
+
+Create visual proof that shows the actual OpenTop workflow from signal input to a selected opportunity and export action.
+
+Acceptance:
+
+- The recording uses the current UI and one built-in sample brief.
+- It shows a generated opportunity, score explanation, and one launch export.
+- README includes the visual above or near the first feature list.
+- The visual is committed under `docs/assets/` or linked from a stable public URL.
+
+## 3. Add end-to-end smoke coverage for launch exports
+
+Labels: `ui`, `exporter`, `growth`
+
+Add a browser-level smoke test or lightweight DOM harness that proves the most important export buttons render after a production build.
+
+Acceptance:
+
+- The check verifies `Copy Launch Brief`, `Copy Launch Kit`, `Copy Star Plan`, and `Download Repo ZIP` are present.
+- It runs against the production build output or a local preview server.
+- The command is documented in the local quality gate.
+- Existing `pnpm test` and `pnpm build` still pass.
+
+## 4. Add five high-quality AI builder sample briefs
 
 Labels: `sample-brief`, `growth`, `good-first-opportunity`
 
-Extend the sample brief set with concrete AI developer workflows.
+Expand the gallery with recognizable AI developer workflows that make OpenTop easier to judge from examples.
 
 Acceptance:
 
-- Each brief has a specific audience, signal, constraints, channels, and scores.
-- `pnpm generate:gallery` updates docs and JSON.
-- Gallery synchronization test passes.
+- Each brief has a specific audience, signal, constraints, channels, and score inputs.
+- At least two briefs focus on local-first AI or agent debugging.
+- `pnpm generate:gallery` updates the public gallery JSON and docs.
+- Gallery synchronization tests pass.
 
-## 3. Add keyboard navigation for opportunity cards
-
-Labels: `ui`, `good-first-opportunity`
-
-Improve keyboard access for selecting opportunities and activating export actions.
-
-Acceptance:
-
-- Tab order is predictable.
-- Focus states are visible.
-- Enter/Space activation works for opportunity cards and action buttons.
-
-## 4. Import trend signals from GitHub issues
-
-Labels: `exporter`, `scoring`, `growth`
-
-Allow users to paste one or more GitHub issue URLs and turn titles/bodies into a consolidated signal brief.
-
-Acceptance:
-
-- Import works without storing credentials.
-- Public issue URLs can be parsed or fetched with clear failure states.
-- Imported source links remain visible in the generated signal.
-- `pnpm test` and `pnpm build` pass.
-
-## 5. Import browser bookmarks or copied link lists
-
-Labels: `exporter`, `growth`, `good-first-opportunity`
-
-Support pasted bookmark exports or newline-separated links as trend sources.
-
-Acceptance:
-
-- Pasted links are normalized into source + signal rows.
-- Duplicate links are ignored.
-- Invalid rows are counted and reported.
-
-## 6. Turn benchmark examples into in-app scoring presets
-
-Labels: `scoring`, `sample-brief`, `growth`
-
-Use `public/benchmarks.json` to let users compare a selected opportunity against patterns from successful AI repos.
-
-Acceptance:
-
-- Users can inspect benchmark lessons without leaving the app.
-- Every benchmark maps to one OpenTop score dimension.
-- No private metrics or hard-coded star counts are introduced.
-
-## 7. Add a scoring template marketplace
-
-Labels: `scoring`, `ui`
-
-Let users switch between opinionated scoring profiles, such as local-first tools, provider SDKs, agent debugging, and launch-content generators.
-
-Acceptance:
-
-- Templates adjust score weights in a visible, reversible way.
-- The selected template is included in exported JSON.
-- Existing default scoring remains available.
-
-## 8. Export a downloadable repository scaffold
-
-Labels: `exporter`, `growth`
-
-Turn the selected opportunity into a local starter scaffold that can be downloaded as source files or a ZIP.
-
-Acceptance:
-
-- Export includes README, package metadata, source placeholders, tests, and CI workflow.
-- Generated file names are safe and deterministic.
-- No dependency install is required to generate the scaffold.
-
-## 9. Add README screenshots or an animated demo GIF
+## 5. Add a launch evidence section to the README
 
 Labels: `docs`, `growth`
 
-Create visual proof above the fold for GitHub visitors.
+Make the README easier for a cold GitHub visitor to trust before they clone the repository.
 
 Acceptance:
 
-- README includes at least one current screenshot or GIF.
-- Image assets are committed under `public/` or `docs/assets/`.
-- Visuals show the actual OpenTop interface and one generated opportunity.
+- README shows the working demo status, screenshot or GIF, local quick start, and one generated example near the top.
+- It avoids unsupported claims about star counts or adoption.
+- It links to the public launch brief, gallery, benchmark examples, and starter issues.
+- English and Simplified Chinese README files stay aligned.
 
-## 10. Add a label sync workflow
+## 6. Refine the public launch brief with real feedback
+
+Labels: `growth`, `docs`
+
+Keep the public launch brief useful as demo status, screenshots, examples, and launch feedback change.
+
+Acceptance:
+
+- The launch brief still includes a one-liner, demo story, proof checklist, channel sequence, follow-up loop, and feedback ask.
+- It points to the working demo or current fallback path.
+- It incorporates at least one concrete launch feedback item or demo-status update.
+- README and the launch playbook still link to it.
+
+## 7. Add Cloudflare Pages direct-upload instructions
 
 Labels: `docs`, `growth`
 
-Automate creation of labels from `.github/labels.yml` so starter issues can be tagged consistently after forks or fresh repo setup.
+Document a second fallback path for cases where GitHub Pages or Actions are unavailable.
 
 Acceptance:
 
-- Workflow or script reads `.github/labels.yml`.
-- It documents the required GitHub token permissions.
-- Running it is optional and does not affect local demo mode.
+- The guide starts from `pnpm build` and `pnpm package:demo`.
+- It explains whether to upload the extracted `dist` directory or the ZIP contents.
+- It includes the smoke-check command for the deployed URL.
+- It clarifies when to switch README and GitHub About homepage to the fallback URL.
+
+## 8. Add a weekly gallery update workflow
+
+Labels: `sample-brief`, `growth`
+
+Create a repeatable process for keeping OpenTop's public examples fresh after launch.
+
+Acceptance:
+
+- The workflow explains how to collect new AI builder signals.
+- It defines the minimum quality bar for a sample brief.
+- It includes commands for regenerating gallery assets and running tests.
+- It avoids private metrics and unsupported star claims.

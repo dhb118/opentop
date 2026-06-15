@@ -16,7 +16,7 @@ Live demo status: temporarily unavailable while GitHub Pages custom domain setti
 
 Example outputs: [Opportunity Gallery](docs/GALLERY.md), [AI Repo Benchmarks](docs/BENCHMARKS.md)
 
-Launch assets: [GitHub Publish Guide](docs/GITHUB_PUBLISH.md), [Demo Fallbacks](docs/DEMO_FALLBACKS.md), [Starter Issues](docs/STARTER_ISSUES.md), [Launch Playbook](docs/LAUNCH_PLAYBOOK.md)
+Launch assets: [GitHub Publish Guide](docs/GITHUB_PUBLISH.md), [Demo Fallbacks](docs/DEMO_FALLBACKS.md), [Public Launch Brief](docs/PUBLIC_LAUNCH_BRIEF.md), [Starter Issues](docs/STARTER_ISSUES.md), [Launch Playbook](docs/LAUNCH_PLAYBOOK.md)
 
 ## Languages
 

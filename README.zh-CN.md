@@ -8,33 +8,37 @@
 
 ![OpenTop 界面截图：AI Opportunity Radar、示例简报和机会图库](docs/assets/opentop-app-screenshot.png)
 
-OpenTop 帮开发者从混乱的趋势信号里选出值得做的开源 AI 应用。
+OpenTop 是面向 AI 开发者的选题雷达：把零散趋势、issue、链接和产品想法，变成可比较的开源 AI 应用方向。
 
-粘贴趋势笔记、GitHub issue、链接列表或产品想法，它会输出可排序的候选方向、评分依据、首版范围、README/发布草稿和 starter repo。
+输入一组研究信号后，它会给出三类结果：
 
-默认本地可跑，不需要 API Key；需要更强生成能力时，可接入 OpenAI 兼容接口、Anthropic、Bedrock、Vertex AI 或 Ollama。
+- 候选选题：按痛点、紧迫性、分发路径、可构建性和 Star 潜力排序。
+- 首版方案：说明目标用户、MVP 范围、验证步骤和主要风险。
+- 发布素材：生成 README 简报、公开发布简报、Launch Kit、Star 增长计划和 starter repo ZIP。
+
+默认本地运行，不需要 API Key；需要更强生成能力时，可接入 OpenAI 兼容接口、Anthropic、Bedrock、Vertex AI 或 Ollama。
 
 在线演示暂不可用：GitHub Pages custom domain 仍在修复中。请先用下方命令本地运行，或用 [Demo 备用部署](docs/DEMO_FALLBACKS.md) 发布 Vercel/Netlify/静态 ZIP 版本。
 
 示例输出：[机会图库](docs/GALLERY.md) | [AI 仓库基准](docs/BENCHMARKS.md)
 
-发布资料：[GitHub 发布指南](docs/GITHUB_PUBLISH.md) | [Demo 备用部署](docs/DEMO_FALLBACKS.md) | [新手任务](docs/STARTER_ISSUES.md) | [发布手册](docs/LAUNCH_PLAYBOOK.md)
+发布资料：[GitHub 发布指南](docs/GITHUB_PUBLISH.md) | [Demo 备用部署](docs/DEMO_FALLBACKS.md) | [公开发布简报](docs/PUBLIC_LAUNCH_BRIEF.md) | [新手任务](docs/STARTER_ISSUES.md) | [发布手册](docs/LAUNCH_PLAYBOOK.md)
 
 ## 适合谁
 
-- 想从 AI 趋势里选一个可发布切入点的开发者。
+- 想从 AI 趋势里快速筛选开源项目方向的开发者。
 - 需要把用户反馈、issue 或调研笔记整理成产品机会的维护者。
-- 希望让 demo、README 和贡献入口更利于获得 GitHub stars 的团队。
+- 想在发布前准备 demo、README、贡献入口和增长计划的团队。
 
 ## 核心能力
 
-- 从 CSV、Markdown、笔记、书签、链接列表和公开 GitHub issue 导入研究信号。
-- 本地生成 AI 应用方向，并按痛点、紧迫性、分发、可构建性和 Star 潜力评分。
-- 使用评分模板切换不同策略，例如本地优先工具、Provider SDK、Agent 调试和发布生成器。
-- 输出 README 简报、公开发布简报、Launch Kit、Star 增长计划、GitHub 仓库展示包、贡献者 issue 队列、GitHub issue、Show HN、X 线程、Reddit 帖子和 JSON 记录。
+- 导入 CSV、Markdown、笔记、书签、链接列表和公开 GitHub issue。
+- 生成多个 AI 应用方向，并用透明评分解释为什么值得做或不值得做。
+- 使用评分模板切换策略，例如本地优先工具、Provider SDK、Agent 调试和发布生成器。
+- 导出 README 简报、公开发布简报、Launch Kit、Star 增长计划、仓库展示包、贡献者 issue 队列和社媒发布草稿。
 - 下载 PNG/SVG 分享卡片和可运行的 TypeScript starter repo ZIP。
-- 拉取公开 GitHub README，审计首屏钩子、截图、快速开始、demo、示例、贡献入口、信任信号和仓库主页元数据，并复制 7 天修复冲刺计划。
-- 对比公开 AI 仓库的成功模式，辅助判断一个想法是否值得继续做。
+- 审计公开 GitHub README，给出 7 天修复冲刺计划。
+- 对比公开 AI 仓库的成功模式，辅助判断一个想法是否值得继续投入。
 - 支持演示模式、OpenAI 兼容接口、Anthropic、Bedrock、Vertex AI 和 Ollama。
 
 ## 快速开始
