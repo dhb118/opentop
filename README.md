@@ -31,6 +31,7 @@ OpenTop is built around those loops: paste a trend signal, get ranked app ideas,
 - Score matrix for pain, urgency, distribution, buildability, and star potential.
 - Copyable Markdown brief for GitHub issues, README sections, and launch drafts.
 - Export actions for README briefs, Show HN posts, and JSON opportunity records.
+- Shareable brief links that preserve the full input signal in the URL.
 - One-click sample briefs for local models, agents, prompt regression, and README positioning.
 - Responsive single-page interface built with Vite and TypeScript.
 

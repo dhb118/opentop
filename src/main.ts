@@ -4,10 +4,11 @@ import type { AnalysisResult, OpportunityInput, ProviderSettings } from "./domai
 import { analyzeLocally } from "./opportunityEngine";
 import { sampleBriefs } from "./sampleBriefs";
 import { loadInput, loadSettings, saveInput, saveSettings } from "./storage";
+import { createShareUrl, readBriefFromSearch } from "./urlState";
 
 const appRoot = requireAppRoot();
 
-let currentInput = loadInput();
+let currentInput = readBriefFromSearch(window.location.search) ?? loadInput();
 let settings = loadSettings();
 let result: AnalysisResult | null = null;
 let selectedId = "";
@@ -176,10 +177,10 @@ function bindEvents(): void {
         return;
       }
       const mode = button.dataset.copy;
-      await navigator.clipboard.writeText(mode === "show-hn" ? toShowHnPost(selected) : toMarkdown(selected.name, selected));
+      await navigator.clipboard.writeText(copyPayload(mode, selected));
       button.textContent = "Copied";
       window.setTimeout(() => {
-        button.textContent = mode === "show-hn" ? "Copy Show HN" : "Copy README Brief";
+        button.textContent = copyLabel(mode);
       }, 1400);
     });
   });
@@ -254,6 +255,7 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
         <div class="action-row">
           <button class="secondary-action" data-copy="markdown" type="button">Copy README Brief</button>
           <button class="secondary-action" data-copy="show-hn" type="button">Copy Show HN</button>
+          <button class="secondary-action" data-copy="share-url" type="button">Copy Share Link</button>
           <button class="secondary-action" data-download type="button">Download JSON</button>
         </div>
       </div>
@@ -409,6 +411,26 @@ ${item.firstRelease.map((entry) => `- ${entry}`).join("\n")}
 Launch plan:
 ${item.launchPlan.map((entry) => `- ${entry}`).join("\n")}
 `;
+}
+
+function copyPayload(mode: string | undefined, item: AnalysisResult["opportunities"][number]): string {
+  if (mode === "show-hn") {
+    return toShowHnPost(item);
+  }
+  if (mode === "share-url") {
+    return createShareUrl(currentInput, window.location.href);
+  }
+  return toMarkdown(item.name, item);
+}
+
+function copyLabel(mode: string | undefined): string {
+  if (mode === "show-hn") {
+    return "Copy Show HN";
+  }
+  if (mode === "share-url") {
+    return "Copy Share Link";
+  }
+  return "Copy README Brief";
 }
 
 function downloadJson(filename: string, item: AnalysisResult["opportunities"][number]): void {

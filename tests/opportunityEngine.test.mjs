@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { defaultInput } from "../src/domain.ts";
 import { analyzeLocally } from "../src/opportunityEngine.ts";
+import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
 
 describe("analyzeLocally", () => {
   it("returns ranked launchable opportunities", () => {
@@ -39,5 +40,42 @@ describe("analyzeLocally", () => {
       assert.ok(opportunity.launchPlan.length >= 4);
       assert.ok(opportunity.risks.length >= 3);
     }
+  });
+});
+
+describe("brief URL state", () => {
+  it("round-trips an opportunity brief through the URL-safe payload", () => {
+    const encoded = encodeBrief(defaultInput);
+    assert.deepEqual(decodeBrief(encoded), defaultInput);
+  });
+
+  it("creates share links that can be loaded back into the app", () => {
+    const shareUrl = createShareUrl(defaultInput, "https://example.com/opentop/?x=1#old");
+    const parsed = new URL(shareUrl);
+
+    assert.equal(parsed.hash, "");
+    assert.deepEqual(readBriefFromSearch(parsed.search), defaultInput);
+  });
+
+  it("normalizes untrusted brief URL values", () => {
+    const decoded = decodeBrief(
+      encodeURIComponent(
+        JSON.stringify({
+          audience: "",
+          signal: "short signal",
+          constraints: "constraints",
+          channels: "channels",
+          pain: 99,
+          urgency: "2",
+          distribution: "not-a-number"
+        })
+      )
+    );
+
+    assert.equal(decoded?.audience, defaultInput.audience);
+    assert.equal(decoded?.signal, "short signal");
+    assert.equal(decoded?.pain, 10);
+    assert.equal(decoded?.urgency, 2);
+    assert.equal(decoded?.distribution, defaultInput.distribution);
   });
 });
