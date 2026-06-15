@@ -14,6 +14,7 @@ import {
 import { parseModelAnalysis } from "../src/modelResponse.ts";
 import { analyzeLocally, scoreWeights } from "../src/opportunityEngine.ts";
 import { buildShareCardSvg, buildShareCardSvgDataUrl, shareCardDimensions } from "../src/shareCard.ts";
+import { isOpportunityNavigationKey, nextOpportunityIndex } from "../src/keyboardNavigation.ts";
 import { parseTrendCsv, parseTrendNotes, parseTrendSignals } from "../src/trendImport.ts";
 import { createShareUrl, decodeBrief, encodeBrief, readBriefFromSearch } from "../src/urlState.ts";
 import { benchmarkRepos } from "../src/benchmarkRepos.ts";
@@ -256,6 +257,28 @@ describe("launch text exports", () => {
     assert.match(scaffold, /## File Tree/);
     assert.match(scaffold, /README\.md/);
     assert.match(scaffold, /## Starter Issues/);
+  });
+});
+
+describe("opportunity keyboard navigation", () => {
+  it("moves through opportunity cards with arrow keys and clamps at edges", () => {
+    assert.equal(nextOpportunityIndex(0, 5, "ArrowDown"), 1);
+    assert.equal(nextOpportunityIndex(1, 5, "ArrowRight"), 2);
+    assert.equal(nextOpportunityIndex(4, 5, "ArrowDown"), 4);
+    assert.equal(nextOpportunityIndex(0, 5, "ArrowUp"), 0);
+    assert.equal(nextOpportunityIndex(3, 5, "ArrowLeft"), 2);
+  });
+
+  it("supports Home and End navigation keys", () => {
+    assert.equal(nextOpportunityIndex(3, 5, "Home"), 0);
+    assert.equal(nextOpportunityIndex(1, 5, "End"), 4);
+    assert.equal(nextOpportunityIndex(0, 0, "End"), -1);
+  });
+
+  it("recognizes only opportunity navigation keys", () => {
+    assert.equal(isOpportunityNavigationKey("ArrowDown"), true);
+    assert.equal(isOpportunityNavigationKey("Enter"), false);
+    assert.equal(isOpportunityNavigationKey(" "), false);
   });
 });
 

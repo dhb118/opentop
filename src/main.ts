@@ -9,6 +9,7 @@ import {
   buildShowHnPost,
   buildXThread
 } from "./launchExports";
+import { isOpportunityNavigationKey, nextOpportunityIndex } from "./keyboardNavigation";
 import { analyzeLocally, scoreWeights } from "./opportunityEngine";
 import { sampleBriefs } from "./sampleBriefs";
 import { buildShareCardSvg, renderShareCardPngBlob } from "./shareCard";
@@ -23,6 +24,7 @@ let settings = loadSettings();
 let result: AnalysisResult | null = null;
 let selectedId = "";
 let isBusy = false;
+let pendingFocusId = "";
 
 render();
 void runAnalysis();
@@ -151,6 +153,7 @@ function render(): void {
 
   bindEvents();
   drawRadar();
+  restorePendingFocus();
 }
 
 function requireAppRoot(): HTMLDivElement {
@@ -192,8 +195,24 @@ function bindEvents(): void {
 
   document.querySelectorAll<HTMLButtonElement>("[data-select]").forEach((button) => {
     button.addEventListener("click", () => {
-      selectedId = button.dataset.select ?? selectedId;
-      render();
+      selectOpportunity(button.dataset.select ?? selectedId);
+    });
+
+    button.addEventListener("keydown", (event) => {
+      if (!isOpportunityNavigationKey(event.key)) {
+        return;
+      }
+
+      event.preventDefault();
+      const cards = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-select]"));
+      const currentIndex = cards.findIndex((card) => card === event.currentTarget);
+      const nextIndex = nextOpportunityIndex(currentIndex, cards.length, event.key);
+      const nextId = cards[nextIndex]?.dataset.select;
+      if (!nextId || nextId === selectedId) {
+        return;
+      }
+
+      selectOpportunity(nextId, true);
     });
   });
 
@@ -326,7 +345,7 @@ function renderResults(analysis: AnalysisResult): string {
       ${analysis.opportunities
         .map(
           (item) => `
-            <button class="opportunity-card ${item.id === selected?.id ? "active" : ""}" data-select="${item.id}" type="button">
+            <button class="opportunity-card ${item.id === selected?.id ? "active" : ""}" data-select="${item.id}" type="button" tabindex="${item.id === selected?.id ? "0" : "-1"}" aria-pressed="${item.id === selected?.id ? "true" : "false"}">
               <span>${item.score}/10</span>
               <strong>${escapeHtml(item.name)}</strong>
               <small>${escapeHtml(item.tagline)}</small>
@@ -337,6 +356,22 @@ function renderResults(analysis: AnalysisResult): string {
     </div>
     ${selected ? renderOpportunityDetail(selected) : ""}
   `;
+}
+
+function selectOpportunity(id: string, focusAfterRender = false): void {
+  selectedId = id;
+  pendingFocusId = focusAfterRender ? id : "";
+  render();
+}
+
+function restorePendingFocus(): void {
+  if (!pendingFocusId) {
+    return;
+  }
+
+  const nextFocus = document.querySelector<HTMLButtonElement>(`[data-select="${CSS.escape(pendingFocusId)}"]`);
+  pendingFocusId = "";
+  nextFocus?.focus({ preventScroll: true });
 }
 
 function renderGalleryRail(): string {

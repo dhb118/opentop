@@ -44,6 +44,17 @@ button {
   cursor: pointer;
 }
 
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(216, 255, 79, 0.16);
+}
+
 .shell {
   width: min(1480px, 100%);
   margin: 0 auto;
@@ -201,6 +212,11 @@ form {
   background: rgba(216, 255, 79, 0.1);
 }
 
+.sample-button:focus-visible {
+  border-color: rgba(216, 255, 79, 0.82);
+  background: rgba(216, 255, 79, 0.12);
+}
+
 .settings {
   border-top: 1px solid var(--line);
 }
@@ -299,6 +315,11 @@ select:focus {
 
 .primary-action:hover,
 .secondary-action:hover {
+  transform: translateY(-1px);
+}
+
+.primary-action:focus-visible,
+.secondary-action:focus-visible {
   transform: translateY(-1px);
 }
 
@@ -462,6 +483,11 @@ canvas {
 .opportunity-card.active {
   border-color: rgba(216, 255, 79, 0.74);
   background: linear-gradient(135deg, rgba(216, 255, 79, 0.14), rgba(245, 241, 230, 0.055));
+}
+
+.opportunity-card:focus-visible {
+  border-color: var(--acid);
+  background: linear-gradient(135deg, rgba(216, 255, 79, 0.18), rgba(50, 220, 192, 0.08));
 }
 
 .opportunity-card span {
