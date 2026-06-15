@@ -392,6 +392,13 @@ canvas {
   margin-bottom: 18px;
 }
 
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .tagline {
   max-width: 860px;
   color: #dbd8c8;
@@ -483,6 +490,14 @@ li + li {
   .detail-heading {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .action-row {
+    justify-content: stretch;
+  }
+
+  .action-row .secondary-action {
+    flex: 1 1 150px;
   }
 
   .layout,

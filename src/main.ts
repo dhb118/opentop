@@ -169,13 +169,27 @@ function bindEvents(): void {
     });
   });
 
-  document.querySelector<HTMLButtonElement>("[data-export]")?.addEventListener("click", async () => {
+  document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const selected = result?.opportunities.find((item) => item.id === selectedId);
+      if (!selected) {
+        return;
+      }
+      const mode = button.dataset.copy;
+      await navigator.clipboard.writeText(mode === "show-hn" ? toShowHnPost(selected) : toMarkdown(selected.name, selected));
+      button.textContent = "Copied";
+      window.setTimeout(() => {
+        button.textContent = mode === "show-hn" ? "Copy Show HN" : "Copy README Brief";
+      }, 1400);
+    });
+  });
+
+  document.querySelector<HTMLButtonElement>("[data-download]")?.addEventListener("click", () => {
     const selected = result?.opportunities.find((item) => item.id === selectedId);
     if (!selected) {
       return;
     }
-    await navigator.clipboard.writeText(toMarkdown(selected.name, selected));
-    document.querySelector("[data-export]")?.setAttribute("data-copied", "Copied");
+    downloadJson(`${selected.id}.json`, selected);
   });
 }
 
@@ -237,7 +251,11 @@ function renderOpportunityDetail(item: NonNullable<AnalysisResult["opportunities
           <p class="eyebrow">Selected wedge</p>
           <h2>${escapeHtml(item.name)}</h2>
         </div>
-        <button class="secondary-action" data-export type="button">Copy Markdown</button>
+        <div class="action-row">
+          <button class="secondary-action" data-copy="markdown" type="button">Copy README Brief</button>
+          <button class="secondary-action" data-copy="show-hn" type="button">Copy Show HN</button>
+          <button class="secondary-action" data-download type="button">Download JSON</button>
+        </div>
       </div>
       <p class="tagline">${escapeHtml(item.tagline)}</p>
       <div class="score-strip">
@@ -374,6 +392,32 @@ ${item.firstRelease.map((entry) => `- ${entry}`).join("\n")}
 
 ${item.launchPlan.map((entry) => `- ${entry}`).join("\n")}
 `;
+}
+
+function toShowHnPost(item: AnalysisResult["opportunities"][number]): string {
+  return `Show HN: ${item.name} - ${item.repoHook}
+
+I built ${item.name} for ${item.targetUser}.
+
+The wedge: ${item.wedge}
+
+Why it is different: ${item.differentiator}
+
+First release scope:
+${item.firstRelease.map((entry) => `- ${entry}`).join("\n")}
+
+Launch plan:
+${item.launchPlan.map((entry) => `- ${entry}`).join("\n")}
+`;
+}
+
+function downloadJson(filename: string, item: AnalysisResult["opportunities"][number]): void {
+  const blob = new Blob([JSON.stringify(item, null, 2)], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(link.href);
 }
 
 function analyzeFallback(input: OpportunityInput): AnalysisResult {
