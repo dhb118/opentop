@@ -4,24 +4,35 @@ Iron Ridge is a TypeScript web tank arena built on Three.js.
 
 ## Current Slice
 
-- Default route: opens the 3D tank arena.
-- Single player: fight five bot tanks on a walled arena with cover blocks.
-- Multiplayer: use a room code and open another same-origin browser tab to sync peer tank movement through `BroadcastChannel`.
+- Default route opens the playable 3D tank arena.
+- Downloaded CC0 GLB assets provide tank skins, trenches, sandbags, and modular ruins.
+- Single-player mode spawns five bot tanks.
+- Multiplayer mode syncs same-origin browser tabs through `BroadcastChannel`.
 - Combat loop: drive, rotate turret, fire shells, take damage, respawn, and score kills.
-- Controls: `WASD` or arrow keys to drive, `Q` / `E` for turret rotation, mouse aim, mouse click or `Space` to fire.
+- Camera modes: commander chase, gunner sight, driver view, and tactical overhead.
+- HUD is Chinese-friendly and shows armor, kills, speed, heading, surface, camera mode, asset status, and roster.
 
 ## Physics System
 
-The tank movement is driven by a small deterministic physics model in `src/tankWorldModel.ts`:
+The deterministic tank movement model lives in `src/tankWorldModel.ts`:
 
 - mass-based acceleration,
 - separate engine and reverse/brake force,
 - linear drag,
 - angular drag,
 - differential-style turning torque,
+- terrain grip and terrain drag,
 - rebound response for blocked movement,
 - arena boundary clamping,
 - constant shell velocity and distance-based shell damage.
+
+Terrain surfaces currently include field, road, mud, and rubble. The renderer reads the same surface model that the physics system uses, so the HUD and movement behavior stay aligned.
+
+## Asset Boundary
+
+The GLB files are stored in `public/assets/vendor/poly-pizza/`. They are treated as visual skins and scenery. Collision remains code-defined with simple boxes so gameplay stays deterministic even if a model fails to load.
+
+See `public/assets/ATTRIBUTION.md` for source URLs and license notes.
 
 ## Multiplayer Boundary
 
@@ -43,8 +54,7 @@ Production multiplayer still needs:
 3. Add mobile controls and gamepad support.
 4. Add garage customization: tank hull, turret, paint, and ability loadouts.
 5. Add shareable replay GIF or short highlight export for launch posts.
-6. Rebrand repository metadata, README, social preview, screenshots, and topics around the tank game.
-7. Publish a public demo build and smoke it in a browser.
+6. Rebuild screenshots and public demo metadata after GitHub Pages deploys from workflow.
 
 ## Star Growth Path
 
@@ -52,6 +62,6 @@ Iron Ridge can earn GitHub attention if it becomes a tiny but complete browser m
 
 - no backend required for the first playable demo,
 - real Three.js scene instead of a static mock,
-- readable TypeScript systems for movement, shells, bots, rooms, and HUD,
+- readable TypeScript systems for movement, shells, bots, rooms, terrain, assets, and HUD,
 - clear path from local prototype to authoritative multiplayer,
 - easy issues for new contributors: maps, tanks, weapons, bots, netcode, mobile controls.

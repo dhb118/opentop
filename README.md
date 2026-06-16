@@ -2,18 +2,18 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-Iron Ridge is a TypeScript + Three.js 3D tank arena for the browser. It starts as a playable WebGL prototype with a real physics layer, bot skirmishes, shell combat, and same-origin multiplayer rooms.
+Iron Ridge is a TypeScript + Three.js browser tank arena. It is built as a small, readable game template: downloaded CC0 3D assets, terrain-aware tank physics, bot combat, and same-origin multiplayer rooms without a backend.
 
-## Current Game
+## What You Can Play
 
-- Three.js 3D battlefield with ground grid, walls, cover blocks, tanks, turrets, and shells.
-- Tank physics model with mass, engine force, drag, differential turning, rebound collisions, and arena clamping.
-- Single-player mode with five bot tanks.
-- Multiplayer room mode using `BroadcastChannel` for two same-origin tabs.
-- HUD for armor, kills, room status, and roster.
-- Controls: `WASD` or arrow keys to drive, `Q` / `E` to rotate the turret, `Space` or mouse click to fire.
+- WWII-inspired 3D battlefield with downloaded Quaternius CC0 GLB tanks, trenches, sandbags, and ruins.
+- Tank physics with mass, engine force, track grip, terrain drag, collision rebound, shell velocity, and arena bounds.
+- Four camera modes: commander chase view, gunner sight, driver view, and overhead tactical view.
+- Single-player skirmish against five bot tanks.
+- Same-origin multiplayer prototype using `BroadcastChannel`; open two tabs with the same room code.
+- Chinese-friendly sci-fi HUD with armor, kills, speed, heading, surface type, camera mode, asset status, and roster.
 
-## Run
+## Run Locally
 
 ```bash
 pnpm install
@@ -28,6 +28,18 @@ pnpm typecheck
 pnpm build
 ```
 
+## Controls
+
+- Drive: `WASD` or arrow keys
+- Rotate turret: `Q` / `E`
+- Fire: `Space` or mouse click
+- Aim turret: mouse move over the battlefield
+- Switch camera: `C` or the HUD camera buttons
+
+## Assets
+
+The playable battlefield uses free CC0 GLB assets downloaded from Poly Pizza / Quaternius. See [asset attribution](public/assets/ATTRIBUTION.md).
+
 ## Documentation
 
 - [Tank world brief](docs/TANK_WORLD.md)
@@ -35,11 +47,11 @@ pnpm build
 ## Roadmap
 
 1. Add an authoritative WebSocket match server.
-2. Add match timer, objectives, spawn protection, and bot difficulty.
+2. Add objectives, spawn protection, match timer, and bot difficulty.
 3. Add mobile controls and gamepad input.
-4. Add tank hull, turret, armor, and paint customization.
+4. Add tank hull, turret, armor, paint, and loadout customization.
 5. Add replay or highlight export for launch sharing.
-6. Rebrand repository metadata and public demo links around Iron Ridge.
+6. Re-enable and verify a public GitHub Pages demo after the Pages workflow finishes deploying.
 
 ## License
 

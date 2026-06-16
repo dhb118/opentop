@@ -3,12 +3,30 @@
   inset: 0;
   overflow: hidden;
   background:
-    linear-gradient(90deg, rgba(216, 255, 79, 0.08) 1px, transparent 1px),
-    linear-gradient(rgba(245, 241, 230, 0.05) 1px, transparent 1px),
-    #070907;
-  background-size: 64px 64px;
+    linear-gradient(90deg, rgba(90, 255, 218, 0.08) 1px, transparent 1px),
+    linear-gradient(rgba(245, 241, 230, 0.04) 1px, transparent 1px),
+    #050806;
+  background-size: 56px 56px, 56px 56px, auto;
   color: #f7f2df;
-  font-family: "Trebuchet MS", "Microsoft YaHei", system-ui, sans-serif;
+  font-family: "Microsoft YaHei", "Trebuchet MS", system-ui, sans-serif;
+}
+
+.tank-app *,
+.tank-app *::before,
+.tank-app *::after {
+  box-sizing: border-box;
+}
+
+.tank-app::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.035) 50%, rgba(0, 0, 0, 0.05) 50%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025), transparent 28%, rgba(90, 255, 218, 0.03));
+  background-size: 100% 4px, 100% 100%;
+  mix-blend-mode: screen;
 }
 
 .tank-canvas {
@@ -20,17 +38,31 @@
 
 .tank-hud {
   position: absolute;
-  top: 18px;
-  left: 18px;
+  top: 16px;
+  left: 16px;
   display: grid;
-  gap: 12px;
-  width: min(390px, calc(100vw - 36px));
-  padding: 16px;
-  border: 1px solid rgba(216, 255, 79, 0.26);
+  gap: 10px;
+  width: min(430px, calc(100vw - 32px));
+  padding: 14px;
+  border: 1px solid rgba(90, 255, 218, 0.34);
   border-radius: 8px;
-  background: rgba(7, 9, 7, 0.74);
-  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.42);
-  backdrop-filter: blur(12px);
+  background:
+    linear-gradient(135deg, rgba(90, 255, 218, 0.12), transparent 28%),
+    rgba(5, 8, 6, 0.78);
+  box-shadow:
+    inset 0 0 0 1px rgba(247, 242, 223, 0.05),
+    0 22px 80px rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(14px);
+}
+
+.tank-hud::after {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  width: 86px;
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, transparent, rgba(216, 255, 79, 0.8));
 }
 
 .tank-brand {
@@ -40,50 +72,75 @@
 
 .tank-brand p,
 .tank-brand h1,
-.tank-brand span {
+.tank-brand span,
+.tank-prompt {
   margin: 0;
 }
 
 .tank-brand p {
-  color: #d8ff4f;
+  color: #5affda;
   font: 800 12px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
   text-transform: uppercase;
 }
 
 .tank-brand h1 {
-  font-size: 34px;
-  line-height: 0.9;
+  color: #f7f2df;
+  font-size: 30px;
+  line-height: 1;
   letter-spacing: 0;
 }
 
 .tank-brand span,
 .tank-prompt {
   color: #c4c9aa;
-  line-height: 1.35;
+  line-height: 1.36;
+}
+
+.tank-toolbar,
+.tank-camera-switch,
+.tank-room,
+.tank-system-row {
+  display: grid;
+  gap: 8px;
 }
 
 .tank-toolbar,
 .tank-room {
-  display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+}
+
+.tank-camera-switch {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.tank-system-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .tank-mode-button,
+.tank-camera-button,
 .tank-room button {
-  min-height: 40px;
-  border: 1px solid rgba(247, 242, 223, 0.18);
+  min-height: 38px;
+  border: 1px solid rgba(247, 242, 223, 0.16);
   border-radius: 6px;
-  background: rgba(247, 242, 223, 0.08);
+  background: rgba(247, 242, 223, 0.07);
   color: #f7f2df;
   font-weight: 800;
 }
 
+.tank-camera-button {
+  min-width: 0;
+  color: #d7f7ec;
+  font-size: 13px;
+}
+
 .tank-mode-button.active,
+.tank-camera-button.active,
 .tank-mode-button:hover,
+.tank-camera-button:hover,
 .tank-room button:hover {
-  border-color: rgba(216, 255, 79, 0.72);
-  background: rgba(216, 255, 79, 0.16);
+  border-color: rgba(90, 255, 218, 0.76);
+  background: rgba(90, 255, 218, 0.14);
 }
 
 .tank-room label {
@@ -95,10 +152,10 @@
 }
 
 .tank-room input {
-  height: 40px;
-  border: 1px solid rgba(247, 242, 223, 0.18);
+  height: 38px;
+  border: 1px solid rgba(247, 242, 223, 0.16);
   border-radius: 6px;
-  background: rgba(0, 0, 0, 0.42);
+  background: rgba(0, 0, 0, 0.46);
   color: #f7f2df;
   padding: 0 10px;
   font: 800 14px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
@@ -112,39 +169,56 @@
 }
 
 .tank-status-grid span,
-.tank-roster span {
+.tank-roster span,
+.tank-system-row span {
   display: grid;
-  min-height: 58px;
-  padding: 10px;
-  border: 1px solid rgba(247, 242, 223, 0.13);
+  min-height: 56px;
+  padding: 9px;
+  border: 1px solid rgba(247, 242, 223, 0.12);
   border-radius: 6px;
-  background: rgba(247, 242, 223, 0.07);
+  background: rgba(247, 242, 223, 0.065);
   color: #aeb69a;
-  font: 800 11px/1.1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  font: 800 11px/1.12 ui-monospace, SFMono-Regular, Consolas, monospace;
+  overflow: hidden;
   text-transform: uppercase;
 }
 
+.tank-system-row span {
+  min-height: 44px;
+}
+
 .tank-status-grid b,
-.tank-roster b {
+.tank-roster b,
+.tank-system-row b {
   color: #f7f2df;
-  font-size: 16px;
+  font-size: 15px;
   overflow-wrap: anywhere;
+}
+
+.tank-status-grid span:nth-child(4) b,
+.tank-status-grid span:nth-child(5) b,
+.tank-system-row b {
+  color: #5affda;
 }
 
 .tank-roster {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
-  max-height: 208px;
+  max-height: 188px;
   overflow: auto;
 }
 
 .tank-roster span.player {
-  border-color: rgba(216, 255, 79, 0.48);
+  border-color: rgba(216, 255, 79, 0.5);
 }
 
 .tank-roster span.peer {
-  border-color: rgba(69, 216, 255, 0.48);
+  border-color: rgba(90, 255, 218, 0.5);
+}
+
+.tank-roster span.bot {
+  border-color: rgba(255, 119, 80, 0.42);
 }
 
 .tank-roster em {
@@ -153,26 +227,49 @@
 }
 
 .tank-prompt {
-  margin: 0;
+  color: #d6ddc1;
   font-size: 13px;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 760px) {
   .tank-hud {
     top: auto;
-    bottom: 12px;
-    left: 12px;
-    width: calc(100vw - 24px);
-    max-height: 52vh;
+    bottom: 10px;
+    left: 10px;
+    width: calc(100vw - 20px);
+    max-height: 56vh;
     overflow: auto;
+    padding: 12px;
   }
 
   .tank-brand h1 {
-    font-size: 26px;
+    font-size: 24px;
   }
 
-  .tank-status-grid,
+  .tank-status-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tank-camera-switch {
+    grid-template-columns: repeat(4, minmax(44px, 1fr));
+  }
+
+  .tank-mode-button,
+  .tank-camera-button,
+  .tank-room button {
+    min-height: 36px;
+  }
+}
+
+@media (max-width: 420px) {
+  .tank-toolbar,
+  .tank-room,
+  .tank-system-row,
   .tank-roster {
     grid-template-columns: 1fr;
+  }
+
+  .tank-status-grid {
+    grid-template-columns: 1fr 1fr;
   }
 }

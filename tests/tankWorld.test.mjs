@@ -3,13 +3,18 @@ import { describe, it } from "node:test";
 import {
   actionForTankKey,
   clampArenaPoint,
+  defaultTankCameraMode,
   defaultTankPhysics,
+  normalizeTankCameraMode,
   normalizeRoomCode,
   shellDamageForDistance,
   sortScoreboard,
   stepTankPhysics,
+  tankCameraModes,
   tankArenaSize,
-  tankShellSpeed
+  tankShellSpeed,
+  terrainSurfaceForPoint,
+  terrainSurfaceProfiles
 } from "../src/tankWorldModel.ts";
 
 describe("tank world controls", () => {
@@ -24,6 +29,12 @@ describe("tank world controls", () => {
     assert.equal(actionForTankKey("ArrowLeft"), "turnLeft");
     assert.equal(actionForTankKey(" "), "fire");
     assert.equal(actionForTankKey("Escape"), null);
+  });
+
+  it("normalizes camera modes for HUD and hotkeys", () => {
+    assert.deepEqual(tankCameraModes, ["commander", "gunner", "driver", "tactical"]);
+    assert.equal(normalizeTankCameraMode("gunner"), "gunner");
+    assert.equal(normalizeTankCameraMode("unknown"), defaultTankCameraMode);
   });
 });
 
@@ -76,6 +87,42 @@ describe("tank physics", () => {
     assert.ok(next.linearVelocity < 0);
     assert.ok(Math.abs(next.linearVelocity) < 10);
     assert.ok(Math.abs(next.angularVelocity) < 0.5);
+  });
+
+  it("models terrain grip and drag for mud, roads, and rubble", () => {
+    assert.equal(terrainSurfaceForPoint({ x: 0, z: 22 }), "road");
+    assert.equal(terrainSurfaceForPoint({ x: -32, z: 18 }), "mud");
+    assert.equal(terrainSurfaceForPoint({ x: -24, z: -16 }), "rubble");
+    assert.ok(terrainSurfaceProfiles.mud.grip < terrainSurfaceProfiles.road.grip);
+
+    const baseState = {
+      position: { x: 20, z: 20 },
+      heading: 0,
+      linearVelocity: 0,
+      angularVelocity: 0
+    };
+    const road = stepTankPhysics(
+      baseState,
+      {
+        throttle: 1,
+        turn: 0,
+        surfaceGrip: terrainSurfaceProfiles.road.grip,
+        dragMultiplier: terrainSurfaceProfiles.road.dragMultiplier
+      },
+      0.05
+    );
+    const mud = stepTankPhysics(
+      baseState,
+      {
+        throttle: 1,
+        turn: 0,
+        surfaceGrip: terrainSurfaceProfiles.mud.grip,
+        dragMultiplier: terrainSurfaceProfiles.mud.dragMultiplier
+      },
+      0.05
+    );
+
+    assert.ok(road.linearVelocity > mud.linearVelocity);
   });
 
   it("keeps tanks inside the arena and scores shell damage by hit distance", () => {
