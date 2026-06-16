@@ -6,6 +6,8 @@ import {
   applyTankRecoil,
   armorDamageMultiplier,
   armorZoneForImpact,
+  cityBuildingDamageForBlast,
+  cityBuildingDamageStage,
   clampArenaPoint,
   damageAfterArmor,
   defaultTankCameraMode,
@@ -218,6 +220,17 @@ describe("german city map", () => {
   it("adds shadow-capable street lights to the city scene", () => {
     assert.ok(germanCityStreetLights.length >= 8);
     assert.ok(germanCityStreetLights.some((lamp) => lamp.castsShadow));
+  });
+
+  it("scores blast damage and visual stages for city buildings", () => {
+    assert.equal(cityBuildingDamageForBlast(1), 42);
+    assert.equal(cityBuildingDamageForBlast(3), 28);
+    assert.equal(cityBuildingDamageForBlast(5.5), 14);
+    assert.equal(cityBuildingDamageForBlast(7), 0);
+    assert.equal(cityBuildingDamageStage(100), "intact");
+    assert.equal(cityBuildingDamageStage(76), "scarred");
+    assert.equal(cityBuildingDamageStage(42), "breached");
+    assert.equal(cityBuildingDamageStage(0), "collapsed");
   });
 });
 

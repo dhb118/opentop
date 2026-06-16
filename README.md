@@ -10,7 +10,7 @@ Live demo: https://dhb118.github.io/opentop/
 
 - WWII-inspired German city battlefield with downloaded CC0 GLB tanks, trenches, sandbags, ruins, barrels, crates, guard towers, fortified fences, and a bridge.
 - PBR visual pass using ambientCG CC0 material textures for tank armor, tracks, cobblestone streets, brick facades, plaster walls, and roof/rail details.
-- Procedural German city blocks with row houses, gabled roofs, windows, rubble spill, tram rails, collision boxes, street lamps, warm window glow, fog, and soft shadows.
+- Procedural German city blocks with row houses, gabled roofs, windows, rubble spill, tram rails, collision boxes, street lamps, warm window glow, fog, soft shadows, and shell-damaged building states.
 - Tank physics with mass, engine force, track grip, terrain drag, ballistic shells, blast impulse, directional armor, cannon recoil, collision rebound, and arena bounds.
 - Battlefield feedback with track dust, shell explosions, camera kick, anti-tank hedgehogs, wire lines, fuel depots, and supply cover.
 - Four camera modes: commander chase view, gunner sight, driver view, and overhead tactical view.

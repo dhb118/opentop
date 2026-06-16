@@ -54,6 +54,7 @@ export interface TerrainSurfaceProfile {
 }
 
 export type GermanCityFacade = "brick" | "plaster" | "damaged";
+export type GermanCityDamageStage = "intact" | "scarred" | "breached" | "collapsed";
 
 export interface GermanCityBuilding {
   x: number;
@@ -84,6 +85,7 @@ export const tankCameraModes: TankCameraMode[] = ["commander", "gunner", "driver
 export const defaultTankCameraMode: TankCameraMode = "commander";
 export const germanCityMapLabel = "莱茵城市街区";
 export const germanCityMaterialLabel = "4 套 CC0 PBR";
+export const germanCityBuildingBlastRadius = 6.2;
 
 export const germanCityBuildings: GermanCityBuilding[] = [
   { x: -35, z: -35, width: 11, depth: 8, height: 12, yaw: 0.02, facade: "brick" },
@@ -239,6 +241,32 @@ export function armorDamageMultiplier(zone: ArmorZone): number {
 
 export function damageAfterArmor(baseDamage: number, zone: ArmorZone): number {
   return Math.max(0, Math.round(baseDamage * armorDamageMultiplier(zone)));
+}
+
+export function cityBuildingDamageForBlast(distance: number, blastRadius = germanCityBuildingBlastRadius): number {
+  if (distance <= 1.8) {
+    return 42;
+  }
+  if (distance <= 3.4) {
+    return 28;
+  }
+  if (distance <= blastRadius) {
+    return 14;
+  }
+  return 0;
+}
+
+export function cityBuildingDamageStage(health: number): GermanCityDamageStage {
+  if (health <= 0) {
+    return "collapsed";
+  }
+  if (health <= 42) {
+    return "breached";
+  }
+  if (health <= 76) {
+    return "scarred";
+  }
+  return "intact";
 }
 
 export function applyBlastImpulse(

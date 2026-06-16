@@ -6,6 +6,8 @@ import {
   applyBlastImpulse,
   applyTankRecoil,
   armorZoneForImpact,
+  cityBuildingDamageForBlast,
+  cityBuildingDamageStage,
   damageAfterArmor,
   buildCallsign,
   clampArenaPoint,
@@ -33,6 +35,7 @@ import {
   type ArenaPoint,
   type ArmorZone,
   type GermanCityBuilding,
+  type GermanCityDamageStage,
   type ScoreboardEntry,
   type TankCameraMode,
   type TankMode,
@@ -83,6 +86,17 @@ interface ExplosionEntity {
   maxTtl: number;
 }
 
+interface CityBuildingEntity {
+  building: GermanCityBuilding;
+  group: THREE.Group;
+  body: THREE.Mesh;
+  roof: THREE.Mesh;
+  windows: THREE.Mesh[];
+  box: THREE.Box3;
+  health: number;
+  stage: GermanCityDamageStage;
+}
+
 interface RemoteStatePacket {
   type: "state";
   senderId: string;
@@ -123,6 +137,7 @@ interface TankDom {
   armorZone: HTMLElement;
   map: HTMLElement;
   material: HTMLElement;
+  cityDamage: HTMLElement;
   roster: HTMLElement;
   prompt: HTMLElement;
 }
@@ -345,6 +360,7 @@ export function mountTankWorld(root: HTMLElement): void {
           <span>资产 <b data-assets>加载中</b></span>
           <span>地图 <b data-map>${germanCityMapLabel}</b></span>
           <span>材质 <b data-material>${germanCityMaterialLabel}</b></span>
+          <span>城损 <b data-city-damage>完整</b></span>
           <span>装填 <b data-reload>就绪</b></span>
           <span>受击 <b data-armor-zone>完整</b></span>
         </div>
@@ -375,6 +391,7 @@ function readTankDom(root: HTMLElement): TankDom {
   const armorZone = root.querySelector<HTMLElement>("[data-armor-zone]");
   const map = root.querySelector<HTMLElement>("[data-map]");
   const material = root.querySelector<HTMLElement>("[data-material]");
+  const cityDamage = root.querySelector<HTMLElement>("[data-city-damage]");
   const roster = root.querySelector<HTMLElement>("[data-roster]");
   const prompt = root.querySelector<HTMLElement>("[data-prompt]");
 
@@ -394,6 +411,7 @@ function readTankDom(root: HTMLElement): TankDom {
     !armorZone ||
     !map ||
     !material ||
+    !cityDamage ||
     !roster ||
     !prompt
   ) {
@@ -418,6 +436,7 @@ function readTankDom(root: HTMLElement): TankDom {
     armorZone,
     map,
     material,
+    cityDamage,
     roster,
     prompt
   };
@@ -431,6 +450,7 @@ class TankWorldGame {
   private readonly explosions: ExplosionEntity[] = [];
   private readonly tanks = new Map<string, TankEntity>();
   private readonly obstacles: THREE.Box3[] = [];
+  private readonly cityBuildings: CityBuildingEntity[] = [];
   private readonly assetLoader = new GLTFLoader();
   private readonly textureLoader = new THREE.TextureLoader();
   private readonly materials = createPbrMaterialKit(this.textureLoader);
@@ -446,6 +466,7 @@ class TankWorldGame {
   private player!: TankEntity;
   private assetStatus = `0/${worldAssets.length} CC0 GLB + PBR`;
   private materialStatus = germanCityMaterialLabel;
+  private cityDamageStatus = "完整";
   private sceneryApplied = false;
   private cameraKick = 0;
   private lastBroadcast = 0;
@@ -652,21 +673,33 @@ class TankWorldGame {
     roof.receiveShadow = true;
     group.add(roof);
 
-    this.addCityWindows(group, building);
+    const windows = this.addCityWindows(group, building);
     if (building.facade === "damaged") {
       this.addRubbleSpill(group, building);
     }
 
     this.scene.add(group);
-    this.obstacles.push(new THREE.Box3().setFromObject(group).expandByScalar(0.55));
+    const box = new THREE.Box3().setFromObject(group).expandByScalar(0.55);
+    this.cityBuildings.push({
+      building,
+      group,
+      body,
+      roof,
+      windows,
+      box,
+      health: 100,
+      stage: "intact"
+    });
+    this.obstacles.push(box);
   }
 
-  private addCityWindows(group: THREE.Group, building: GermanCityBuilding): void {
+  private addCityWindows(group: THREE.Group, building: GermanCityBuilding): THREE.Mesh[] {
     const floors = Math.max(2, Math.floor(building.height / 3.2));
     const columns = Math.max(2, Math.floor(building.width / 3.2));
     const windowGeometry = new THREE.BoxGeometry(0.78, 1.08, 0.09);
     const yStart = 1.9;
     const zFaces = [building.depth / 2 + 0.06, -building.depth / 2 - 0.06];
+    const windows: THREE.Mesh[] = [];
 
     for (const z of zFaces) {
       for (let floor = 0; floor < floors; floor += 1) {
@@ -689,9 +722,11 @@ class TankWorldGame {
           window.castShadow = false;
           window.receiveShadow = true;
           group.add(window);
+          windows.push(window);
         }
       }
     }
+    return windows;
   }
 
   private addRubbleSpill(group: THREE.Group, building: GermanCityBuilding): void {
@@ -1234,21 +1269,23 @@ class TankWorldGame {
         this.removeShell(index);
         continue;
       }
-      if (shell.mesh.position.y <= 0.28 || this.hitsObstacle(point)) {
-        this.explodeShell(shell, index);
+      const cityHit = this.findCityBuildingAtPoint(point);
+      if (shell.mesh.position.y <= 0.28 || cityHit || this.hitsObstacle(point)) {
+        this.explodeShell(shell, index, cityHit);
         continue;
       }
       const hit = this.findShellHit(shell);
       if (hit) {
-        this.explodeShell(shell, index);
+        this.explodeShell(shell, index, null);
       }
     }
   }
 
-  private explodeShell(shell: ShellEntity, index: number): void {
+  private explodeShell(shell: ShellEntity, index: number, directBuilding: CityBuildingEntity | null): void {
     const origin = shell.mesh.position.clone();
     origin.y = Math.max(0.2, origin.y);
     this.spawnExplosion(origin);
+    this.applyCityBlastDamage(origin, directBuilding);
     this.applyBlastDamage(origin, shell.ownerId);
     this.removeShell(index);
   }
@@ -1297,6 +1334,88 @@ class TankWorldGame {
         this.damageTank(tank, ownerId, damage, armorZone);
       }
     }
+  }
+
+  private applyCityBlastDamage(origin: THREE.Vector3, directBuilding: CityBuildingEntity | null): void {
+    for (const building of this.cityBuildings) {
+      const distance = building === directBuilding ? 0 : distanceToBoxXZ(origin, building.box);
+      const damage = cityBuildingDamageForBlast(distance);
+      if (damage > 0) {
+        this.damageCityBuilding(building, damage, origin);
+      }
+    }
+  }
+
+  private damageCityBuilding(building: CityBuildingEntity, damage: number, origin: THREE.Vector3): void {
+    const previousStage = building.stage;
+    building.health = Math.max(0, building.health - damage);
+    building.stage = cityBuildingDamageStage(building.health);
+    this.addBuildingImpactRubble(building, origin, damage >= 28 ? 12 : 6);
+    if (building.stage !== previousStage) {
+      this.applyCityBuildingStage(building);
+    }
+    this.cityDamageStatus = this.formatCityDamageStatus();
+  }
+
+  private applyCityBuildingStage(building: CityBuildingEntity): void {
+    const { height } = building.building;
+    if (building.stage !== "intact") {
+      building.body.material = this.materials.damagedBrick.clone();
+    }
+
+    if (building.stage === "scarred") {
+      building.body.scale.y = 0.96;
+      building.body.position.y = (height * building.body.scale.y) / 2;
+      building.roof.position.y = height * building.body.scale.y;
+    } else if (building.stage === "breached") {
+      building.body.scale.y = 0.74;
+      building.body.position.y = (height * building.body.scale.y) / 2;
+      building.roof.rotation.z = 0.05;
+      building.roof.position.y = height * building.body.scale.y + 0.25;
+      building.windows.forEach((window, index) => {
+        window.visible = index % 3 !== 0;
+      });
+    } else if (building.stage === "collapsed") {
+      building.body.scale.y = 0.34;
+      building.body.position.y = (height * building.body.scale.y) / 2;
+      building.roof.visible = false;
+      building.windows.forEach((window) => {
+        window.visible = false;
+      });
+      this.addBuildingImpactRubble(building, building.group.position.clone(), 28);
+    }
+
+    building.box.setFromObject(building.group).expandByScalar(0.72);
+  }
+
+  private addBuildingImpactRubble(building: CityBuildingEntity, origin: THREE.Vector3, count: number): void {
+    const local = building.group.worldToLocal(origin.clone());
+    const rubbleX = clamp(local.x, -building.building.width / 2, building.building.width / 2);
+    const rubbleZ = clamp(local.z, -building.building.depth / 2, building.building.depth / 2);
+    for (let index = 0; index < count; index += 1) {
+      const size = 0.24 + Math.random() * 0.62;
+      const geometry = new THREE.BoxGeometry(size, size * 0.45, size * (0.7 + Math.random()));
+      ensureGeometryUv2(geometry);
+      const rubble = new THREE.Mesh(geometry, this.materials.damagedBrick);
+      const radius = 0.4 + Math.random() * 2.6;
+      const angle = Math.random() * Math.PI * 2;
+      rubble.position.set(rubbleX + Math.cos(angle) * radius, size * 0.23, rubbleZ + Math.sin(angle) * radius);
+      rubble.rotation.set(Math.random() * 0.55, Math.random() * Math.PI, Math.random() * 0.45);
+      rubble.castShadow = true;
+      rubble.receiveShadow = true;
+      building.group.add(rubble);
+    }
+  }
+
+  private formatCityDamageStatus(): string {
+    const damaged = this.cityBuildings.filter((building) => building.health < 100).length;
+    if (damaged === 0) {
+      return "完整";
+    }
+    const collapsed = this.cityBuildings.filter((building) => building.stage === "collapsed").length;
+    return collapsed > 0
+      ? `${damaged}/${this.cityBuildings.length} 受损 · ${collapsed} 坍塌`
+      : `${damaged}/${this.cityBuildings.length} 受损`;
   }
 
   private spawnTrackDust(tank: TankEntity): void {
@@ -1581,6 +1700,11 @@ class TankWorldGame {
     return this.obstacles.some((box) => box.containsPoint(probe));
   }
 
+  private findCityBuildingAtPoint(point: ArenaPoint): CityBuildingEntity | null {
+    const probe = new THREE.Vector3(point.x, 1.4, point.z);
+    return this.cityBuildings.find((building) => building.box.containsPoint(probe)) ?? null;
+  }
+
   private hasAction(action: string): boolean {
     for (const key of this.input) {
       if (actionForTankKey(key) === action) {
@@ -1607,6 +1731,7 @@ class TankWorldGame {
     this.dom.assets.textContent = this.assetStatus;
     this.dom.map.textContent = germanCityMapLabel;
     this.dom.material.textContent = this.materialStatus;
+    this.dom.cityDamage.textContent = this.cityDamageStatus;
     this.dom.reload.textContent = this.player.reloadMs > 0 ? `${Math.ceil(this.player.reloadMs)} ms` : "就绪";
     this.dom.armorZone.textContent = this.player.lastArmorZone ? armorZoneLabels[this.player.lastArmorZone] : "完整";
     this.dom.roster.innerHTML = sortScoreboard(this.scoreboard())
@@ -1647,6 +1772,12 @@ function headingDegrees(radians: number): string {
 
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
+}
+
+function distanceToBoxXZ(point: THREE.Vector3, box: THREE.Box3): number {
+  const dx = Math.max(box.min.x - point.x, 0, point.x - box.max.x);
+  const dz = Math.max(box.min.z - point.z, 0, point.z - box.max.z);
+  return Math.hypot(dx, dz);
 }
 
 function createGroundTexture(): THREE.CanvasTexture {

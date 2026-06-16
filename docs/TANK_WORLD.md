@@ -7,7 +7,7 @@ Iron Ridge is a TypeScript web tank arena built on Three.js.
 - Default route opens the playable 3D tank arena.
 - Downloaded CC0 GLB assets provide tank skins, trenches, sandbags, modular ruins, barrels, crates, guard towers, fortified fences, and a bridge.
 - ambientCG CC0 PBR textures provide tank armor, tracks, cobblestone roads, brick facades, plaster facades, rails, and roof surfaces.
-- The map is now a fictional German city block with row houses, gabled roofs, street lamps, warm window glow, rubble spill, tram rails, fog, and soft shadows.
+- The map is now a fictional German city block with row houses, gabled roofs, street lamps, warm window glow, rubble spill, tram rails, fog, soft shadows, and shell-damaged building states.
 - Procedural battlefield props add anti-tank hedgehogs, wire lines, roads, mud craters, and supply collision zones.
 - Single-player mode spawns five bot tanks.
 - Multiplayer mode syncs same-origin browser tabs through `BroadcastChannel`.
@@ -29,6 +29,7 @@ The deterministic tank movement model lives in `src/tankWorldModel.ts`:
 - ballistic shell gravity,
 - blast-radius shell damage,
 - blast impulse against nearby tanks,
+- distance-based shell damage against city buildings,
 - directional front/side/rear armor damage,
 - rebound response for blocked movement,
 - arena boundary clamping,
