@@ -11,7 +11,7 @@ Iron Ridge is a TypeScript web tank arena built on Three.js.
 - Multiplayer mode syncs same-origin browser tabs through `BroadcastChannel`.
 - Combat loop: drive, rotate turret, fire shells, take damage, respawn, and score kills.
 - Camera modes: commander chase, gunner sight, driver view, and tactical overhead.
-- HUD is Chinese-friendly and shows armor, kills, speed, heading, surface, camera mode, asset status, and roster.
+- HUD is Chinese-friendly and shows armor, kills, speed, heading, surface, reload state, hit armor zone, camera mode, asset status, and roster.
 
 ## Physics System
 
@@ -26,11 +26,13 @@ The deterministic tank movement model lives in `src/tankWorldModel.ts`:
 - cannon recoil impulse,
 - ballistic shell gravity,
 - blast-radius shell damage,
+- blast impulse against nearby tanks,
+- directional front/side/rear armor damage,
 - rebound response for blocked movement,
 - arena boundary clamping,
 - distance-based shell damage.
 
-Terrain surfaces currently include field, road, mud, and rubble. The renderer reads the same surface model that the physics system uses, so the HUD and movement behavior stay aligned. Firing applies a recoil impulse to the tank body and a short camera kick for the local player. Shells now travel as ballistic projectiles: gravity pulls them down, ground or obstacle impact spawns an explosion, and tanks inside the blast radius receive distance-based damage.
+Terrain surfaces currently include field, road, mud, and rubble. The renderer reads the same surface model that the physics system uses, so the HUD and movement behavior stay aligned. Firing applies a recoil impulse to the tank body and a short camera kick for the local player. Shells travel as ballistic projectiles: gravity pulls them down, ground or obstacle impact spawns an explosion, tanks inside the blast radius are pushed by shock impulse, and damage is adjusted by front/side/rear armor facing.
 
 ## Asset Boundary
 

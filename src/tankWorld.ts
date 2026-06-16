@@ -3,7 +3,10 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import {
   actionForTankKey,
+  applyBlastImpulse,
   applyTankRecoil,
+  armorZoneForImpact,
+  damageAfterArmor,
   buildCallsign,
   clampArenaPoint,
   defaultTankCameraMode,
@@ -24,6 +27,7 @@ import {
   terrainSurfaceForPoint,
   terrainSurfaceProfiles,
   type ArenaPoint,
+  type ArmorZone,
   type ScoreboardEntry,
   type TankCameraMode,
   type TankMode,
@@ -43,6 +47,7 @@ interface TankEntity {
   turret: THREE.Group;
   skin: THREE.Object3D | null;
   surface: TerrainSurface;
+  lastArmorZone: ArmorZone | null;
   health: number;
   score: number;
   turretYaw: number;
@@ -109,6 +114,8 @@ interface TankDom {
   heading: HTMLElement;
   camera: HTMLElement;
   assets: HTMLElement;
+  reload: HTMLElement;
+  armorZone: HTMLElement;
   roster: HTMLElement;
   prompt: HTMLElement;
 }
@@ -156,6 +163,12 @@ const cameraModeLabels: Record<TankCameraMode, string> = {
   gunner: "炮手",
   driver: "驾驶",
   tactical: "战术"
+};
+const armorZoneLabels: Record<ArmorZone, string> = {
+  front: "正面",
+  side: "侧面",
+  rear: "后部",
+  top: "顶部"
 };
 const worldAssets: WorldAssetDefinition[] = [
   {
@@ -272,6 +285,8 @@ export function mountTankWorld(root: HTMLElement): void {
         <div class="tank-system-row">
           <span>视角 <b data-camera>${cameraModeLabels[defaultTankCameraMode]}</b></span>
           <span>资产 <b data-assets>加载中</b></span>
+          <span>装填 <b data-reload>就绪</b></span>
+          <span>受击 <b data-armor-zone>完整</b></span>
         </div>
         <div class="tank-roster" data-roster></div>
         <p class="tank-prompt" data-prompt>WASD/方向键驾驶，Q/E 转炮塔，Space/鼠标开火，C 切换视角。</p>
@@ -296,6 +311,8 @@ function readTankDom(root: HTMLElement): TankDom {
   const heading = root.querySelector<HTMLElement>("[data-heading]");
   const camera = root.querySelector<HTMLElement>("[data-camera]");
   const assets = root.querySelector<HTMLElement>("[data-assets]");
+  const reload = root.querySelector<HTMLElement>("[data-reload]");
+  const armorZone = root.querySelector<HTMLElement>("[data-armor-zone]");
   const roster = root.querySelector<HTMLElement>("[data-roster]");
   const prompt = root.querySelector<HTMLElement>("[data-prompt]");
 
@@ -311,6 +328,8 @@ function readTankDom(root: HTMLElement): TankDom {
     !heading ||
     !camera ||
     !assets ||
+    !reload ||
+    !armorZone ||
     !roster ||
     !prompt
   ) {
@@ -331,6 +350,8 @@ function readTankDom(root: HTMLElement): TankDom {
     heading,
     camera,
     assets,
+    reload,
+    armorZone,
     roster,
     prompt
   };
@@ -659,6 +680,7 @@ class TankWorldGame {
       turret,
       skin: null,
       surface: terrainSurfaceForPoint(point),
+      lastArmorZone: null,
       health: 100,
       score: 0,
       turretYaw: 0,
@@ -998,9 +1020,17 @@ class TankWorldGame {
         continue;
       }
       const distance = Math.hypot(tank.group.position.x - origin.x, tank.group.position.z - origin.z);
-      const damage = shellDamageForDistance(distance);
-      if (damage > 0) {
-        this.damageTank(tank, ownerId, damage);
+      const baseDamage = shellDamageForDistance(distance);
+      if (baseDamage > 0) {
+        const impactBearing = Math.atan2(origin.x - tank.group.position.x, origin.z - tank.group.position.z);
+        const armorZone = armorZoneForImpact(tank.physics.heading, impactBearing);
+        const damage = damageAfterArmor(baseDamage, armorZone);
+        tank.physics = applyBlastImpulse(tank.physics, { x: origin.x, z: origin.z }, distance);
+        tank.lastArmorZone = armorZone;
+        if (tank.kind === "player") {
+          this.cameraKick = Math.min(1, this.cameraKick + 0.45);
+        }
+        this.damageTank(tank, ownerId, damage, armorZone);
       }
     }
   }
@@ -1239,7 +1269,8 @@ class TankWorldGame {
     return null;
   }
 
-  private damageTank(tank: TankEntity, ownerId: string, damage: number): void {
+  private damageTank(tank: TankEntity, ownerId: string, damage: number, armorZone: ArmorZone): void {
+    tank.lastArmorZone = armorZone;
     tank.health = Math.max(0, tank.health - damage);
     if (tank.health > 0) {
       return;
@@ -1261,6 +1292,7 @@ class TankWorldGame {
       angularVelocity: 0
     };
     tank.surface = terrainSurfaceForPoint(spawn);
+    tank.lastArmorZone = null;
     tank.turretYaw = 0;
     tank.group.position.set(spawn.x, 0, spawn.z);
     tank.group.rotation.set(0, 0, 0);
@@ -1309,6 +1341,8 @@ class TankWorldGame {
     this.dom.heading.textContent = headingDegrees(this.player.physics.heading);
     this.dom.camera.textContent = cameraModeLabels[this.cameraMode];
     this.dom.assets.textContent = this.assetStatus;
+    this.dom.reload.textContent = this.player.reloadMs > 0 ? `${Math.ceil(this.player.reloadMs)} ms` : "就绪";
+    this.dom.armorZone.textContent = this.player.lastArmorZone ? armorZoneLabels[this.player.lastArmorZone] : "完整";
     this.dom.roster.innerHTML = sortScoreboard(this.scoreboard())
       .map(
         (entry) => `
@@ -1321,7 +1355,7 @@ class TankWorldGame {
       .join("");
     this.dom.prompt.textContent =
       this.mode === "single"
-        ? "物理：地形牵引、履带阻力、抛物线炮弹、爆炸半径、开炮后坐、扬尘。"
+        ? "物理：地形牵引、方向装甲、爆炸冲击、抛物线炮弹、开炮后坐、扬尘。"
         : "联机：同源 BroadcastChannel 房间；两个浏览器标签输入同一房间码即可同步。";
   }
 

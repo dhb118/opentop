@@ -2,8 +2,12 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   actionForTankKey,
+  applyBlastImpulse,
   applyTankRecoil,
+  armorDamageMultiplier,
+  armorZoneForImpact,
   clampArenaPoint,
+  damageAfterArmor,
   defaultTankCameraMode,
   defaultTankPhysics,
   normalizeTankCameraMode,
@@ -146,6 +150,30 @@ describe("tank physics", () => {
     assert.ok(straightShot.linearVelocity < 0);
     assert.ok(Math.abs(sideShot.linearVelocity) < Math.abs(straightShot.linearVelocity));
     assert.ok(sideShot.angularVelocity < 0);
+  });
+
+  it("reduces or amplifies blast damage by armor facing", () => {
+    assert.equal(armorZoneForImpact(0, 0), "front");
+    assert.equal(armorZoneForImpact(0, Math.PI / 2), "side");
+    assert.equal(armorZoneForImpact(0, Math.PI), "rear");
+    assert.ok(armorDamageMultiplier("front") < armorDamageMultiplier("side"));
+    assert.ok(armorDamageMultiplier("rear") > armorDamageMultiplier("side"));
+    assert.equal(damageAfterArmor(42, "front"), 26);
+    assert.equal(damageAfterArmor(42, "rear"), 57);
+  });
+
+  it("pushes tanks away from shell blasts", () => {
+    const state = {
+      position: { x: 0, z: 3 },
+      heading: 0,
+      linearVelocity: 0,
+      angularVelocity: 0
+    };
+    const pushed = applyBlastImpulse(state, { x: 0, z: 0 }, 3);
+
+    assert.ok(pushed.linearVelocity > 0);
+    assert.equal(pushed.position, state.position);
+    assert.equal(applyBlastImpulse(state, { x: 0, z: 0 }, 8), state);
   });
 
   it("steps shell height with gravity for ballistic arcs", () => {

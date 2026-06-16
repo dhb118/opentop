@@ -7,12 +7,12 @@ Iron Ridge is a TypeScript + Three.js browser tank arena. It is built as a small
 ## What You Can Play
 
 - WWII-inspired 3D battlefield with downloaded CC0 GLB tanks, trenches, sandbags, ruins, barrels, crates, guard towers, fortified fences, and a bridge.
-- Tank physics with mass, engine force, track grip, terrain drag, ballistic shells, blast radius damage, cannon recoil, collision rebound, and arena bounds.
+- Tank physics with mass, engine force, track grip, terrain drag, ballistic shells, blast impulse, directional armor, cannon recoil, collision rebound, and arena bounds.
 - Battlefield feedback with track dust, shell explosions, camera kick, anti-tank hedgehogs, wire lines, fuel depots, and supply cover.
 - Four camera modes: commander chase view, gunner sight, driver view, and overhead tactical view.
 - Single-player skirmish against five bot tanks.
 - Same-origin multiplayer prototype using `BroadcastChannel`; open two tabs with the same room code.
-- Chinese-friendly sci-fi HUD with armor, kills, speed, heading, surface type, camera mode, asset status, and roster.
+- Chinese-friendly sci-fi HUD with armor, kills, speed, heading, surface type, reload state, hit armor zone, camera mode, asset status, and roster.
 
 ## Run Locally
 

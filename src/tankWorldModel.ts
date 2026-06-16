@@ -6,6 +6,8 @@ export type TankCameraMode = "commander" | "gunner" | "driver" | "tactical";
 
 export type TerrainSurface = "field" | "road" | "mud" | "rubble";
 
+export type ArmorZone = "front" | "side" | "rear" | "top";
+
 export interface ArenaPoint {
   x: number;
   z: number;
@@ -59,6 +61,7 @@ export const tankShellGravity = 18;
 export const tankShellMuzzleLift = 7.2;
 export const tankBlastRadius = 5.4;
 export const tankRecoilImpulse = 5.4;
+export const tankBlastImpulse = 7.6;
 export const tankCameraModes: TankCameraMode[] = ["commander", "gunner", "driver", "tactical"];
 export const defaultTankCameraMode: TankCameraMode = "commander";
 
@@ -159,6 +162,59 @@ export function stepShellVerticalVelocity(verticalVelocity: number, dt: number, 
 export function shellHeightAfterStep(height: number, verticalVelocity: number, dt: number): number {
   const safeDt = Math.max(0, Math.min(dt, 0.05));
   return height + stepShellVerticalVelocity(verticalVelocity, safeDt) * safeDt;
+}
+
+export function armorZoneForImpact(tankHeading: number, impactBearing: number): ArmorZone {
+  const relative = Math.atan2(Math.sin(impactBearing - tankHeading), Math.cos(impactBearing - tankHeading));
+  const forwardness = Math.cos(relative);
+  if (forwardness > 0.62) {
+    return "front";
+  }
+  if (forwardness < -0.62) {
+    return "rear";
+  }
+  return "side";
+}
+
+export function armorDamageMultiplier(zone: ArmorZone): number {
+  if (zone === "front") {
+    return 0.62;
+  }
+  if (zone === "rear") {
+    return 1.35;
+  }
+  if (zone === "top") {
+    return 1.15;
+  }
+  return 1;
+}
+
+export function damageAfterArmor(baseDamage: number, zone: ArmorZone): number {
+  return Math.max(0, Math.round(baseDamage * armorDamageMultiplier(zone)));
+}
+
+export function applyBlastImpulse(
+  state: TankPhysicsState,
+  blastOrigin: ArenaPoint,
+  distance: number,
+  blastRadius = tankBlastRadius,
+  impulse = tankBlastImpulse,
+  config: TankPhysicsConfig = defaultTankPhysics
+): TankPhysicsState {
+  if (distance <= 0 || distance > blastRadius) {
+    return state;
+  }
+
+  const falloff = Math.max(0, 1 - distance / blastRadius);
+  const push = (impulse * falloff * falloff) / config.mass;
+  const awayBearing = Math.atan2(state.position.x - blastOrigin.x, state.position.z - blastOrigin.z);
+  const relative = awayBearing - state.heading;
+
+  return {
+    ...state,
+    linearVelocity: state.linearVelocity + Math.cos(relative) * push,
+    angularVelocity: state.angularVelocity + Math.sin(relative) * push * 0.42
+  };
 }
 
 export function terrainSurfaceForPoint(point: ArenaPoint): TerrainSurface {
