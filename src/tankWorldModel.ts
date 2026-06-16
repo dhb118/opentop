@@ -53,6 +53,24 @@ export interface TerrainSurfaceProfile {
   dust: number;
 }
 
+export type GermanCityFacade = "brick" | "plaster" | "damaged";
+
+export interface GermanCityBuilding {
+  x: number;
+  z: number;
+  width: number;
+  depth: number;
+  height: number;
+  yaw: number;
+  facade: GermanCityFacade;
+}
+
+export interface GermanCityStreetLight {
+  x: number;
+  z: number;
+  castsShadow: boolean;
+}
+
 export const tankArenaSize = 96;
 export const defaultTankRoom = "RIDGE-01";
 export const multiplayerRoomStorageKey = "iron-ridge-room";
@@ -64,6 +82,36 @@ export const tankRecoilImpulse = 5.4;
 export const tankBlastImpulse = 7.6;
 export const tankCameraModes: TankCameraMode[] = ["commander", "gunner", "driver", "tactical"];
 export const defaultTankCameraMode: TankCameraMode = "commander";
+export const germanCityMapLabel = "莱茵城市街区";
+export const germanCityMaterialLabel = "4 套 CC0 PBR";
+
+export const germanCityBuildings: GermanCityBuilding[] = [
+  { x: -35, z: -35, width: 11, depth: 8, height: 12, yaw: 0.02, facade: "brick" },
+  { x: -20, z: -36, width: 12, depth: 7.5, height: 9.5, yaw: -0.04, facade: "plaster" },
+  { x: 21, z: -36, width: 13, depth: 8.5, height: 10.5, yaw: 0.05, facade: "brick" },
+  { x: 36, z: -32, width: 8.5, depth: 12, height: 13, yaw: -0.02, facade: "damaged" },
+  { x: -39, z: -9, width: 8, depth: 16, height: 10, yaw: 0.04, facade: "plaster" },
+  { x: 39, z: -19, width: 8, depth: 15, height: 11, yaw: -0.04, facade: "brick" },
+  { x: -39, z: 15, width: 8, depth: 15, height: 12, yaw: -0.02, facade: "brick" },
+  { x: 39, z: 13, width: 8, depth: 15, height: 9.5, yaw: 0.03, facade: "plaster" },
+  { x: -36, z: 33, width: 9, depth: 12, height: 10, yaw: -0.03, facade: "damaged" },
+  { x: -20, z: 35, width: 12, depth: 8, height: 8.5, yaw: 0.06, facade: "plaster" },
+  { x: 21, z: 34, width: 13, depth: 8, height: 11, yaw: -0.02, facade: "brick" },
+  { x: 36, z: 31, width: 8, depth: 13, height: 10, yaw: 0.04, facade: "plaster" }
+];
+
+export const germanCityStreetLights: GermanCityStreetLight[] = [
+  { x: -7, z: -41, castsShadow: true },
+  { x: 7, z: -41, castsShadow: false },
+  { x: -7, z: 34, castsShadow: true },
+  { x: 7, z: 34, castsShadow: false },
+  { x: -42, z: -19, castsShadow: true },
+  { x: -42, z: 9, castsShadow: false },
+  { x: 42, z: -20, castsShadow: true },
+  { x: 42, z: 11, castsShadow: false },
+  { x: -8, z: -7, castsShadow: false },
+  { x: 8, z: -7, castsShadow: false }
+];
 
 export const defaultTankPhysics: TankPhysicsConfig = {
   mass: 18,

@@ -10,6 +10,10 @@ import {
   damageAfterArmor,
   defaultTankCameraMode,
   defaultTankPhysics,
+  germanCityBuildings,
+  germanCityMapLabel,
+  germanCityMaterialLabel,
+  germanCityStreetLights,
   normalizeTankCameraMode,
   normalizeRoomCode,
   shellHeightAfterStep,
@@ -194,6 +198,26 @@ describe("tank physics", () => {
     assert.equal(tankBlastRadius, 5.4);
     assert.equal(tankShellSpeed, 46);
     assert.equal(defaultTankPhysics.mass, 18);
+  });
+});
+
+describe("german city map", () => {
+  it("keeps city blocks inside the arena and off the main roads", () => {
+    assert.equal(germanCityMapLabel, "莱茵城市街区");
+    assert.match(germanCityMaterialLabel, /PBR/);
+    assert.ok(germanCityBuildings.length >= 12);
+
+    for (const building of germanCityBuildings) {
+      assert.ok(Math.abs(building.x) + building.width / 2 < tankArenaSize / 2);
+      assert.ok(Math.abs(building.z) + building.depth / 2 < tankArenaSize / 2);
+      assert.ok(Math.abs(building.x) > 8 || Math.abs(building.z + 7) > 8);
+      assert.ok(building.height >= 8);
+    }
+  });
+
+  it("adds shadow-capable street lights to the city scene", () => {
+    assert.ok(germanCityStreetLights.length >= 8);
+    assert.ok(germanCityStreetLights.some((lamp) => lamp.castsShadow));
   });
 });
 

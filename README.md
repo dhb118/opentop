@@ -2,13 +2,15 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-Iron Ridge is a TypeScript + Three.js browser tank arena. It is built as a small, readable game template: downloaded CC0 3D assets, terrain-aware tank physics, bot combat, and same-origin multiplayer rooms without a backend.
+Iron Ridge is a TypeScript + Three.js browser tank arena. It is built as a small, readable game template: downloaded CC0 3D assets, a PBR-material tank, a German city combat map, terrain-aware physics, bot combat, and same-origin multiplayer rooms without a backend.
 
 Live demo: https://dhb118.github.io/opentop/
 
 ## What You Can Play
 
-- WWII-inspired 3D battlefield with downloaded CC0 GLB tanks, trenches, sandbags, ruins, barrels, crates, guard towers, fortified fences, and a bridge.
+- WWII-inspired German city battlefield with downloaded CC0 GLB tanks, trenches, sandbags, ruins, barrels, crates, guard towers, fortified fences, and a bridge.
+- PBR visual pass using ambientCG CC0 material textures for tank armor, tracks, cobblestone streets, brick facades, plaster walls, and roof/rail details.
+- Procedural German city blocks with row houses, gabled roofs, windows, rubble spill, tram rails, collision boxes, street lamps, warm window glow, fog, and soft shadows.
 - Tank physics with mass, engine force, track grip, terrain drag, ballistic shells, blast impulse, directional armor, cannon recoil, collision rebound, and arena bounds.
 - Battlefield feedback with track dust, shell explosions, camera kick, anti-tank hedgehogs, wire lines, fuel depots, and supply cover.
 - Four camera modes: commander chase view, gunner sight, driver view, and overhead tactical view.
@@ -41,7 +43,7 @@ pnpm build
 
 ## Assets
 
-The playable battlefield uses free CC0 GLB assets downloaded from Poly Pizza / Quaternius. See [asset attribution](public/assets/ATTRIBUTION.md).
+The playable battlefield uses free CC0 GLB assets downloaded from Poly Pizza / Quaternius and free CC0 PBR material textures from ambientCG. See [asset attribution](public/assets/ATTRIBUTION.md).
 
 ## Documentation
 

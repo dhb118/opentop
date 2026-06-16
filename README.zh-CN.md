@@ -2,13 +2,15 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-Iron Ridge 是一款用 TypeScript + Three.js 实现的浏览器 3D 坦克战场。项目目标是做成一个可玩、可读、可扩展的坦克游戏模板：免费 CC0 3D 资产、真实感履带物理、bot 对战，以及无需后端的同源房间联机原型。
+Iron Ridge 是一款用 TypeScript + Three.js 实现的浏览器 3D 坦克战场。当前版本聚焦“可直接试玩”的核心体验：PBR 坦克材质、德国城市街区地图、真实感履带物理、bot 对战，以及无需后端的同源房间联机原型。
 
 在线演示：https://dhb118.github.io/opentop/
 
 ## 当前可玩内容
 
-- 二战风格 3D 战场：已接入 CC0 GLB 坦克、战壕、沙袋、废墟、燃料桶、木箱、哨塔、加固围栏和小桥。
+- 二战风格德国城市战场：已接入 CC0 GLB 坦克、战壕、沙袋、废墟、燃料桶、木箱、哨塔、加固围栏和小桥。
+- PBR 材质：使用 ambientCG 的 CC0 纹理，为坦克装甲、履带、鹅卵石街道、砖墙、灰泥墙、屋顶和轨道提供 color/normal/roughness 等贴图。
+- 德国城市街区：程序化生成排屋、斜屋顶、窗光、瓦砾、路轨、街灯和建筑碰撞体，并开启雾效、光照和柔和阴影。
 - 坦克物理：质量、引擎力、履带牵引、地形阻力、抛物线炮弹、爆炸冲击、方向装甲、开炮后坐力、碰撞反弹和边界约束。
 - 战场反馈：履带扬尘、炮弹爆炸、开炮镜头冲击、反坦克钢障、铁丝网、燃料点和补给掩体。
 - 多视角操控：车长追踪、炮手瞄准、驾驶舱、战术俯视。
@@ -41,7 +43,7 @@ pnpm build
 
 ## 资产来源
 
-战场使用从 Poly Pizza / Quaternius 下载的免费 CC0 GLB 资产。详见 [资产说明](public/assets/ATTRIBUTION.md)。
+战场使用从 Poly Pizza / Quaternius 下载的免费 CC0 GLB 资产，并使用 ambientCG 的免费 CC0 PBR 材质纹理。详见 [资产说明](public/assets/ATTRIBUTION.md)。
 
 ## 文档
 
@@ -54,7 +56,7 @@ pnpm build
 3. 增加移动端控制和手柄输入。
 4. 增加车体、炮塔、装甲、涂装和载荷自定义。
 5. 增加回放或高光导出，便于发布传播。
-6. 等 GitHub Pages workflow 部署完成后，重新验证公开 demo 地址。
+6. 补充公开 demo 截图、动图和玩法短视频。
 
 ## 许可
 

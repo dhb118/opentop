@@ -11,6 +11,10 @@ import {
   clampArenaPoint,
   defaultTankCameraMode,
   defaultTankRoom,
+  germanCityBuildings,
+  germanCityMapLabel,
+  germanCityMaterialLabel,
+  germanCityStreetLights,
   multiplayerRoomStorageKey,
   normalizeTankCameraMode,
   normalizeRoomCode,
@@ -28,6 +32,7 @@ import {
   terrainSurfaceProfiles,
   type ArenaPoint,
   type ArmorZone,
+  type GermanCityBuilding,
   type ScoreboardEntry,
   type TankCameraMode,
   type TankMode,
@@ -116,6 +121,8 @@ interface TankDom {
   assets: HTMLElement;
   reload: HTMLElement;
   armorZone: HTMLElement;
+  map: HTMLElement;
+  material: HTMLElement;
   roster: HTMLElement;
   prompt: HTMLElement;
 }
@@ -141,6 +148,27 @@ interface SceneryPlacement {
   z: number;
   footprint: number;
   yaw: number;
+}
+
+interface PbrTextureSet {
+  color: string;
+  normal: string;
+  roughness: string;
+  ao?: string;
+  displacement?: string;
+}
+
+interface PbrMaterialKit {
+  tankArmor: THREE.MeshStandardMaterial;
+  tankTrack: THREE.MeshStandardMaterial;
+  cobblestone: THREE.MeshStandardMaterial;
+  brick: THREE.MeshStandardMaterial;
+  plaster: THREE.MeshStandardMaterial;
+  damagedBrick: THREE.MeshStandardMaterial;
+  roof: THREE.MeshStandardMaterial;
+  rail: THREE.MeshStandardMaterial;
+  window: THREE.MeshStandardMaterial;
+  windowGlow: THREE.MeshStandardMaterial;
 }
 
 const playerId = crypto.randomUUID();
@@ -217,6 +245,36 @@ const worldAssets: WorldAssetDefinition[] = [
     url: "assets/vendor/poly-pizza/quaternius-small-bridge/quaternius-small-bridge.glb"
   }
 ];
+
+const pbrTextureSets = {
+  tankMetal: {
+    color: "assets/vendor/ambientcg/Metal038/Metal038_1K-JPG_Color.jpg",
+    normal: "assets/vendor/ambientcg/Metal038/Metal038_1K-JPG_NormalGL.jpg",
+    roughness: "assets/vendor/ambientcg/Metal038/Metal038_1K-JPG_Roughness.jpg",
+    displacement: "assets/vendor/ambientcg/Metal038/Metal038_1K-JPG_Displacement.jpg"
+  },
+  cobblestone: {
+    color: "assets/vendor/ambientcg/PavingStones150/PavingStones150_1K-JPG_Color.jpg",
+    normal: "assets/vendor/ambientcg/PavingStones150/PavingStones150_1K-JPG_NormalGL.jpg",
+    roughness: "assets/vendor/ambientcg/PavingStones150/PavingStones150_1K-JPG_Roughness.jpg",
+    ao: "assets/vendor/ambientcg/PavingStones150/PavingStones150_1K-JPG_AmbientOcclusion.jpg",
+    displacement: "assets/vendor/ambientcg/PavingStones150/PavingStones150_1K-JPG_Displacement.jpg"
+  },
+  brick: {
+    color: "assets/vendor/ambientcg/Bricks100/Bricks100_1K-JPG_Color.jpg",
+    normal: "assets/vendor/ambientcg/Bricks100/Bricks100_1K-JPG_NormalGL.jpg",
+    roughness: "assets/vendor/ambientcg/Bricks100/Bricks100_1K-JPG_Roughness.jpg",
+    ao: "assets/vendor/ambientcg/Bricks100/Bricks100_1K-JPG_AmbientOcclusion.jpg",
+    displacement: "assets/vendor/ambientcg/Bricks100/Bricks100_1K-JPG_Displacement.jpg"
+  },
+  plaster: {
+    color: "assets/vendor/ambientcg/Plaster001/Plaster001_1K-JPG_Color.jpg",
+    normal: "assets/vendor/ambientcg/Plaster001/Plaster001_1K-JPG_NormalGL.jpg",
+    roughness: "assets/vendor/ambientcg/Plaster001/Plaster001_1K-JPG_Roughness.jpg",
+    displacement: "assets/vendor/ambientcg/Plaster001/Plaster001_1K-JPG_Displacement.jpg"
+  }
+} satisfies Record<string, PbrTextureSet>;
+
 const coverPlacements: CoverPlacement[] = [
   { x: -24, z: -16, sx: 12, sz: 7, height: 3.8, kind: "ruins" },
   { x: 18, z: -23, sx: 8, sz: 13, height: 2.2, kind: "trench" },
@@ -285,6 +343,8 @@ export function mountTankWorld(root: HTMLElement): void {
         <div class="tank-system-row">
           <span>视角 <b data-camera>${cameraModeLabels[defaultTankCameraMode]}</b></span>
           <span>资产 <b data-assets>加载中</b></span>
+          <span>地图 <b data-map>${germanCityMapLabel}</b></span>
+          <span>材质 <b data-material>${germanCityMaterialLabel}</b></span>
           <span>装填 <b data-reload>就绪</b></span>
           <span>受击 <b data-armor-zone>完整</b></span>
         </div>
@@ -313,6 +373,8 @@ function readTankDom(root: HTMLElement): TankDom {
   const assets = root.querySelector<HTMLElement>("[data-assets]");
   const reload = root.querySelector<HTMLElement>("[data-reload]");
   const armorZone = root.querySelector<HTMLElement>("[data-armor-zone]");
+  const map = root.querySelector<HTMLElement>("[data-map]");
+  const material = root.querySelector<HTMLElement>("[data-material]");
   const roster = root.querySelector<HTMLElement>("[data-roster]");
   const prompt = root.querySelector<HTMLElement>("[data-prompt]");
 
@@ -330,6 +392,8 @@ function readTankDom(root: HTMLElement): TankDom {
     !assets ||
     !reload ||
     !armorZone ||
+    !map ||
+    !material ||
     !roster ||
     !prompt
   ) {
@@ -352,6 +416,8 @@ function readTankDom(root: HTMLElement): TankDom {
     assets,
     reload,
     armorZone,
+    map,
+    material,
     roster,
     prompt
   };
@@ -366,6 +432,8 @@ class TankWorldGame {
   private readonly tanks = new Map<string, TankEntity>();
   private readonly obstacles: THREE.Box3[] = [];
   private readonly assetLoader = new GLTFLoader();
+  private readonly textureLoader = new THREE.TextureLoader();
+  private readonly materials = createPbrMaterialKit(this.textureLoader);
   private readonly assetLibrary = new Map<WorldAssetKey, THREE.Object3D>();
   private readonly scene = new THREE.Scene();
   private readonly camera = new THREE.PerspectiveCamera(55, 1, 0.1, 500);
@@ -376,7 +444,8 @@ class TankWorldGame {
   private cameraMode: TankCameraMode = defaultTankCameraMode;
   private roomCode = defaultTankRoom;
   private player!: TankEntity;
-  private assetStatus = `0/${worldAssets.length}`;
+  private assetStatus = `0/${worldAssets.length} CC0 GLB + PBR`;
+  private materialStatus = germanCityMaterialLabel;
   private sceneryApplied = false;
   private cameraKick = 0;
   private lastBroadcast = 0;
@@ -428,21 +497,24 @@ class TankWorldGame {
     this.scene.fog = new THREE.Fog(0x050806, 46, 150);
     this.camera.position.set(0, 30, 34);
 
-    const hemi = new THREE.HemisphereLight(0xe5f5cf, 0x12160e, 1.35);
-    const sun = new THREE.DirectionalLight(0xffe4a6, 3.1);
-    sun.position.set(-18, 42, 12);
+    const hemi = new THREE.HemisphereLight(0xd8ecff, 0x16120c, 1.05);
+    const sun = new THREE.DirectionalLight(0xffd79a, 3.4);
+    sun.position.set(-28, 48, 18);
     sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.mapSize.set(3072, 3072);
     sun.shadow.camera.near = 10;
-    sun.shadow.camera.far = 120;
-    sun.shadow.camera.left = -60;
-    sun.shadow.camera.right = 60;
-    sun.shadow.camera.top = 60;
-    sun.shadow.camera.bottom = -60;
-    this.scene.add(hemi, sun);
+    sun.shadow.camera.far = 150;
+    sun.shadow.camera.left = -72;
+    sun.shadow.camera.right = 72;
+    sun.shadow.camera.top = 72;
+    sun.shadow.camera.bottom = -72;
+    const skyFill = new THREE.DirectionalLight(0x6fa6ff, 0.48);
+    skyFill.position.set(30, 28, -32);
+    this.scene.add(hemi, sun, skyFill);
 
     this.createTerrain();
     this.createCratersAndRoads();
+    this.createGermanCityScene();
 
     this.createWalls();
     this.createObstacles();
@@ -478,21 +550,42 @@ class TankWorldGame {
   }
 
   private createCratersAndRoads(): void {
-    const roadMaterial = new THREE.MeshStandardMaterial({
-      color: 0x3c3423,
-      roughness: 0.94,
-      transparent: true,
-      opacity: 0.88
-    });
-    const verticalRoad = new THREE.Mesh(roadGeometry, roadMaterial);
+    ensureGeometryUv2(roadGeometry);
+    const verticalRoad = new THREE.Mesh(
+      roadGeometry,
+      createPbrMaterial(this.textureLoader, pbrTextureSets.cobblestone, {
+        repeat: [1.4, 12],
+        color: 0xb3aaa0,
+        metalness: 0.02,
+        roughness: 0.96,
+        normalScale: 0.78,
+        displacementScale: 0.018
+      })
+    );
     verticalRoad.scale.set(10.6, tankArenaSize, 1);
     verticalRoad.rotation.x = -Math.PI / 2;
     verticalRoad.position.y = 0.09;
+    verticalRoad.receiveShadow = true;
+    verticalRoad.name = "german-city-cobblestone-main-road";
     this.scene.add(verticalRoad);
 
-    const horizontalRoad = verticalRoad.clone();
+    const horizontalRoad = new THREE.Mesh(
+      roadGeometry,
+      createPbrMaterial(this.textureLoader, pbrTextureSets.cobblestone, {
+        repeat: [12, 1.4],
+        color: 0xb3aaa0,
+        metalness: 0.02,
+        roughness: 0.96,
+        normalScale: 0.78,
+        displacementScale: 0.018
+      })
+    );
     horizontalRoad.scale.set(tankArenaSize, 10.6, 1);
+    horizontalRoad.rotation.x = -Math.PI / 2;
+    horizontalRoad.position.y = 0.1;
     horizontalRoad.position.z = -7;
+    horizontalRoad.receiveShadow = true;
+    horizontalRoad.name = "german-city-cobblestone-cross-road";
     this.scene.add(horizontalRoad);
 
     const craterMaterial = new THREE.MeshStandardMaterial({
@@ -515,6 +608,151 @@ class TankWorldGame {
       mesh.position.set(crater.x, 0.12, crater.z);
       this.scene.add(mesh);
     });
+  }
+
+  private createGermanCityScene(): void {
+    this.createTramRails();
+    for (const building of germanCityBuildings) {
+      this.createGermanCityBuilding(building);
+    }
+    for (const lamp of germanCityStreetLights) {
+      this.createStreetLamp(lamp.x, lamp.z, lamp.castsShadow);
+    }
+  }
+
+  private createGermanCityBuilding(building: GermanCityBuilding): void {
+    const group = new THREE.Group();
+    group.position.set(building.x, 0, building.z);
+    group.rotation.y = building.yaw;
+    group.name = `german-city-${building.facade}-building`;
+
+    const material =
+      building.facade === "brick"
+        ? this.materials.brick
+        : building.facade === "damaged"
+          ? this.materials.damagedBrick
+          : this.materials.plaster;
+    const bodyGeometry = new THREE.BoxGeometry(building.width, building.height, building.depth, 2, 4, 2);
+    ensureGeometryUv2(bodyGeometry);
+    const body = new THREE.Mesh(bodyGeometry, material);
+    body.position.y = building.height / 2;
+    body.castShadow = true;
+    body.receiveShadow = true;
+    group.add(body);
+
+    const roofGeometry = createGabledRoofGeometry(
+      building.width + 0.9,
+      building.depth + 0.9,
+      Math.max(1.5, building.height * 0.16)
+    );
+    ensureGeometryUv2(roofGeometry);
+    const roof = new THREE.Mesh(roofGeometry, this.materials.roof);
+    roof.position.y = building.height;
+    roof.castShadow = true;
+    roof.receiveShadow = true;
+    group.add(roof);
+
+    this.addCityWindows(group, building);
+    if (building.facade === "damaged") {
+      this.addRubbleSpill(group, building);
+    }
+
+    this.scene.add(group);
+    this.obstacles.push(new THREE.Box3().setFromObject(group).expandByScalar(0.55));
+  }
+
+  private addCityWindows(group: THREE.Group, building: GermanCityBuilding): void {
+    const floors = Math.max(2, Math.floor(building.height / 3.2));
+    const columns = Math.max(2, Math.floor(building.width / 3.2));
+    const windowGeometry = new THREE.BoxGeometry(0.78, 1.08, 0.09);
+    const yStart = 1.9;
+    const zFaces = [building.depth / 2 + 0.06, -building.depth / 2 - 0.06];
+
+    for (const z of zFaces) {
+      for (let floor = 0; floor < floors; floor += 1) {
+        for (let column = 0; column < columns; column += 1) {
+          const x = ((column + 0.5) / columns - 0.5) * (building.width - 1.8);
+          const y = yStart + floor * 2.65;
+          if (y > building.height - 1.1) {
+            continue;
+          }
+          const window = new THREE.Mesh(
+            windowGeometry,
+            (floor + column + Math.round(building.x + building.z)) % 5 === 0
+              ? this.materials.windowGlow
+              : this.materials.window
+          );
+          window.position.set(x, y, z);
+          if (z < 0) {
+            window.rotation.y = Math.PI;
+          }
+          window.castShadow = false;
+          window.receiveShadow = true;
+          group.add(window);
+        }
+      }
+    }
+  }
+
+  private addRubbleSpill(group: THREE.Group, building: GermanCityBuilding): void {
+    const rubbleMaterial = this.materials.damagedBrick;
+    for (let index = 0; index < 18; index += 1) {
+      const size = 0.35 + Math.random() * 0.55;
+      const geometry = new THREE.BoxGeometry(size, size * 0.55, size * (0.8 + Math.random() * 0.8));
+      ensureGeometryUv2(geometry);
+      const rubble = new THREE.Mesh(geometry, rubbleMaterial);
+      rubble.position.set(
+        -building.width / 2 + Math.random() * building.width,
+        size * 0.28,
+        building.depth / 2 + 0.4 + Math.random() * 2.4
+      );
+      rubble.rotation.set(Math.random() * 0.4, Math.random() * Math.PI, Math.random() * 0.35);
+      rubble.castShadow = true;
+      rubble.receiveShadow = true;
+      group.add(rubble);
+    }
+  }
+
+  private createTramRails(): void {
+    const railMaterial = this.materials.rail;
+    [
+      { x: -1.35, z: 0, sx: 0.18, sz: tankArenaSize - 10 },
+      { x: 1.35, z: 0, sx: 0.18, sz: tankArenaSize - 10 },
+      { x: 0, z: -8.35, sx: tankArenaSize - 10, sz: 0.18 },
+      { x: 0, z: -5.65, sx: tankArenaSize - 10, sz: 0.18 }
+    ].forEach((rail) => {
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(rail.sx, 0.09, rail.sz), railMaterial);
+      mesh.position.set(rail.x, 0.18, rail.z);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      mesh.name = "german-city-tram-rail";
+      this.scene.add(mesh);
+    });
+  }
+
+  private createStreetLamp(x: number, z: number, castsShadow: boolean): void {
+    const group = new THREE.Group();
+    const pole = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.08, 0.1, 4.2, 10),
+      new THREE.MeshStandardMaterial({ color: 0x2f342e, roughness: 0.62, metalness: 0.72 })
+    );
+    pole.position.y = 2.1;
+    pole.castShadow = true;
+    pole.receiveShadow = true;
+    const lamp = new THREE.Mesh(
+      new THREE.SphereGeometry(0.38, 16, 10),
+      new THREE.MeshStandardMaterial({ color: 0xffd69a, emissive: 0xffa444, emissiveIntensity: 1.25 })
+    );
+    lamp.position.y = 4.35;
+    const light = new THREE.PointLight(0xffb56d, 0.9, 17, 2);
+    light.position.y = 4.35;
+    light.castShadow = castsShadow;
+    light.shadow.mapSize.set(512, 512);
+    light.shadow.bias = -0.0008;
+    group.add(pole, lamp, light);
+    group.position.set(x, 0, z);
+    group.name = "german-city-street-lamp";
+    this.scene.add(group);
   }
 
   private createWalls(): void {
@@ -646,8 +884,8 @@ class TankWorldGame {
 
   private createTank(id: string, callsign: string, kind: TankKind, color: number, point: ArenaPoint): TankEntity {
     const group = new THREE.Group();
-    const material = new THREE.MeshStandardMaterial({ color, roughness: 0.74, metalness: 0.18 });
-    const darkMaterial = new THREE.MeshStandardMaterial({ color: 0x111710, roughness: 0.9 });
+    const material = this.createTankArmorMaterial(kind, color);
+    const darkMaterial = this.materials.tankTrack.clone();
     const hull = new THREE.Group();
     const body = new THREE.Mesh(tankBodyGeometry, material);
     body.position.y = 0.85;
@@ -698,6 +936,13 @@ class TankWorldGame {
     return tank;
   }
 
+  private createTankArmorMaterial(kind: TankKind, fallbackColor: number): THREE.MeshStandardMaterial {
+    const material = this.materials.tankArmor.clone();
+    material.color.setHex(kind === "player" ? 0x687454 : kind === "peer" ? 0x55707a : kind === "bot" ? 0x73604a : fallbackColor);
+    material.needsUpdate = true;
+    return material;
+  }
+
   private loadWorldAssets(): void {
     this.assetStatus = "加载中";
     Promise.allSettled(
@@ -722,7 +967,7 @@ class TankWorldGame {
           this.assetLibrary.set(key, scene);
         }
       }
-      this.assetStatus = `${this.assetLibrary.size}/${worldAssets.length} CC0 GLB`;
+      this.assetStatus = `${this.assetLibrary.size}/${worldAssets.length} CC0 GLB + PBR`;
       for (const tank of this.tanks.values()) {
         this.applyTankSkin(tank);
       }
@@ -744,9 +989,28 @@ class TankWorldGame {
     }
     const skin = normalizeAssetModel(tankAsset, 5.2, 0.02, 0);
     skin.name = `${tank.callsign}-cc0-tank-skin`;
+    this.applyPbrTankMaterials(skin, tank);
     tank.hull.visible = false;
     tank.group.add(skin);
     tank.skin = skin;
+  }
+
+  private applyPbrTankMaterials(root: THREE.Object3D, tank: TankEntity): void {
+    root.traverse((child) => {
+      const mesh = child as THREE.Mesh;
+      if (!mesh.isMesh) {
+        return;
+      }
+      const signature = `${mesh.name} ${mesh.parent?.name ?? ""}`.toLowerCase();
+      const isTrack = /track|tread|wheel|roadwheel|belt|chain|kette/.test(signature);
+      const material = isTrack ? this.materials.tankTrack.clone() : this.createTankArmorMaterial(tank.kind, 0x746149);
+      if (mesh.geometry) {
+        ensureGeometryUv2(mesh.geometry);
+      }
+      mesh.material = material;
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+    });
   }
 
   private applyDownloadedScenery(): void {
@@ -1341,6 +1605,8 @@ class TankWorldGame {
     this.dom.heading.textContent = headingDegrees(this.player.physics.heading);
     this.dom.camera.textContent = cameraModeLabels[this.cameraMode];
     this.dom.assets.textContent = this.assetStatus;
+    this.dom.map.textContent = germanCityMapLabel;
+    this.dom.material.textContent = this.materialStatus;
     this.dom.reload.textContent = this.player.reloadMs > 0 ? `${Math.ceil(this.player.reloadMs)} ms` : "就绪";
     this.dom.armorZone.textContent = this.player.lastArmorZone ? armorZoneLabels[this.player.lastArmorZone] : "完整";
     this.dom.roster.innerHTML = sortScoreboard(this.scoreboard())
@@ -1411,6 +1677,164 @@ function createGroundTexture(): THREE.CanvasTexture {
   texture.repeat.set(12, 12);
   texture.colorSpace = THREE.SRGBColorSpace;
   return texture;
+}
+
+function createPbrMaterialKit(loader: THREE.TextureLoader): PbrMaterialKit {
+  return {
+    tankArmor: createPbrMaterial(loader, pbrTextureSets.tankMetal, {
+      repeat: [2.4, 2.4],
+      color: 0x687454,
+      metalness: 0.58,
+      roughness: 0.84,
+      normalScale: 0.5
+    }),
+    tankTrack: createPbrMaterial(loader, pbrTextureSets.tankMetal, {
+      repeat: [3.2, 1.8],
+      color: 0x171a16,
+      metalness: 0.72,
+      roughness: 0.88,
+      normalScale: 0.82
+    }),
+    cobblestone: createPbrMaterial(loader, pbrTextureSets.cobblestone, {
+      repeat: [7, 7],
+      color: 0xb3aaa0,
+      metalness: 0.02,
+      roughness: 0.96,
+      normalScale: 0.78,
+      displacementScale: 0.012
+    }),
+    brick: createPbrMaterial(loader, pbrTextureSets.brick, {
+      repeat: [2.4, 2.8],
+      color: 0x9a7561,
+      metalness: 0.01,
+      roughness: 0.94,
+      normalScale: 0.68,
+      displacementScale: 0.01
+    }),
+    plaster: createPbrMaterial(loader, pbrTextureSets.plaster, {
+      repeat: [2.1, 2.5],
+      color: 0xada48f,
+      metalness: 0.01,
+      roughness: 0.97,
+      normalScale: 0.54,
+      displacementScale: 0.006
+    }),
+    damagedBrick: createPbrMaterial(loader, pbrTextureSets.brick, {
+      repeat: [2.2, 2.6],
+      color: 0x6f6255,
+      metalness: 0.01,
+      roughness: 0.98,
+      normalScale: 0.86,
+      displacementScale: 0.014
+    }),
+    roof: createPbrMaterial(loader, pbrTextureSets.brick, {
+      repeat: [3, 1.4],
+      color: 0x4d2f25,
+      metalness: 0.02,
+      roughness: 0.91,
+      normalScale: 0.42
+    }),
+    rail: createPbrMaterial(loader, pbrTextureSets.tankMetal, {
+      repeat: [8, 1],
+      color: 0x3e433d,
+      metalness: 0.8,
+      roughness: 0.68,
+      normalScale: 0.6
+    }),
+    window: new THREE.MeshStandardMaterial({
+      color: 0x141b1d,
+      roughness: 0.42,
+      metalness: 0.08
+    }),
+    windowGlow: new THREE.MeshStandardMaterial({
+      color: 0xffd49a,
+      emissive: 0xff9f45,
+      emissiveIntensity: 0.9,
+      roughness: 0.5,
+      metalness: 0.02
+    })
+  };
+}
+
+function createPbrMaterial(
+  loader: THREE.TextureLoader,
+  textureSet: PbrTextureSet,
+  options: {
+    repeat: [number, number];
+    color: number;
+    metalness: number;
+    roughness: number;
+    normalScale: number;
+    displacementScale?: number;
+  }
+): THREE.MeshStandardMaterial {
+  const material = new THREE.MeshStandardMaterial({
+    color: options.color,
+    map: loadPbrTexture(loader, textureSet.color, options.repeat, true),
+    normalMap: loadPbrTexture(loader, textureSet.normal, options.repeat, false),
+    roughnessMap: loadPbrTexture(loader, textureSet.roughness, options.repeat, false),
+    aoMap: textureSet.ao ? loadPbrTexture(loader, textureSet.ao, options.repeat, false) : undefined,
+    displacementMap:
+      textureSet.displacement && options.displacementScale
+        ? loadPbrTexture(loader, textureSet.displacement, options.repeat, false)
+        : undefined,
+    displacementScale: options.displacementScale ?? 0,
+    metalness: options.metalness,
+    roughness: options.roughness
+  });
+  material.normalScale.setScalar(options.normalScale);
+  return material;
+}
+
+function loadPbrTexture(
+  loader: THREE.TextureLoader,
+  url: string,
+  repeat: [number, number],
+  colorTexture: boolean
+): THREE.Texture {
+  const texture = loader.load(url);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(repeat[0], repeat[1]);
+  texture.anisotropy = 8;
+  if (colorTexture) {
+    texture.colorSpace = THREE.SRGBColorSpace;
+  }
+  return texture;
+}
+
+function ensureGeometryUv2(geometry: THREE.BufferGeometry): void {
+  const uv = geometry.getAttribute("uv");
+  if (!uv || geometry.getAttribute("uv2")) {
+    return;
+  }
+  geometry.setAttribute("uv2", new THREE.BufferAttribute(new Float32Array(uv.array as ArrayLike<number>), uv.itemSize));
+}
+
+function createGabledRoofGeometry(width: number, depth: number, height: number): THREE.BufferGeometry {
+  const leftFront = [-width / 2, 0, depth / 2];
+  const peakFront = [0, height, depth / 2];
+  const rightFront = [width / 2, 0, depth / 2];
+  const leftBack = [-width / 2, 0, -depth / 2];
+  const peakBack = [0, height, -depth / 2];
+  const rightBack = [width / 2, 0, -depth / 2];
+  const triangles = [
+    [leftFront, peakFront, rightFront],
+    [leftBack, rightBack, peakBack],
+    [leftFront, leftBack, peakBack],
+    [leftFront, peakBack, peakFront],
+    [rightFront, peakFront, peakBack],
+    [rightFront, peakBack, rightBack],
+    [leftFront, rightFront, rightBack],
+    [leftFront, rightBack, leftBack]
+  ];
+  const positions = triangles.flat(2);
+  const uvs = triangles.flatMap(() => [0, 0, 0.5, 1, 1, 0]);
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
+  geometry.computeVertexNormals();
+  return geometry;
 }
 
 function prepareAssetScene(root: THREE.Object3D): void {
