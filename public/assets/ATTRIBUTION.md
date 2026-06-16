@@ -4,7 +4,7 @@ The current build uses free public-domain assets downloaded for this repository.
 
 ## Poly Pizza / Quaternius
 
-All files below are listed on Poly Pizza as `Public Domain (CC0)` and are authored by Quaternius.
+All files below are listed on Poly Pizza as `Public Domain (CC0)`.
 
 | Local file | Source | Use |
 | --- | --- | --- |
@@ -14,5 +14,8 @@ All files below are listed on Poly Pizza as `Public Domain (CC0)` and are author
 | `vendor/poly-pizza/quaternius-modular-ruins/quaternius-modular-ruins.glb` | https://poly.pizza/m/F2LAK03B0r | Ruined battlefield structures |
 | `vendor/poly-pizza/quaternius-barrel/quaternius-barrel.glb` | https://poly.pizza/m/ONdghDBByN | Fuel and supply depot props |
 | `vendor/poly-pizza/quaternius-cube-crate/quaternius-cube-crate.glb` | https://poly.pizza/m/YAghI6GBls | Supply crate props |
+| `vendor/poly-pizza/quaternius-guard-tower/quaternius-guard-tower.glb` | https://poly.pizza/m/sbaM8I229r | Guard tower landmarks |
+| `vendor/poly-pizza/kenney-fence-fortified/kenney-fence-fortified.glb` | https://poly.pizza/m/9FQPNr0sdJ | Fortified fence cover |
+| `vendor/poly-pizza/quaternius-small-bridge/quaternius-small-bridge.glb` | https://poly.pizza/m/j4KsIuJYnq | Battlefield bridge landmark |
 
 CC0 license reference: https://creativecommons.org/publicdomain/zero/1.0/

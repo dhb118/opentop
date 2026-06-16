@@ -55,6 +55,9 @@ export const tankArenaSize = 96;
 export const defaultTankRoom = "RIDGE-01";
 export const multiplayerRoomStorageKey = "iron-ridge-room";
 export const tankShellSpeed = 46;
+export const tankShellGravity = 18;
+export const tankShellMuzzleLift = 7.2;
+export const tankBlastRadius = 5.4;
 export const tankRecoilImpulse = 5.4;
 export const tankCameraModes: TankCameraMode[] = ["commander", "gunner", "driver", "tactical"];
 export const defaultTankCameraMode: TankCameraMode = "commander";
@@ -136,13 +139,26 @@ export function clampArenaPoint(point: ArenaPoint, arenaSize = tankArenaSize): A
 }
 
 export function shellDamageForDistance(distance: number): number {
-  if (distance <= 1.7) {
-    return 34;
+  if (distance <= 1.6) {
+    return 42;
   }
-  if (distance <= 2.7) {
-    return 18;
+  if (distance <= 3.2) {
+    return 24;
+  }
+  if (distance <= tankBlastRadius) {
+    return 10;
   }
   return 0;
+}
+
+export function stepShellVerticalVelocity(verticalVelocity: number, dt: number, gravity = tankShellGravity): number {
+  const safeDt = Math.max(0, Math.min(dt, 0.05));
+  return verticalVelocity - gravity * safeDt;
+}
+
+export function shellHeightAfterStep(height: number, verticalVelocity: number, dt: number): number {
+  const safeDt = Math.max(0, Math.min(dt, 0.05));
+  return height + stepShellVerticalVelocity(verticalVelocity, safeDt) * safeDt;
 }
 
 export function terrainSurfaceForPoint(point: ArenaPoint): TerrainSurface {

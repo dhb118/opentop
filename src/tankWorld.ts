@@ -12,10 +12,14 @@ import {
   normalizeTankCameraMode,
   normalizeRoomCode,
   shellDamageForDistance,
+  shellHeightAfterStep,
   sortScoreboard,
+  stepShellVerticalVelocity,
   stepTankPhysics,
+  tankBlastRadius,
   tankCameraModes,
   tankArenaSize,
+  tankShellMuzzleLift,
   tankShellSpeed,
   terrainSurfaceForPoint,
   terrainSurfaceProfiles,
@@ -28,7 +32,7 @@ import {
 } from "./tankWorldModel";
 
 type TankKind = "player" | "bot" | "peer";
-type WorldAssetKey = "tank" | "bags" | "trench" | "ruins" | "barrel" | "crate";
+type WorldAssetKey = "tank" | "bags" | "trench" | "ruins" | "barrel" | "crate" | "guardTower" | "fence" | "bridge";
 
 interface TankEntity {
   id: string;
@@ -52,11 +56,19 @@ interface ShellEntity {
   mesh: THREE.Mesh;
   velocity: THREE.Vector3;
   ttl: number;
+  age: number;
 }
 
 interface DustEntity {
   mesh: THREE.Mesh;
   velocity: THREE.Vector3;
+  ttl: number;
+  maxTtl: number;
+}
+
+interface ExplosionEntity {
+  mesh: THREE.Mesh;
+  light: THREE.PointLight;
   ttl: number;
   maxTtl: number;
 }
@@ -127,6 +139,7 @@ interface SceneryPlacement {
 const playerId = crypto.randomUUID();
 const playerCallsign = buildCallsign(playerId);
 const shellGeometry = new THREE.SphereGeometry(0.34, 12, 8);
+const explosionGeometry = new THREE.SphereGeometry(1, 16, 10);
 const tankBodyGeometry = new THREE.BoxGeometry(3.2, 1.25, 4.2);
 const tankTurretGeometry = new THREE.CylinderGeometry(0.95, 1.05, 0.74, 18);
 const tankBarrelGeometry = new THREE.BoxGeometry(0.36, 0.34, 3);
@@ -174,6 +187,21 @@ const worldAssets: WorldAssetDefinition[] = [
     key: "crate",
     label: "Quaternius Cube Crate",
     url: "assets/vendor/poly-pizza/quaternius-cube-crate/quaternius-cube-crate.glb"
+  },
+  {
+    key: "guardTower",
+    label: "Quaternius Guard Tower",
+    url: "assets/vendor/poly-pizza/quaternius-guard-tower/quaternius-guard-tower.glb"
+  },
+  {
+    key: "fence",
+    label: "Kenney Fence Fortified",
+    url: "assets/vendor/poly-pizza/kenney-fence-fortified/kenney-fence-fortified.glb"
+  },
+  {
+    key: "bridge",
+    label: "Quaternius Small Bridge",
+    url: "assets/vendor/poly-pizza/quaternius-small-bridge/quaternius-small-bridge.glb"
   }
 ];
 const coverPlacements: CoverPlacement[] = [
@@ -195,7 +223,13 @@ const sceneryPlacements: SceneryPlacement[] = [
   { key: "barrel", x: -32, z: -36, footprint: 3, yaw: -0.35 },
   { key: "crate", x: -39, z: -31, footprint: 3.2, yaw: 0.8 },
   { key: "crate", x: 35, z: 36, footprint: 3.4, yaw: -0.48 },
-  { key: "barrel", x: 39, z: 33, footprint: 2.8, yaw: 0.7 }
+  { key: "barrel", x: 39, z: 33, footprint: 2.8, yaw: 0.7 },
+  { key: "guardTower", x: -43, z: 40, footprint: 8.5, yaw: 0.72 },
+  { key: "guardTower", x: 42, z: -40, footprint: 8, yaw: -2.35 },
+  { key: "fence", x: -43, z: 24, footprint: 6, yaw: Math.PI / 2 },
+  { key: "fence", x: -43, z: 30, footprint: 6, yaw: Math.PI / 2 },
+  { key: "fence", x: 43, z: -25, footprint: 6, yaw: -Math.PI / 2 },
+  { key: "bridge", x: 0, z: -7, footprint: 11, yaw: Math.PI / 2 }
 ];
 
 export function mountTankWorld(root: HTMLElement): void {
@@ -307,6 +341,7 @@ class TankWorldGame {
   private readonly input = new Set<string>();
   private readonly shells: ShellEntity[] = [];
   private readonly dust: DustEntity[] = [];
+  private readonly explosions: ExplosionEntity[] = [];
   private readonly tanks = new Map<string, TankEntity>();
   private readonly obstacles: THREE.Box3[] = [];
   private readonly assetLoader = new GLTFLoader();
@@ -707,6 +742,9 @@ class TankWorldGame {
       mesh.position.z = placement.z;
       mesh.name = `downloaded-${placement.key}-scenery`;
       this.scene.add(mesh);
+      if (placement.key === "guardTower" || placement.key === "fence") {
+        this.obstacles.push(new THREE.Box3().setFromObject(mesh).expandByScalar(0.6));
+      }
     }
   }
 
@@ -822,6 +860,7 @@ class TankWorldGame {
     this.updateBots(dt);
     this.updateShells(dt);
     this.updateDust(dt);
+    this.updateExplosions(dt);
     this.updatePeers();
     this.updateCamera(dt);
     this.broadcastState(false);
@@ -894,21 +933,74 @@ class TankWorldGame {
     for (let index = this.shells.length - 1; index >= 0; index -= 1) {
       const shell = this.shells[index];
       shell.ttl -= dt;
-      shell.mesh.position.addScaledVector(shell.velocity, dt);
+      shell.age += dt;
+      const verticalVelocity = shell.velocity.y;
+      shell.mesh.position.x += shell.velocity.x * dt;
+      shell.mesh.position.y = shellHeightAfterStep(shell.mesh.position.y, verticalVelocity, dt);
+      shell.mesh.position.z += shell.velocity.z * dt;
+      shell.velocity.y = stepShellVerticalVelocity(verticalVelocity, dt);
       const point = { x: shell.mesh.position.x, z: shell.mesh.position.z };
       if (
         shell.ttl <= 0 ||
         Math.abs(point.x) > tankArenaSize / 2 ||
-        Math.abs(point.z) > tankArenaSize / 2 ||
-        this.hitsObstacle(point)
+        Math.abs(point.z) > tankArenaSize / 2
       ) {
         this.removeShell(index);
         continue;
       }
+      if (shell.mesh.position.y <= 0.28 || this.hitsObstacle(point)) {
+        this.explodeShell(shell, index);
+        continue;
+      }
       const hit = this.findShellHit(shell);
       if (hit) {
-        this.damageTank(hit, shell);
-        this.removeShell(index);
+        this.explodeShell(shell, index);
+      }
+    }
+  }
+
+  private explodeShell(shell: ShellEntity, index: number): void {
+    const origin = shell.mesh.position.clone();
+    origin.y = Math.max(0.2, origin.y);
+    this.spawnExplosion(origin);
+    this.applyBlastDamage(origin, shell.ownerId);
+    this.removeShell(index);
+  }
+
+  private spawnExplosion(origin: THREE.Vector3): void {
+    const material = new THREE.MeshBasicMaterial({
+      color: 0xffb24a,
+      transparent: true,
+      opacity: 0.48,
+      depthWrite: false
+    });
+    const mesh = new THREE.Mesh(explosionGeometry, material);
+    mesh.position.copy(origin);
+    mesh.scale.setScalar(1.2);
+    const light = new THREE.PointLight(0xff9340, 2.4, 18);
+    light.position.copy(origin).add(new THREE.Vector3(0, 1.8, 0));
+    this.scene.add(mesh, light);
+    this.explosions.push({ mesh, light, ttl: 0.58, maxTtl: 0.58 });
+
+    const scorch = new THREE.Mesh(
+      craterGeometry,
+      new THREE.MeshBasicMaterial({ color: 0x0f0905, transparent: true, opacity: 0.48, depthWrite: false })
+    );
+    scorch.rotation.x = -Math.PI / 2;
+    scorch.position.set(origin.x, 0.145, origin.z);
+    scorch.scale.setScalar(1.2 + Math.random() * 1.5);
+    this.scene.add(scorch);
+  }
+
+  private applyBlastDamage(origin: THREE.Vector3, ownerId: string): void {
+    for (const tank of this.tanks.values()) {
+      if (tank.id === ownerId || tank.health <= 0) {
+        continue;
+      }
+      const distance = Math.hypot(tank.group.position.x - origin.x, tank.group.position.z - origin.z);
+      const damage = shellDamageForDistance(distance);
+      if (damage > 0) {
+        this.damageTank(tank, ownerId, damage);
       }
     }
   }
@@ -953,6 +1045,23 @@ class TankWorldGame {
     }
   }
 
+  private updateExplosions(dt: number): void {
+    for (let index = this.explosions.length - 1; index >= 0; index -= 1) {
+      const explosion = this.explosions[index];
+      explosion.ttl -= dt;
+      const progress = 1 - explosion.ttl / explosion.maxTtl;
+      explosion.mesh.scale.setScalar(1.2 + progress * tankBlastRadius);
+      explosion.light.intensity = Math.max(0, 2.4 * (1 - progress));
+      const material = explosion.mesh.material as THREE.MeshBasicMaterial;
+      material.opacity = Math.max(0, 0.48 * (1 - progress));
+      if (explosion.ttl <= 0) {
+        this.scene.remove(explosion.mesh, explosion.light);
+        material.dispose();
+        this.explosions.splice(index, 1);
+      }
+    }
+  }
+
   private updatePeers(): void {
     const now = performance.now();
     for (const tank of this.tanks.values()) {
@@ -988,9 +1097,9 @@ class TankWorldGame {
       target = new THREE.Vector3(origin.x + Math.sin(hullHeading) * 28, 1.2, origin.z + Math.cos(hullHeading) * 28);
       fov = 58;
     } else if (this.cameraMode === "tactical") {
-      desired = new THREE.Vector3(origin.x, 46, origin.z + 0.1);
+      desired = new THREE.Vector3(origin.x, 66, origin.z + 0.1);
       target = new THREE.Vector3(origin.x, 0, origin.z);
-      fov = 48;
+      fov = 56;
     } else {
       desired = new THREE.Vector3(
         origin.x - Math.sin(hullHeading) * 18,
@@ -1041,13 +1150,14 @@ class TankWorldGame {
       shellGeometry,
       new THREE.MeshStandardMaterial({ color: tank.kind === "player" ? 0xd8ff4f : 0xff744f, emissive: 0x442000 })
     );
-    mesh.position.set(tank.group.position.x + Math.sin(heading) * 3, 1.25, tank.group.position.z + Math.cos(heading) * 3);
+    mesh.position.set(tank.group.position.x + Math.sin(heading) * 3, 1.55, tank.group.position.z + Math.cos(heading) * 3);
     this.scene.add(mesh);
     this.shells.push({
       ownerId: tank.id,
       mesh,
-      velocity: new THREE.Vector3(Math.sin(heading) * tankShellSpeed, 0, Math.cos(heading) * tankShellSpeed),
-      ttl: 2.4
+      velocity: new THREE.Vector3(Math.sin(heading) * tankShellSpeed, tankShellMuzzleLift, Math.cos(heading) * tankShellSpeed),
+      ttl: 2.8,
+      age: 0
     });
     if (broadcast && this.mode === "multiplayer") {
       this.channel?.postMessage({
@@ -1129,12 +1239,12 @@ class TankWorldGame {
     return null;
   }
 
-  private damageTank(tank: TankEntity, shell: ShellEntity): void {
-    tank.health = Math.max(0, tank.health - shellDamageForDistance(tank.group.position.distanceTo(shell.mesh.position)));
+  private damageTank(tank: TankEntity, ownerId: string, damage: number): void {
+    tank.health = Math.max(0, tank.health - damage);
     if (tank.health > 0) {
       return;
     }
-    const owner = this.tanks.get(shell.ownerId);
+    const owner = this.tanks.get(ownerId);
     if (owner) {
       owner.score += 1;
     }
@@ -1161,6 +1271,12 @@ class TankWorldGame {
     const [shell] = this.shells.splice(index, 1);
     if (shell) {
       this.scene.remove(shell.mesh);
+      const material = shell.mesh.material;
+      if (Array.isArray(material)) {
+        material.forEach((item) => item.dispose());
+      } else {
+        material.dispose();
+      }
     }
   }
 
@@ -1205,7 +1321,7 @@ class TankWorldGame {
       .join("");
     this.dom.prompt.textContent =
       this.mode === "single"
-        ? "物理：质量、引擎力、地形牵引、履带阻力、开炮后坐、扬尘、碰撞反弹。"
+        ? "物理：地形牵引、履带阻力、抛物线炮弹、爆炸半径、开炮后坐、扬尘。"
         : "联机：同源 BroadcastChannel 房间；两个浏览器标签输入同一房间码即可同步。";
   }
 

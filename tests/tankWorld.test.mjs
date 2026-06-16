@@ -8,12 +8,17 @@ import {
   defaultTankPhysics,
   normalizeTankCameraMode,
   normalizeRoomCode,
+  shellHeightAfterStep,
   shellDamageForDistance,
   sortScoreboard,
+  stepShellVerticalVelocity,
   stepTankPhysics,
+  tankBlastRadius,
   tankCameraModes,
   tankArenaSize,
   tankRecoilImpulse,
+  tankShellGravity,
+  tankShellMuzzleLift,
   tankShellSpeed,
   terrainSurfaceForPoint,
   terrainSurfaceProfiles
@@ -143,11 +148,22 @@ describe("tank physics", () => {
     assert.ok(sideShot.angularVelocity < 0);
   });
 
+  it("steps shell height with gravity for ballistic arcs", () => {
+    const nextVelocity = stepShellVerticalVelocity(tankShellMuzzleLift, 0.05);
+    const nextHeight = shellHeightAfterStep(1.55, tankShellMuzzleLift, 0.05);
+
+    assert.equal(tankShellGravity, 18);
+    assert.ok(nextVelocity < tankShellMuzzleLift);
+    assert.ok(nextHeight > 1.55);
+  });
+
   it("keeps tanks inside the arena and scores shell damage by hit distance", () => {
     assert.deepEqual(clampArenaPoint({ x: tankArenaSize, z: -tankArenaSize }), { x: 45, z: -45 });
-    assert.equal(shellDamageForDistance(1.4), 34);
-    assert.equal(shellDamageForDistance(2.4), 18);
-    assert.equal(shellDamageForDistance(3.1), 0);
+    assert.equal(shellDamageForDistance(1.4), 42);
+    assert.equal(shellDamageForDistance(2.4), 24);
+    assert.equal(shellDamageForDistance(4.8), 10);
+    assert.equal(shellDamageForDistance(6.1), 0);
+    assert.equal(tankBlastRadius, 5.4);
     assert.equal(tankShellSpeed, 46);
     assert.equal(defaultTankPhysics.mass, 18);
   });
