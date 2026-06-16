@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Iron Ridge 3D Tank World</title>
+  <desc id="desc">A dark tactical grid with a lime tank, orange shell, and the Iron Ridge 3D Tank World title.</desc>
+  <rect width="1200" height="630" fill="#070907"/>
+  <path d="M0 454h1200M0 356h1200M0 258h1200M0 160h1200M170 0l-260 630M340 0L80 630M510 0 250 630M680 0 420 630M850 0 590 630M1020 0 760 630M1190 0 930 630" stroke="#2d3d22" stroke-width="2"/>
+  <rect x="765" y="95" width="180" height="74" fill="#566b3f"/>
+  <rect x="925" y="430" width="230" height="98" fill="#405331"/>
+  <g transform="translate(560 345) rotate(-8)">
+    <rect x="-118" y="-72" width="236" height="144" rx="8" fill="#d8ff4f"/>
+    <rect x="-144" y="40" width="42" height="38" fill="#071007"/>
+    <rect x="102" y="40" width="42" height="38" fill="#071007"/>
+    <path d="M-50 0c16 34 84 34 100 0v42H12V22h-24v20h-38z" fill="#789c25"/>
+    <rect x="-12" y="-156" width="24" height="178" fill="#d8ff4f"/>
+  </g>
+  <circle cx="382" cy="263" r="15" fill="#ff704d"/>
+  <circle cx="382" cy="263" r="42" fill="#ff704d" opacity=".14"/>
+  <text x="74" y="108" fill="#d8ff4f" font-family="Consolas, monospace" font-size="22" font-weight="700">IRON RIDGE</text>
+  <text x="74" y="185" fill="#f7f2df" font-family="Trebuchet MS, Arial, sans-serif" font-size="78" font-weight="800">3D Tank World</text>
+  <text x="78" y="238" fill="#c4c9aa" font-family="Trebuchet MS, Arial, sans-serif" font-size="30">TypeScript + Three.js physics arena</text>
+  <text x="78" y="292" fill="#f7f2df" font-family="Consolas, monospace" font-size="24">Single-player bots . same-origin multiplayer rooms . shell combat</text>
+</svg>
