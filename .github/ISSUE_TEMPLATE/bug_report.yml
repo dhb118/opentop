@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a reproducible issue in the app, demo, docs, or launch exports.
+description: Report a reproducible issue in Iron Ridge.
 title: "[Bug]: "
 labels: ["bug"]
 body:
@@ -16,10 +16,10 @@ body:
       label: Reproduction steps
       description: List the smallest steps that reproduce the issue.
       placeholder: |
-        1. Open the demo
-        2. Load the "Local model debugger" brief
-        3. Click "Copy Launch Kit"
-        4. See the error
+        1. Open the game
+        2. Start single-player mode
+        3. Drive into cover while firing
+        4. See the issue
     validations:
       required: true
   - type: dropdown
@@ -27,11 +27,12 @@ body:
     attributes:
       label: Area
       options:
-        - Demo
-        - Scoring
-        - Export
-        - README audit
-        - Provider settings
+        - Physics
+        - Combat
+        - Bot AI
+        - Multiplayer
+        - Rendering
+        - Input
         - Documentation
         - Other
     validations:
@@ -40,9 +41,9 @@ body:
     id: browser
     attributes:
       label: Browser or runtime
-      placeholder: Chrome 126, Firefox 127, Node 24, etc.
+      placeholder: Chrome 126, Firefox 127, Edge 126, Node 24, etc.
   - type: textarea
     id: evidence
     attributes:
       label: Evidence
-      description: Paste console output, screenshots, smoke-check output, or the generated artifact that looks wrong.
+      description: Paste console output, screenshots, or a short recording link.

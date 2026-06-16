@@ -1,35 +1,39 @@
-- name: good-first-opportunity
+- name: good-first-issue
   color: D8FF4F
-  description: Small contribution that improves OpenTop's launch value.
+  description: Small contribution that improves the playable tank arena.
 
-- name: provider
+- name: physics
   color: 32DCC0
-  description: AI provider integrations and compatibility work.
+  description: Movement, traction, collision, recoil, or shell simulation.
 
-- name: exporter
+- name: combat
   color: FF704D
-  description: Markdown, JSON, issue, launch, or social export workflows.
+  description: Weapons, damage, armor, respawn, and match rules.
 
-- name: scoring
+- name: bot-ai
   color: B8A1FF
-  description: Opportunity scoring model, weights, and explainability.
+  description: Bot navigation, tactics, target selection, and difficulty.
 
-- name: sample-brief
+- name: multiplayer
+  color: 8FD3FF
+  description: Rooms, networking, authority, interpolation, and reconnects.
+
+- name: map-mode
+  color: FFB86B
+  description: Maps, objectives, spawns, cover, and mode design.
+
+- name: rendering
   color: F5F1E6
-  description: Built-in briefs and generated gallery examples.
+  description: Three.js visuals, effects, lighting, models, and performance.
+
+- name: input
+  color: F45B69
+  description: Keyboard, mouse, touch, gamepad, and accessibility controls.
 
 - name: docs
-  color: 8FD3FF
-  description: README, launch playbook, guides, and gallery content.
-
-- name: ui
-  color: FFB86B
-  description: Interface, accessibility, layout, and interaction polish.
-
-- name: growth
-  color: F45B69
-  description: Assets that help the repository spread and convert visitors.
+  color: 7C9CFF
+  description: README, setup, architecture, and contributor documentation.
 
 - name: bug
   color: D73A4A
-  description: Reproducible defects in the app, demo, docs, or launch exports.
+  description: Reproducible defects in gameplay, rendering, physics, or docs.

@@ -1,10 +1,10 @@
 {
-  "name": "opentop",
+  "name": "iron-ridge",
   "version": "0.1.0",
-  "description": "AI opportunity radar for builders who want to choose, shape, and launch open-source AI apps.",
+  "description": "TypeScript and Three.js 3D tank arena with physics, bots, and same-origin multiplayer rooms.",
   "type": "module",
   "private": false,
-  "homepage": "https://rawcdn.githack.com/dhb118/opentop/c0cc556035b729caf53d44d9f0b4a1e5dc85adea/",
+  "homepage": "https://github.com/dhb118/opentop",
   "repository": {
     "type": "git",
     "url": "https://github.com/dhb118/opentop.git"
@@ -15,34 +15,26 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
-    "capture:demo-frames": "node scripts/capture-demo-frames.mjs",
-    "check:publish": "node scripts/prepublish-check.mjs",
-    "deploy:pages:branch": "node scripts/deploy-gh-pages.mjs",
-    "generate:benchmarks": "node scripts/generate-benchmarks.mjs",
-    "generate:gallery": "node scripts/generate-gallery.mjs",
-    "package:demo": "node scripts/package-demo.mjs",
     "preview": "vite preview --host 0.0.0.0",
-    "repo:profile": "node scripts/repo-profile.mjs",
-    "repo:profile:apply": "node scripts/repo-profile.mjs --apply",
-    "repo:profile:audit": "node scripts/repo-profile.mjs --audit",
-    "sync:labels": "node scripts/sync-labels.mjs --dry-run",
-    "smoke:launch-exports": "node scripts/smoke-launch-exports.mjs",
-    "smoke:pages": "node scripts/smoke-pages.mjs",
     "test": "node --test tests/*.test.mjs",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [
-    "ai",
+    "threejs",
     "typescript",
-    "startup-ideas",
-    "open-source",
-    "prompt-engineering",
-    "ollama",
-    "openai-compatible"
+    "tank-game",
+    "webgl",
+    "multiplayer",
+    "browser-game",
+    "physics"
   ],
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "three": "^0.184.0"
+  },
   "devDependencies": {
+    "@types/three": "^0.184.1",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"
   }

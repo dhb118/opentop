@@ -1,18 +1,18 @@
 ## Summary
 
-- Replace this with the concrete change.
+- What changed?
 
-## Why This Helps OpenTop Earn Trust
+## Gameplay Or Engine Impact
 
-- Replace this with the visitor, contributor, launch, or reliability impact.
+- How does this improve physics, controls, bots, rendering, maps, or multiplayer?
 
 ## Verification
 
 - [ ] `pnpm test`
+- [ ] `pnpm typecheck`
 - [ ] `pnpm build`
-- [ ] I updated English and Simplified Chinese README text together, if user-facing copy changed.
-- [ ] I updated launch docs or starter issues, if this changes public launch behavior.
+- [ ] Browser-tested the tank arena when gameplay or UI changed.
 
-## Screenshots Or Artifacts
+## Screenshots Or Clips
 
-Add screenshots, copied export text, demo links, or generated files when the change affects the UI, README, gallery, launch exports, or repository profile.
+Add a screenshot, short clip, or notes for visual/gameplay changes.

@@ -1,0 +1,26 @@
+name: Map or mode idea
+description: Propose a new map, objective, or battle mode.
+title: "[Mode]: "
+labels: ["map-mode"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      placeholder: Ridge Convoy
+    validations:
+      required: true
+  - type: textarea
+    id: loop
+    attributes:
+      label: Core loop
+      description: What does the player do minute to minute?
+    validations:
+      required: true
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Smallest implementation
+      description: What can be built first without new assets or backend work?
+    validations:
+      required: true

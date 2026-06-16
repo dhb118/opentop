@@ -1,22 +1,16 @@
-# Contributing to OpenTop
+# Contributing to Iron Ridge
 
-OpenTop is designed to be easy to fork, tune, and extend.
-
-## Find Work
-
-- Start with the public starter issue list in `docs/STARTER_ISSUES.md`.
-- Current launch blockers are tracked in [#11](https://github.com/dhb118/opentop/issues/11), [#12](https://github.com/dhb118/opentop/issues/12), and [#13](https://github.com/dhb118/opentop/issues/13).
-- Good first growth tasks are tracked in [#14](https://github.com/dhb118/opentop/issues/14), [#15](https://github.com/dhb118/opentop/issues/15), and [#16](https://github.com/dhb118/opentop/issues/16).
-- Pick tasks that improve the hosted demo, launch proof, sample briefs, exports, README clarity, or the weekly gallery workflow.
-- Use the bug report template for reproducible issues, and include the smallest steps, browser/runtime, and console or smoke-check evidence.
+Iron Ridge is a TypeScript and Three.js browser tank game. Contributions should make the game more playable, more reliable, or easier to extend.
 
 ## Useful Contribution Areas
 
-- Add new scoring dimensions.
-- Add sample opportunity briefs.
-- Add exporters for GitHub issues, README sections, and launch posts.
-- Add AI providers that support chat completions.
-- Improve accessibility, keyboard navigation, and responsive behavior.
+- Tank physics: traction, braking, recoil, terrain friction, collision response.
+- Combat: shell types, reload timing, hit feedback, armor zones, respawn rules.
+- AI: bot navigation, target selection, difficulty levels, objective play.
+- Multiplayer: WebSocket server, room lifecycle, server authority, interpolation, reconnects.
+- Maps: cover layout, spawn safety, objectives, visual landmarks.
+- Input: mobile controls, gamepad support, remapping, accessibility.
+- Rendering: tank models, effects, lighting, performance, screenshots.
 
 ## Local Development
 
@@ -29,23 +23,18 @@ Before opening a pull request:
 
 ```bash
 pnpm test
+pnpm typecheck
 pnpm build
 ```
 
-Use the pull request template to explain the user-facing trust or launch value of the change. Add screenshots, copied export text, or demo links when the change affects the UI, README, gallery, launch exports, or repository profile.
-
-## README Translations
-
-- Keep the English and Simplified Chinese READMEs aligned when setup, feature, model, or roadmap copy changes.
-- New README translations should use a locale suffix and be added to the language switcher in every README.
-- Prefer human review for translation changes; avoid changing product claims in only one language.
+For UI or gameplay changes, include a screenshot or a short note explaining what you tested in the browser.
 
 ## Product Bar
 
-Good changes should make at least one of these stronger:
+Good changes should improve at least one of these:
 
-- Faster path from trend signal to concrete app idea.
-- Clearer reasoning behind opportunity scores.
-- Better local-first experience without API keys.
-- More useful export artifacts for GitHub publishing.
-- Better examples that make the project easier to understand in one minute.
+- The tank feels more physical and readable.
+- A new player understands the controls faster.
+- Single-player bots become more interesting.
+- Multiplayer moves closer to authoritative online play.
+- The code remains small enough for contributors to understand.

@@ -1,0 +1,178 @@
+.tank-app {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(216, 255, 79, 0.08) 1px, transparent 1px),
+    linear-gradient(rgba(245, 241, 230, 0.05) 1px, transparent 1px),
+    #070907;
+  background-size: 64px 64px;
+  color: #f7f2df;
+  font-family: "Trebuchet MS", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+.tank-canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  cursor: crosshair;
+}
+
+.tank-hud {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  display: grid;
+  gap: 12px;
+  width: min(390px, calc(100vw - 36px));
+  padding: 16px;
+  border: 1px solid rgba(216, 255, 79, 0.26);
+  border-radius: 8px;
+  background: rgba(7, 9, 7, 0.74);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(12px);
+}
+
+.tank-brand {
+  display: grid;
+  gap: 4px;
+}
+
+.tank-brand p,
+.tank-brand h1,
+.tank-brand span {
+  margin: 0;
+}
+
+.tank-brand p {
+  color: #d8ff4f;
+  font: 800 12px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.tank-brand h1 {
+  font-size: 34px;
+  line-height: 0.9;
+  letter-spacing: 0;
+}
+
+.tank-brand span,
+.tank-prompt {
+  color: #c4c9aa;
+  line-height: 1.35;
+}
+
+.tank-toolbar,
+.tank-room {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.tank-mode-button,
+.tank-room button {
+  min-height: 40px;
+  border: 1px solid rgba(247, 242, 223, 0.18);
+  border-radius: 6px;
+  background: rgba(247, 242, 223, 0.08);
+  color: #f7f2df;
+  font-weight: 800;
+}
+
+.tank-mode-button.active,
+.tank-mode-button:hover,
+.tank-room button:hover {
+  border-color: rgba(216, 255, 79, 0.72);
+  background: rgba(216, 255, 79, 0.16);
+}
+
+.tank-room label {
+  display: grid;
+  gap: 5px;
+  color: #c4c9aa;
+  font: 800 11px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.tank-room input {
+  height: 40px;
+  border: 1px solid rgba(247, 242, 223, 0.18);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.42);
+  color: #f7f2df;
+  padding: 0 10px;
+  font: 800 14px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.tank-status-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.tank-status-grid span,
+.tank-roster span {
+  display: grid;
+  min-height: 58px;
+  padding: 10px;
+  border: 1px solid rgba(247, 242, 223, 0.13);
+  border-radius: 6px;
+  background: rgba(247, 242, 223, 0.07);
+  color: #aeb69a;
+  font: 800 11px/1.1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  text-transform: uppercase;
+}
+
+.tank-status-grid b,
+.tank-roster b {
+  color: #f7f2df;
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+
+.tank-roster {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  max-height: 208px;
+  overflow: auto;
+}
+
+.tank-roster span.player {
+  border-color: rgba(216, 255, 79, 0.48);
+}
+
+.tank-roster span.peer {
+  border-color: rgba(69, 216, 255, 0.48);
+}
+
+.tank-roster em {
+  color: #d8ff4f;
+  font-style: normal;
+}
+
+.tank-prompt {
+  margin: 0;
+  font-size: 13px;
+}
+
+@media (max-width: 720px) {
+  .tank-hud {
+    top: auto;
+    bottom: 12px;
+    left: 12px;
+    width: calc(100vw - 24px);
+    max-height: 52vh;
+    overflow: auto;
+  }
+
+  .tank-brand h1 {
+    font-size: 26px;
+  }
+
+  .tank-status-grid,
+  .tank-roster {
+    grid-template-columns: 1fr;
+  }
+}
