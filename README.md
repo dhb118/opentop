@@ -4,6 +4,8 @@
 
 Iron Ridge is a TypeScript + Three.js browser tank arena. It is built as a small, readable game template: downloaded CC0 3D assets, terrain-aware tank physics, bot combat, and same-origin multiplayer rooms without a backend.
 
+Live demo: https://dhb118.github.io/opentop/
+
 ## What You Can Play
 
 - WWII-inspired 3D battlefield with downloaded CC0 GLB tanks, trenches, sandbags, ruins, barrels, crates, guard towers, fortified fences, and a bridge.
