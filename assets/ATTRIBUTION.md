@@ -19,3 +19,16 @@ All files below are listed on Poly Pizza as `Public Domain (CC0)`.
 | `vendor/poly-pizza/quaternius-small-bridge/quaternius-small-bridge.glb` | https://poly.pizza/m/j4KsIuJYnq | Battlefield bridge landmark |
 
 CC0 license reference: https://creativecommons.org/publicdomain/zero/1.0/
+
+## ambientCG
+
+The PBR material textures below are downloaded from ambientCG and released as `Creative Commons CC0 1.0 Universal`.
+
+| Local folder | Source | Use |
+| --- | --- | --- |
+| `vendor/ambientcg/Metal038/` | https://ambientcg.com/a/Metal038 | PBR tank armor, tracks, tram rails |
+| `vendor/ambientcg/PavingStones150/` | https://ambientcg.com/a/PavingStones150 | German city cobblestone roads |
+| `vendor/ambientcg/Bricks100/` | https://ambientcg.com/a/Bricks100 | German city brick facades, damaged walls, roof tint |
+| `vendor/ambientcg/Plaster001/` | https://ambientcg.com/a/Plaster001 | German city plaster facades |
+
+ambientCG license reference: https://docs.ambientcg.com/license/
