@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   actionForTankKey,
+  applyTankRecoil,
   clampArenaPoint,
   defaultTankCameraMode,
   defaultTankPhysics,
@@ -12,6 +13,7 @@ import {
   stepTankPhysics,
   tankCameraModes,
   tankArenaSize,
+  tankRecoilImpulse,
   tankShellSpeed,
   terrainSurfaceForPoint,
   terrainSurfaceProfiles
@@ -123,6 +125,22 @@ describe("tank physics", () => {
     );
 
     assert.ok(road.linearVelocity > mud.linearVelocity);
+  });
+
+  it("applies cannon recoil against the turret direction", () => {
+    const baseState = {
+      position: { x: 0, z: 0 },
+      heading: 0,
+      linearVelocity: 0,
+      angularVelocity: 0
+    };
+    const straightShot = applyTankRecoil(baseState, 0);
+    const sideShot = applyTankRecoil(baseState, Math.PI / 2);
+
+    assert.equal(tankRecoilImpulse, 5.4);
+    assert.ok(straightShot.linearVelocity < 0);
+    assert.ok(Math.abs(sideShot.linearVelocity) < Math.abs(straightShot.linearVelocity));
+    assert.ok(sideShot.angularVelocity < 0);
   });
 
   it("keeps tanks inside the arena and scores shell damage by hit distance", () => {

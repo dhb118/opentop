@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import {
   actionForTankKey,
+  applyTankRecoil,
   buildCallsign,
   clampArenaPoint,
   defaultTankCameraMode,
@@ -27,7 +28,7 @@ import {
 } from "./tankWorldModel";
 
 type TankKind = "player" | "bot" | "peer";
-type WorldAssetKey = "tank" | "bags" | "trench" | "ruins";
+type WorldAssetKey = "tank" | "bags" | "trench" | "ruins" | "barrel" | "crate";
 
 interface TankEntity {
   id: string;
@@ -51,6 +52,13 @@ interface ShellEntity {
   mesh: THREE.Mesh;
   velocity: THREE.Vector3;
   ttl: number;
+}
+
+interface DustEntity {
+  mesh: THREE.Mesh;
+  velocity: THREE.Vector3;
+  ttl: number;
+  maxTtl: number;
 }
 
 interface RemoteStatePacket {
@@ -125,6 +133,11 @@ const tankBarrelGeometry = new THREE.BoxGeometry(0.36, 0.34, 3);
 const obstacleGeometry = new THREE.BoxGeometry(1, 1, 1);
 const craterGeometry = new THREE.CircleGeometry(1, 28);
 const roadGeometry = new THREE.PlaneGeometry(1, 1);
+const dustGeometry = new THREE.SphereGeometry(0.42, 8, 6);
+const hedgehogBeamGeometry = new THREE.BoxGeometry(0.34, 0.34, 4.6);
+const wirePostGeometry = new THREE.CylinderGeometry(0.08, 0.1, 1.4, 8);
+const wireGeometry = new THREE.CylinderGeometry(0.035, 0.035, 1, 8);
+const supplyCollisionGeometry = new THREE.BoxGeometry(1, 1, 1);
 const cameraModeLabels: Record<TankCameraMode, string> = {
   commander: "车长",
   gunner: "炮手",
@@ -151,6 +164,16 @@ const worldAssets: WorldAssetDefinition[] = [
     key: "ruins",
     label: "Quaternius Modular Ruins",
     url: "assets/vendor/poly-pizza/quaternius-modular-ruins/quaternius-modular-ruins.glb"
+  },
+  {
+    key: "barrel",
+    label: "Quaternius Barrel",
+    url: "assets/vendor/poly-pizza/quaternius-barrel/quaternius-barrel.glb"
+  },
+  {
+    key: "crate",
+    label: "Quaternius Cube Crate",
+    url: "assets/vendor/poly-pizza/quaternius-cube-crate/quaternius-cube-crate.glb"
   }
 ];
 const coverPlacements: CoverPlacement[] = [
@@ -167,7 +190,12 @@ const sceneryPlacements: SceneryPlacement[] = [
   { key: "trench", x: 18, z: -23, footprint: 12, yaw: Math.PI / 2 },
   { key: "trench", x: -34, z: 34, footprint: 11, yaw: -0.08 },
   { key: "bags", x: -18, z: 18, footprint: 9, yaw: 0.64 },
-  { key: "bags", x: 5, z: -5, footprint: 6.5, yaw: -0.42 }
+  { key: "bags", x: 5, z: -5, footprint: 6.5, yaw: -0.42 },
+  { key: "barrel", x: -36, z: -34, footprint: 3.4, yaw: 0.2 },
+  { key: "barrel", x: -32, z: -36, footprint: 3, yaw: -0.35 },
+  { key: "crate", x: -39, z: -31, footprint: 3.2, yaw: 0.8 },
+  { key: "crate", x: 35, z: 36, footprint: 3.4, yaw: -0.48 },
+  { key: "barrel", x: 39, z: 33, footprint: 2.8, yaw: 0.7 }
 ];
 
 export function mountTankWorld(root: HTMLElement): void {
@@ -278,6 +306,7 @@ class TankWorldGame {
   private readonly dom: TankDom;
   private readonly input = new Set<string>();
   private readonly shells: ShellEntity[] = [];
+  private readonly dust: DustEntity[] = [];
   private readonly tanks = new Map<string, TankEntity>();
   private readonly obstacles: THREE.Box3[] = [];
   private readonly assetLoader = new GLTFLoader();
@@ -291,8 +320,9 @@ class TankWorldGame {
   private cameraMode: TankCameraMode = defaultTankCameraMode;
   private roomCode = defaultTankRoom;
   private player!: TankEntity;
-  private assetStatus = "0/4";
+  private assetStatus = `0/${worldAssets.length}`;
   private sceneryApplied = false;
+  private cameraKick = 0;
   private lastBroadcast = 0;
   private lastFrameMs = performance.now();
   private lastHudUpdate = 0;
@@ -360,6 +390,7 @@ class TankWorldGame {
 
     this.createWalls();
     this.createObstacles();
+    this.createDefensiveDetails();
     this.player = this.createTank(playerId, playerCallsign, "player", 0xdefc5a, { x: 0, z: 30 });
     this.loadWorldAssets();
   }
@@ -466,6 +497,94 @@ class TankWorldGame {
       mesh.name = `procedural-${item.kind}-cover`;
       this.scene.add(mesh);
       this.obstacles.push(new THREE.Box3().setFromObject(mesh).expandByScalar(item.kind === "trench" ? 0.7 : 1.1));
+    }
+  }
+
+  private createDefensiveDetails(): void {
+    const steelMaterial = new THREE.MeshStandardMaterial({ color: 0x4f5954, roughness: 0.78, metalness: 0.28 });
+    const wireMaterial = new THREE.MeshStandardMaterial({ color: 0x9aa28d, roughness: 0.65, metalness: 0.45 });
+    const postMaterial = new THREE.MeshStandardMaterial({ color: 0x463b2a, roughness: 0.92 });
+    const supplyMaterial = new THREE.MeshStandardMaterial({
+      color: 0x756441,
+      roughness: 0.96,
+      transparent: true,
+      opacity: 0.12
+    });
+
+    [
+      { x: -39, z: -7, yaw: 0.18 },
+      { x: -33, z: -8, yaw: -0.26 },
+      { x: 35, z: 5, yaw: 0.52 },
+      { x: 39, z: 11, yaw: -0.18 },
+      { x: 12, z: -39, yaw: 0.7 },
+      { x: 18, z: -38, yaw: -0.55 }
+    ].forEach((item) => this.createHedgehog(item.x, item.z, item.yaw, steelMaterial));
+
+    this.createBarbedWireLine(new THREE.Vector3(-44, 0, -28), new THREE.Vector3(-44, 0, 10), wireMaterial, postMaterial);
+    this.createBarbedWireLine(new THREE.Vector3(44, 0, -8), new THREE.Vector3(44, 0, 32), wireMaterial, postMaterial);
+    this.createBarbedWireLine(new THREE.Vector3(-8, 0, -44), new THREE.Vector3(31, 0, -44), wireMaterial, postMaterial);
+
+    [
+      { x: -36, z: -34, sx: 7, sz: 5 },
+      { x: 37, z: 35, sx: 6, sz: 5 }
+    ].forEach((item) => {
+      const mesh = new THREE.Mesh(supplyCollisionGeometry, supplyMaterial);
+      mesh.scale.set(item.sx, 1.8, item.sz);
+      mesh.position.set(item.x, 0.9, item.z);
+      mesh.name = "procedural-supply-cover";
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      this.scene.add(mesh);
+      this.obstacles.push(new THREE.Box3().setFromObject(mesh).expandByScalar(0.8));
+    });
+  }
+
+  private createHedgehog(x: number, z: number, yaw: number, material: THREE.Material): void {
+    const group = new THREE.Group();
+    const beamA = new THREE.Mesh(hedgehogBeamGeometry, material);
+    const beamB = new THREE.Mesh(hedgehogBeamGeometry, material);
+    const beamC = new THREE.Mesh(hedgehogBeamGeometry, material);
+    beamA.rotation.y = Math.PI / 2;
+    beamB.rotation.x = Math.PI / 2;
+    beamC.rotation.set(Math.PI / 4, 0, Math.PI / 2);
+    [beamA, beamB, beamC].forEach((beam) => {
+      beam.castShadow = true;
+      beam.receiveShadow = true;
+      group.add(beam);
+    });
+    group.position.set(x, 1.2, z);
+    group.rotation.y = yaw;
+    this.scene.add(group);
+    this.obstacles.push(new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(x, 1.2, z), new THREE.Vector3(4, 2.4, 4)));
+  }
+
+  private createBarbedWireLine(
+    start: THREE.Vector3,
+    end: THREE.Vector3,
+    wireMaterial: THREE.Material,
+    postMaterial: THREE.Material
+  ): void {
+    const direction = end.clone().sub(start);
+    const length = direction.length();
+    const segments = Math.max(2, Math.ceil(length / 6));
+    const step = direction.clone().divideScalar(segments);
+
+    for (let index = 0; index <= segments; index += 1) {
+      const point = start.clone().addScaledVector(step, index);
+      const post = new THREE.Mesh(wirePostGeometry, postMaterial);
+      post.position.set(point.x, 0.72, point.z);
+      post.castShadow = true;
+      post.receiveShadow = true;
+      this.scene.add(post);
+    }
+
+    for (let index = 0; index < segments; index += 1) {
+      const a = start.clone().addScaledVector(step, index);
+      const b = start.clone().addScaledVector(step, index + 1);
+      for (const y of [0.72, 1.1]) {
+        const wire = createCylinderBetween(a.clone().setY(y), b.clone().setY(y), wireMaterial);
+        this.scene.add(wire);
+      }
     }
   }
 
@@ -702,6 +821,7 @@ class TankWorldGame {
     this.updatePlayer(dt);
     this.updateBots(dt);
     this.updateShells(dt);
+    this.updateDust(dt);
     this.updatePeers();
     this.updateCamera(dt);
     this.broadcastState(false);
@@ -765,6 +885,9 @@ class TankWorldGame {
     const roll = clamp(-tank.physics.angularVelocity * 0.22, -0.09, 0.09);
     tank.group.rotation.set(pitch, tank.physics.heading, roll);
     tank.turret.rotation.y = tank.turretYaw - tank.physics.heading;
+    if (Math.abs(tank.physics.linearVelocity) > 1.25 && Math.random() < terrainSurfaceProfiles[tank.surface].dust * dt * 6) {
+      this.spawnTrackDust(tank);
+    }
   }
 
   private updateShells(dt: number): void {
@@ -786,6 +909,46 @@ class TankWorldGame {
       if (hit) {
         this.damageTank(hit, shell);
         this.removeShell(index);
+      }
+    }
+  }
+
+  private spawnTrackDust(tank: TankEntity): void {
+    const side = Math.random() > 0.5 ? 1 : -1;
+    const heading = tank.physics.heading;
+    const backOffset = -Math.sign(tank.physics.linearVelocity || 1) * 2.2;
+    const x = tank.group.position.x + Math.sin(heading) * backOffset + Math.cos(heading) * side * 1.45;
+    const z = tank.group.position.z + Math.cos(heading) * backOffset - Math.sin(heading) * side * 1.45;
+    const material = new THREE.MeshBasicMaterial({
+      color: tank.surface === "mud" ? 0x332416 : 0x8b8056,
+      transparent: true,
+      opacity: tank.surface === "road" ? 0.2 : 0.32,
+      depthWrite: false
+    });
+    const mesh = new THREE.Mesh(dustGeometry, material);
+    mesh.position.set(x, 0.28, z);
+    mesh.scale.setScalar(0.6 + Math.random() * 0.55);
+    this.scene.add(mesh);
+    this.dust.push({
+      mesh,
+      velocity: new THREE.Vector3((Math.random() - 0.5) * 0.8, 0.35 + Math.random() * 0.35, (Math.random() - 0.5) * 0.8),
+      ttl: 0.85,
+      maxTtl: 0.85
+    });
+  }
+
+  private updateDust(dt: number): void {
+    for (let index = this.dust.length - 1; index >= 0; index -= 1) {
+      const dust = this.dust[index];
+      dust.ttl -= dt;
+      dust.mesh.position.addScaledVector(dust.velocity, dt);
+      dust.mesh.scale.multiplyScalar(1 + dt * 0.9);
+      const material = dust.mesh.material as THREE.MeshBasicMaterial;
+      material.opacity = Math.max(0, (dust.ttl / dust.maxTtl) * 0.32);
+      if (dust.ttl <= 0) {
+        this.scene.remove(dust.mesh);
+        material.dispose();
+        this.dust.splice(index, 1);
       }
     }
   }
@@ -837,6 +1000,14 @@ class TankWorldGame {
       target = new THREE.Vector3(origin.x, 1.6, origin.z);
     }
 
+    this.cameraKick = Math.max(0, this.cameraKick - dt * 2.8);
+    if (this.cameraKick > 0) {
+      const kick = this.cameraKick * this.cameraKick;
+      desired.x += Math.sin(performance.now() * 0.026) * kick * 0.34;
+      desired.y += kick * 0.42;
+      desired.z += Math.cos(performance.now() * 0.021) * kick * 0.34;
+    }
+
     this.camera.position.lerp(desired, dt * (this.cameraMode === "tactical" ? 2.2 : 4.5));
     this.camera.fov = THREE.MathUtils.lerp(this.camera.fov, fov, dt * 4);
     this.camera.updateProjectionMatrix();
@@ -862,6 +1033,10 @@ class TankWorldGame {
     }
     tank.reloadMs = tank.kind === "bot" ? 950 : 520;
     const heading = tank.turretYaw;
+    tank.physics = applyTankRecoil(tank.physics, heading);
+    if (tank.kind === "player") {
+      this.cameraKick = Math.min(1, this.cameraKick + 0.75);
+    }
     const mesh = new THREE.Mesh(
       shellGeometry,
       new THREE.MeshStandardMaterial({ color: tank.kind === "player" ? 0xd8ff4f : 0xff744f, emissive: 0x442000 })
@@ -1030,7 +1205,7 @@ class TankWorldGame {
       .join("");
     this.dom.prompt.textContent =
       this.mode === "single"
-        ? "物理：质量、引擎力、地形牵引、履带阻力、碰撞反弹、炮弹初速。"
+        ? "物理：质量、引擎力、地形牵引、履带阻力、开炮后坐、扬尘、碰撞反弹。"
         : "联机：同源 BroadcastChannel 房间；两个浏览器标签输入同一房间码即可同步。";
   }
 
@@ -1124,4 +1299,16 @@ function normalizeAssetModel(source: THREE.Object3D, footprint: number, groundLi
   wrapper.rotation.y = yaw;
   wrapper.position.y = groundLift + (size.y * scale) / 2;
   return wrapper;
+}
+
+function createCylinderBetween(start: THREE.Vector3, end: THREE.Vector3, material: THREE.Material): THREE.Mesh {
+  const mesh = new THREE.Mesh(wireGeometry, material);
+  const direction = end.clone().sub(start);
+  const length = direction.length();
+  mesh.position.copy(start).add(end).multiplyScalar(0.5);
+  mesh.scale.y = length;
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  return mesh;
 }

@@ -55,6 +55,7 @@ export const tankArenaSize = 96;
 export const defaultTankRoom = "RIDGE-01";
 export const multiplayerRoomStorageKey = "iron-ridge-room";
 export const tankShellSpeed = 46;
+export const tankRecoilImpulse = 5.4;
 export const tankCameraModes: TankCameraMode[] = ["commander", "gunner", "driver", "tactical"];
 export const defaultTankCameraMode: TankCameraMode = "commander";
 
@@ -173,6 +174,23 @@ export function terrainSurfaceForPoint(point: ArenaPoint): TerrainSurface {
   }
 
   return "field";
+}
+
+export function applyTankRecoil(
+  state: TankPhysicsState,
+  turretHeading: number,
+  impulse = tankRecoilImpulse,
+  config: TankPhysicsConfig = defaultTankPhysics
+): TankPhysicsState {
+  const relativeHeading = turretHeading - state.heading;
+  const reverseDriveImpulse = Math.cos(relativeHeading) * (impulse / config.mass);
+  const yawImpulse = Math.sin(relativeHeading) * (impulse / config.mass) * 0.18;
+
+  return {
+    ...state,
+    linearVelocity: state.linearVelocity - reverseDriveImpulse,
+    angularVelocity: state.angularVelocity - yawImpulse
+  };
 }
 
 export function stepTankPhysics(
